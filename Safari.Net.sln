@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.Core", "Safari.Net.Core\Safari.Net.Core.csproj", "{9FFBD08A-6DB0-4091-A045-EA47F001A8EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.Core.Tests", "Safari.Net.Core.Tests\Safari.Net.Core.Tests.csproj", "{366922BE-9242-4C3D-A26F-1788B5C9A5AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.TestTools", "Safari.Net.TestTools\Safari.Net.TestTools.csproj", "{541986DE-D5CA-4781-8FF9-F15008CE232F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{9FFBD08A-6DB0-4091-A045-EA47F001A8EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FFBD08A-6DB0-4091-A045-EA47F001A8EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FFBD08A-6DB0-4091-A045-EA47F001A8EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{366922BE-9242-4C3D-A26F-1788B5C9A5AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{366922BE-9242-4C3D-A26F-1788B5C9A5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{366922BE-9242-4C3D-A26F-1788B5C9A5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{366922BE-9242-4C3D-A26F-1788B5C9A5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
