@@ -1,8 +1,9 @@
 using Safari.Net.Core.Extensions.HttpUtilities;
+using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Extensions.HttpUtilities;
 
-public class HttpHeadersTests
+public class HttpHeadersTests : UnitTest
 {
     [Fact]
     public void TryGetHeaderValue_ReturnsValue_WhenHeaderExists()

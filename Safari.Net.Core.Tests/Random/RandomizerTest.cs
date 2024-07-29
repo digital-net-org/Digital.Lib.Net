@@ -1,8 +1,9 @@
 using Safari.Net.Core.Random;
+using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Random;
 
-public class RandomizerTests
+public class RandomizerTests : UnitTest
 {
     [Fact]
     public void GenerateRandomString_ReturnsStringOfCorrectLength_WhenLengthIsSet()

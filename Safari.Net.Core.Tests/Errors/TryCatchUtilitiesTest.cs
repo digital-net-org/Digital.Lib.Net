@@ -1,8 +1,9 @@
 using Safari.Net.Core.Errors;
+using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Errors;
 
-public class TryCatchUtilitiesTests
+public class TryCatchUtilitiesTests : UnitTest
 {
     [Fact]
     public void TryOrNull_ReturnsResult_WhenFunctionExecutesSuccessfully()
