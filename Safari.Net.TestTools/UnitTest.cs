@@ -2,10 +2,10 @@ namespace Safari.Net.TestTools;
 
 public abstract class UnitTest
 {
-    public const string ASPNETCORE_ENVIRONMENT = "Test";
+    public const string AspnetcoreEnvironment = "Test";
 
     static UnitTest()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", ASPNETCORE_ENVIRONMENT);
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", AspnetcoreEnvironment);
     }
 }

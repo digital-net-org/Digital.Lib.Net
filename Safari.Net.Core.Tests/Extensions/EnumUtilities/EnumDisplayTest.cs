@@ -7,19 +7,19 @@ namespace Safari.Net.Core.Tests.Extensions.EnumUtilities;
 public class EnumDisplayTest : UnitTest
 {
     [Fact]
-    public void GetDisplayName_ShouldReturnEnumDisplayName() =>
+    public void GetDisplayName_ReturnsEnumDisplayName_WhenAttributeIsSet() =>
         Assert.Equal("Test of very simple case", ETest.Test.GetDisplayName());
 
     [Fact]
-    public void GetDisplayName_ShouldReturnEmptyString() =>
+    public void GetDisplayName_ReturnsEmptyString_WhenAttributeIsNotSet() =>
         Assert.Equal(string.Empty, ETest.Test2.GetDisplayName());
 
     [Fact]
-    public void GetEnumValues_ShouldReturnEnumValues() =>
+    public void GetEnumValues_ReturnsEnumValues() =>
         Assert.Equal([ETest.Test, ETest.Test2], EnumDisplay.GetEnumValues<ETest>());
 
     [Fact]
-    public void GetEnumDisplayNames_ShouldReturnEnumDisplayNames() =>
+    public void GetEnumDisplayNames_ReturnsEnumDisplayNames() =>
         Assert.Equal(
             ["Test of very simple case", string.Empty],
             EnumDisplay.GetEnumDisplayNames<ETest>()
