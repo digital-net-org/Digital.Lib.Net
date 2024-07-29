@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.Core.Tests", "Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.TestTools", "Safari.Net.TestTools\Safari.Net.TestTools.csproj", "{541986DE-D5CA-4781-8FF9-F15008CE232F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.Data", "Safari.Net.Data\Safari.Net.Data.csproj", "{1AD79DCB-F242-4117-B058-CC42355F7F39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safari.Net.Data.Test", "Safari.Net.Data.Test\Safari.Net.Data.Test.csproj", "{0DB3E6ED-60F7-4E1E-98F8-5AA93B7CD034}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{541986DE-D5CA-4781-8FF9-F15008CE232F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AD79DCB-F242-4117-B058-CC42355F7F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AD79DCB-F242-4117-B058-CC42355F7F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AD79DCB-F242-4117-B058-CC42355F7F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AD79DCB-F242-4117-B058-CC42355F7F39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DB3E6ED-60F7-4E1E-98F8-5AA93B7CD034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DB3E6ED-60F7-4E1E-98F8-5AA93B7CD034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DB3E6ED-60F7-4E1E-98F8-5AA93B7CD034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DB3E6ED-60F7-4E1E-98F8-5AA93B7CD034}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

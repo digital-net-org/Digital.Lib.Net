@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Safari.Net.Core\Safari.Net.Core.csproj" />
+        <ProjectReference Include="..\Safari.Net.Data\Safari.Net.Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
