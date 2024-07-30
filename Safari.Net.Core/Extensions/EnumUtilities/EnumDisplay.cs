@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Safari.Net.Core.Extensions.EnumUtilities;
 
-public static class EnumDisplay
+public static partial class EnumDisplay
 {
     /// <summary>
     ///     Get the display name of an enum value. Default is an empty string.
@@ -28,10 +29,25 @@ public static class EnumDisplay
         where T : Enum => GetEnumValues<T>().Select(e => e.GetDisplayName());
 
     /// <summary>
+    ///     Converts an enum value to a string with uppercase letters and underscores.
+    ///     Example: MyEnum -> MY_ENUM
+    /// </summary>
+    /// <param name="enumValue">The enum value to convert.</param>
+    /// <returns>The converted string.</returns>
+    public static string ToUpperUnderscoreString(this Enum enumValue)
+    {
+        var enumString = enumValue.ToString();
+        var result = MyRegex().Replace(enumString, "_$1").ToUpper();
+        return result;
+    }
+
+    /// <summary>
     ///     Get the values list of an enum.
     /// </summary>
     /// <typeparam name="T">The enum type to get the values for.</typeparam>
     /// <returns>The values list of the enum.</returns>
     public static IEnumerable<T> GetEnumValues<T>()
         where T : Enum => Enum.GetValues(typeof(T)).Cast<T>();
+    [GeneratedRegex("(?<!^)([A-Z])")]
+    private static partial Regex MyRegex();
 }

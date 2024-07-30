@@ -4,6 +4,22 @@ using Safari.Net.Data.Models;
 
 namespace Safari.Net.Data.Repositories;
 
+/// <summary>
+///     Repository class for a database context.
+/// </summary>
+/// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
+/// <typeparam name="TContext">The database context type.</typeparam>
+/// <example>
+///     Extends Repository class with your context.
+///     <code>
+///     public class MyContextRepository&lt;T&gt;(MyContext context) : Repository&lt;T, MyContext&gt;(context)
+///         where T : EntityBase;
+/// </code>
+///     Then implement IRepository using dependency injection.
+///     <code>
+///     services.AddScoped(typeof(IRepository&lt;&gt;), typeof(MyContextRepository&lt;&gt;));
+/// </code>
+/// </example>
 public class Repository<T, TContext>(TContext context) : IRepository<T>
     where T : EntityBase where TContext : DbContext
 {
