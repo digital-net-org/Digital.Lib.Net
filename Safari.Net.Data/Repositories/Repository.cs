@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Safari.Net.Data.Models;
+using Safari.Net.Data.Entities.Models;
 
 namespace Safari.Net.Data.Repositories;
 

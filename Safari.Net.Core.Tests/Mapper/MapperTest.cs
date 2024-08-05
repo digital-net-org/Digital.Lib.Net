@@ -22,6 +22,24 @@ public class MapperTests : UnitTest
             () => Models.Mapper.Map<TestSourceClass, TestNoSuitableConstructorClass>(source));
     }
 
+    [Fact]
+    public void Map_ReturnsListOfTargetType_WhenSuitableConstructorFound()
+    {
+        var source = new List<TestSourceClass>
+        {
+            new() { Value = 42 },
+            new() { Value = 43 },
+            new() { Value = 44 }
+        };
+        var result = Models.Mapper.Map<TestSourceClass, TestTargetClass>(source);
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<List<TestTargetClass>>(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal(42, result[0].Value);
+        Assert.Equal(43, result[1].Value);
+        Assert.Equal(44, result[2].Value);
+    }
+
     private class TestSourceClass
     {
         public int Value { get; set; }

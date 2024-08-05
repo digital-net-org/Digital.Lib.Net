@@ -24,8 +24,8 @@ public class EnumDisplayTest : UnitTest
         );
 
     [Fact]
-    public void ToUpperUnderscoreString_ReturnsCorrectString() =>
-        Assert.Equal("TEST_ENUM_VALUE", ETest.TestEnumValue.ToUpperUnderscoreString());
+    public void ToReferenceString_ReturnsCorrectString() =>
+        Assert.Equal("TEST_ENUM_VALUE", ETest.TestEnumValue.ToReferenceString());
 
     private enum ETest
     {

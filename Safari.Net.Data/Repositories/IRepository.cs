@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Safari.Net.Data.Models;
+using Safari.Net.Data.Entities.Models;
 
 namespace Safari.Net.Data.Repositories;
 

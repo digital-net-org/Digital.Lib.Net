@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Safari.Net.Data.Models;
+namespace Safari.Net.Data.Entities.Models;
 
 /// <summary>
-///     Base class for entities with an integer primary key
+///     Base class for entities with a Guid primary key
 /// </summary>
-public abstract class EntityWithId : EntityBase
+public class EntityWithGuid : EntityBase
 {
     [Column("id")]
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; init; }
+    public Guid Id { get; init; }
 }

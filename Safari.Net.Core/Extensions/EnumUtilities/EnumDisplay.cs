@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Safari.Net.Core.Extensions.StringUtilities;
 
 namespace Safari.Net.Core.Extensions.EnumUtilities;
 
@@ -34,12 +35,7 @@ public static partial class EnumDisplay
     /// </summary>
     /// <param name="enumValue">The enum value to convert.</param>
     /// <returns>The converted string.</returns>
-    public static string ToUpperUnderscoreString(this Enum enumValue)
-    {
-        var enumString = enumValue.ToString();
-        var result = MyRegex().Replace(enumString, "_$1").ToUpper();
-        return result;
-    }
+    public static string ToReferenceString(this Enum enumValue) => enumValue.ToString().ToUpperSnakeCase();
 
     /// <summary>
     ///     Get the values list of an enum.
@@ -48,6 +44,4 @@ public static partial class EnumDisplay
     /// <returns>The values list of the enum.</returns>
     public static IEnumerable<T> GetEnumValues<T>()
         where T : Enum => Enum.GetValues(typeof(T)).Cast<T>();
-    [GeneratedRegex("(?<!^)([A-Z])")]
-    private static partial Regex MyRegex();
 }

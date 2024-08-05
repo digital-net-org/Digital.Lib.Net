@@ -1,9 +1,10 @@
 using System.Linq.Expressions;
 using Safari.Net.Core.Predicates;
+using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Predicates;
 
-public class PredicateBuilderTest
+public class PredicateBuilderTest : UnitTest
 {
     [Fact]
     public void New_ReturnsCorrectExpression()

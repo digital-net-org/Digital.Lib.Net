@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Safari.Net.Data.Models;
+using Safari.Net.Data.Entities.Models;
 
 namespace Safari.Net.Data.Test.TestUtilities.Models;
 

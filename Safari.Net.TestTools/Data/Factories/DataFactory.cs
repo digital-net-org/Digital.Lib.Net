@@ -1,4 +1,4 @@
-using Safari.Net.Data.Models;
+using Safari.Net.Data.Entities.Models;
 using Safari.Net.Data.Repositories;
 
 namespace Safari.Net.TestTools.Data.Factories;

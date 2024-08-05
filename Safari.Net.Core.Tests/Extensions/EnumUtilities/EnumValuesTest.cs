@@ -1,8 +1,9 @@
 using Safari.Net.Core.Extensions.EnumUtilities;
+using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Extensions.EnumUtilities;
 
-public class EnumValuesTest
+public class EnumValuesTest : UnitTest
 {
     private enum ETest
     {

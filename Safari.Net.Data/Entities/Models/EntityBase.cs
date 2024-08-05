@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Safari.Net.Data.Models;
+namespace Safari.Net.Data.Entities.Models;
 
 /// <summary>
 ///     Base class for all entities with Timestamps
