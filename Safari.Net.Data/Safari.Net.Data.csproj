@@ -9,7 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4"/>
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.4.3"/>
     </ItemGroup>
-    
+
+    <ItemGroup>
+        <ProjectReference Include="..\Safari.Net.Core\Safari.Net.Core.csproj"/>
+    </ItemGroup>
 </Project>
