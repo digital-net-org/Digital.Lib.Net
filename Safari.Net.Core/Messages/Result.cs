@@ -1,5 +1,3 @@
-using Safari.Net.Core.Models;
-
 namespace Safari.Net.Core.Messages;
 
 /// <summary>
@@ -67,21 +65,5 @@ public class Result<T> : Result where T : class
     {
         Infos.Add(new ResultMessage(message));
         return this;
-    }
-
-    public Result<TModel> Map<TModel>() where TModel : class
-    {
-        var result = new Result<TModel>();
-        result.Merge(this);
-        if (Value is null) return result.AddError(new NullReferenceException());
-        try
-        {
-            result.Value = Mapper.Map<T, TModel>(Value);
-        }
-        catch (Exception ex)
-        {
-            result.AddError(ex);
-        }
-        return result;
     }
 }

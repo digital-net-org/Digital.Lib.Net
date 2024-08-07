@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Safari.Net.Core.Extensions.StringUtilities;
 
 namespace Safari.Net.Core.Extensions.EnumUtilities;

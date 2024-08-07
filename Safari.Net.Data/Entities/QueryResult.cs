@@ -4,17 +4,11 @@ namespace Safari.Net.Data.Entities;
 
 public class QueryResult<T> : Result<T> where T : class
 {
-    public new QueryResult<T> AddError(Exception ex, Enum? message = null)
-    {
-        Errors.Add(new ResultMessage(ex, message));
-        return this;
-    }
-
-    public new QueryResult<T> AddError(Enum message)
-    {
-        Errors.Add(new ResultMessage(message));
-        return this;
-    }
-
-
+    public int Index { get; set; }
+    public int Size { get; set; }
+    public int Total { get; set; }
+    public new IEnumerable<T> Value { get; set; } = [];
+    public int Pages => (int)Math.Ceiling((double)Total / Size);
+    public int Count => Value.Count();
+    public bool End => Index >= Pages;
 }

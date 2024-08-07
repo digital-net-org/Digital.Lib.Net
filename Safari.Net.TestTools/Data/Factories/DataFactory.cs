@@ -36,4 +36,28 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
         entity = await repository.GetByIdAsync(id);
         return entity ?? throw new InvalidOperationException("Entity could not be created.");
     }
+
+    /// <summary>
+    ///     Creates a list of entities and returns them.
+    /// </summary>
+    /// <param name="count">Number of entities to create.</param>
+    /// <returns>List of created entities.</returns>
+    public List<T> CreateMany(int count)
+    {
+        var entities = new List<T>();
+        for (var i = 0; i < count; i++) entities.Add(Create());
+        return entities;
+    }
+
+    /// <summary>
+    ///     Creates a list of entities and returns them.
+    /// </summary>
+    /// <param name="count">Number of entities to create.</param>
+    /// <returns>List of created entities.</returns>
+    public async Task<List<T>> CreateManyAsync(int count)
+    {
+        var entities = new List<T>();
+        for (var i = 0; i < count; i++) entities.Add(await CreateAsync());
+        return entities;
+    }
 }
