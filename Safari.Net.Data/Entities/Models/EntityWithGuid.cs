@@ -6,7 +6,7 @@ namespace Safari.Net.Data.Entities.Models;
 /// <summary>
 ///     Base class for entities with a Guid primary key
 /// </summary>
-public class EntityWithGuid : EntityBase
+public abstract class EntityWithGuid : EntityBase
 {
     [Column("id")]
     [Key]

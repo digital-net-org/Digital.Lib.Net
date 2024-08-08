@@ -1,8 +1,11 @@
 ﻿# Build nupkg and publish to nuget.org for the Safari.Net.Core and Safari.Net.Data projects
-# Usage: .\publish.ps1 -v 1.0.0 -k nugetKey
+# Usage: .\publish.ps1 -v 1.0.0 -k nugetKey -p @("project")
 
-param ([string]$v, [string]$k)
-$projects = @("Safari.Net.Core", "Safari.Net.Data")
+param (
+    [string]$v, 
+    [string]$k,
+    [string[]]$projects = @("Safari.Net.Core", "Safari.Net.Data", "Safari.Net.TestTools")
+)
 
 foreach ($project in $projects) {
     Write-Host "Building ${project}..." -ForegroundColor Green
