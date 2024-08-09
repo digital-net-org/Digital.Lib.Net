@@ -1,6 +1,9 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
+using Safari.Net.Core.Messages;
 using Safari.Net.Core.Models;
 using Safari.Net.Data.Entities.Models;
 using Safari.Net.Data.Repositories;
@@ -35,5 +38,33 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository) : IEnt
         return result;
     }
 
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, params object?[]? id) where TM : class
+    {
+        var result = new Result<TM>();
+        try
+        {
+            var item = await repository.GetByIdAsync(id);
+            if (item is null)
+                throw new InvalidOperationException("Entity not found.");
+
+            foreach (var o in patch.Operations)
+                ValidatePatch(o, result);
+
+            patch.ApplyTo(item);
+            repository.Update(item);
+            await repository.SaveAsync();
+
+            result.Value = Mapper.Map<T, TM>(item);
+        }
+        catch (Exception e)
+        {
+            result.AddError(e);
+        }
+
+        return result;
+    }
+
     protected abstract Expression<Func<T, bool>> Filter(TQuery query);
+
+    protected abstract void ValidatePatch(Operation<T> patch, Result result);
 }

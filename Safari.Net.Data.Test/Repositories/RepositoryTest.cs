@@ -9,10 +9,10 @@ namespace Safari.Net.Data.Test.Repositories;
 
 public class RepositoryTest : UnitTest
 {
-    private readonly DataFactory<FakeUser> _userFactory;
     private readonly DataFactory<FakeRole> _roleFactory;
-    private readonly Repository<FakeUser, TestContext> _userRepository;
     private readonly Repository<FakeRole, TestContext> _roleRepository;
+    private readonly DataFactory<FakeUser> _userFactory;
+    private readonly Repository<FakeUser, TestContext> _userRepository;
 
     public RepositoryTest()
     {
@@ -91,6 +91,22 @@ public class RepositoryTest : UnitTest
         var updatedUser = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault()!;
         Assert.Equal(user.Username, updatedUser.Username);
         Assert.True(updatedUser.UpdatedAt <= DateTime.UtcNow);
+    }
+
+    [Fact]
+    public void UpdateRange_ShouldUpdateEntities()
+    {
+        var users = _userFactory.CreateMany(15).Skip(10).ToList();
+        foreach (var u in users)
+            u.Username = "UpdatedUser" + users.FindIndex(usr => usr == u);
+
+        _userRepository.UpdateRange(users);
+        _userRepository.Save();
+
+        var updatedUsers = _userRepository
+            .Get(u => u.Username.StartsWith("UpdatedUser") && u.UpdatedAt <= DateTime.UtcNow).ToList();
+
+        Assert.Equal(5, updatedUsers.Count);
     }
 
     [Fact]

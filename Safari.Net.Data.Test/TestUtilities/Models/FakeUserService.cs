@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.JsonPatch.Operations;
+using Safari.Net.Core.Messages;
 using Safari.Net.Core.Predicates;
 using Safari.Net.Data.Entities;
 using Safari.Net.Data.Repositories;
@@ -19,5 +21,17 @@ public class FakeUserService(IRepository<FakeUser> repository)
             filter = filter.Add(x => x.Role == query.Role);
 
         return filter;
+    }
+
+    protected override void ValidatePatch(Operation<FakeUser> patch, Result result)
+    {
+        if (patch.path == "/Id")
+            result.AddError(new InvalidOperationException("Id cannot be updated."));
+        if (patch.path == "/Password")
+            result.AddError(new InvalidOperationException("Password cannot be updated using PATCH endpoint."));
+        if (patch.path == "/Username" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
+            result.AddError(new InvalidOperationException("Username cannot be empty."));
+        if (patch.path == "/Email" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
+            result.AddError(new InvalidOperationException("Email cannot be empty."));
     }
 }

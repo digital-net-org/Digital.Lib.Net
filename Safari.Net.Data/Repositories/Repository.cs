@@ -29,6 +29,8 @@ public class Repository<T, TContext>(TContext context) : IRepository<T>
 
     public void Update(T entity) => context.Set<T>().Update(entity);
 
+    public void UpdateRange(IEnumerable<T> entities) => context.Set<T>().UpdateRange(entities);
+
     public void Delete(T entity) => context.Set<T>().Remove(entity);
 
     public IQueryable<T> Get(Expression<Func<T, bool>> expression) => context.Set<T>().Where(expression);

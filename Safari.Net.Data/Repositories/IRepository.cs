@@ -46,6 +46,12 @@ public interface IRepository<T>
     public void Update(T entity);
 
     /// <summary>
+    ///     Update a range of entities.
+    /// </summary>
+    /// <param name="entities">The entities to update</param>
+    public void UpdateRange(IEnumerable<T> entities);
+
+    /// <summary>
     ///     Get entities based on a predicate.
     /// </summary>
     /// <param name="expression">The predicate to filter entities</param>

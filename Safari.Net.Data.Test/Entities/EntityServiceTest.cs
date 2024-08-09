@@ -1,4 +1,5 @@
-﻿using Safari.Net.Data.Repositories;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Safari.Net.Data.Repositories;
 using Safari.Net.Data.Test.TestUtilities;
 using Safari.Net.Data.Test.TestUtilities.Models;
 using Safari.Net.TestTools;
@@ -66,5 +67,49 @@ public class EntityServiceTest : UnitTest
         var result = _userService.Get<FakeUserModel>(query);
         Assert.True(result.HasError);
         Assert.NotEmpty(result.Errors);
+    }
+
+    [Fact]
+    public async Task Patch_ReturnsMappedModel_WhenQueryIsValid()
+    {
+        var user = await _userFactory.CreateAsync();
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Username, "NewUsername");
+        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var updatedUser = await _userRepository.GetByIdAsync(user.Id);
+        Assert.NotNull(result);
+        Assert.Equal("NewUsername", result.Value?.Username);
+        Assert.Equal("NewUsername", updatedUser?.Username);
+    }
+
+    [Fact]
+    public async Task Patch_ReturnsError_WhenEntityNotFound()
+    {
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Username, "NewUsername");
+        var result = await _userService.Patch<FakeUserModel>(patch, Guid.NewGuid());
+        Assert.True(result.HasError);
+        Assert.Equal("Entity not found.", result.Errors[0].Message);
+    }
+
+    [Fact]
+    public async Task Patch_ReturnsError_WhenInvalidPatch()
+    {
+        var user = await _userFactory.CreateAsync();
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Username, "");
+        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        Assert.True(result.HasError);
+        Assert.Equal("Username cannot be empty.", result.Errors[0].Message);
+    }
+
+    [Fact]
+    public async Task Patch_ReturnsError_WhenInvalidId()
+    {
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Username, "NewUsername");
+        var result = await _userService.Patch<FakeUserModel>(patch, null);
+        Assert.True(result.HasError);
+        Assert.Equal("Entity not found.", result.Errors[0].Message);
     }
 }
