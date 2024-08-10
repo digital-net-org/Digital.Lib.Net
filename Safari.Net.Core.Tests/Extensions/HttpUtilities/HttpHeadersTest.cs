@@ -3,7 +3,7 @@ using Safari.Net.TestTools;
 
 namespace Safari.Net.Core.Tests.Extensions.HttpUtilities;
 
-public class HttpHeadersTests : UnitTest
+public class ClientHeadersTests : UnitTest
 {
     [Fact]
     public void TryGetHeaderValue_ReturnsValue_WhenHeaderExists()
@@ -45,8 +45,8 @@ public class HttpHeadersTests : UnitTest
         const string cookie = "testCookie";
         var client = new HttpClient();
         client.AddCookie(cookie);
-        Assert.True(client.DefaultRequestHeaders.Contains(HttpHeaders.CookieHeader));
-        Assert.Equal(cookie, client.DefaultRequestHeaders.GetValues(HttpHeaders.CookieHeader).First());
+        Assert.True(client.DefaultRequestHeaders.Contains(ClientHeaders.CookieHeader));
+        Assert.Equal(cookie, client.DefaultRequestHeaders.GetValues(ClientHeaders.CookieHeader).First());
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class HttpHeadersTests : UnitTest
         const string token = "testToken";
         client.AddAuthorization(token);
         Assert.NotNull(client.DefaultRequestHeaders.Authorization);
-        Assert.Equal(HttpHeaders.BearerAuthorization, client.DefaultRequestHeaders.Authorization.Scheme);
+        Assert.Equal(ClientHeaders.BearerAuthorization, client.DefaultRequestHeaders.Authorization.Scheme);
         Assert.Equal(token, client.DefaultRequestHeaders.Authorization.Parameter);
     }
 }

@@ -3,7 +3,7 @@ using Safari.Net.Core.Errors;
 
 namespace Safari.Net.Core.Extensions.HttpUtilities;
 
-public static class HttpHeaders
+public static class ClientHeaders
 {
     public const string SetCookieHeader = "Set-Cookie";
     public const string CookieHeader = "Cookie";
