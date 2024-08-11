@@ -45,7 +45,12 @@ public class EntityServiceTest : UnitTest
         const int index = 2;
         const int size = 5;
         var users = _userFactory.CreateMany(total);
-        var query = new FakeUserQuery { Index = index, Size = size, OrderBy = "CreatedAt" };
+        var query = new FakeUserQuery
+        {
+            Index = index,
+            Size = size,
+            OrderBy = "CreatedAt"
+        };
         foreach (var user in users)
         {
             var i = users.IndexOf(user) + 1;
@@ -99,8 +104,10 @@ public class EntityServiceTest : UnitTest
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Username, "");
         var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var updatedUser = await _userRepository.GetByIdAsync(user.Id);
         Assert.True(result.HasError);
         Assert.Equal("Username cannot be empty.", result.Errors[0].Message);
+        Assert.NotEqual("", updatedUser?.Username);
     }
 
     [Fact]

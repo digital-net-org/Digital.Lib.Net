@@ -23,15 +23,15 @@ public class FakeUserService(IRepository<FakeUser> repository)
         return filter;
     }
 
-    protected override void ValidatePatch(Operation<FakeUser> patch, Result result)
+    protected override void ValidatePatch(Operation<FakeUser> patch)
     {
         if (patch.path == "/Id")
-            result.AddError(new InvalidOperationException("Id cannot be updated."));
+            throw new InvalidOperationException("Id cannot be updated.");
         if (patch.path == "/Password")
-            result.AddError(new InvalidOperationException("Password cannot be updated using PATCH endpoint."));
+            throw new InvalidOperationException("Password cannot be updated using PATCH endpoint.");
         if (patch.path == "/Username" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
-            result.AddError(new InvalidOperationException("Username cannot be empty."));
+            throw new InvalidOperationException("Username cannot be empty.");
         if (patch.path == "/Email" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
-            result.AddError(new InvalidOperationException("Email cannot be empty."));
+            throw new InvalidOperationException("Email cannot be empty.");
     }
 }

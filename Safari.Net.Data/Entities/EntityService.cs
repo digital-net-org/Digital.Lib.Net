@@ -10,11 +10,13 @@ using Safari.Net.Data.Repositories;
 
 namespace Safari.Net.Data.Entities;
 
-public abstract class EntityService<T, TQuery>(IRepository<T> repository) : IEntityService<T, TQuery>
+public abstract class EntityService<T, TQuery>(IRepository<T> repository)
+    : IEntityService<T, TQuery>
     where T : EntityBase
     where TQuery : Query
 {
-    public QueryResult<TM> Get<TM>(TQuery query) where TM : class
+    public QueryResult<TM> Get<TM>(TQuery query)
+        where TM : class
     {
         query.ValidateParameters();
         var result = new QueryResult<TM>();
@@ -38,17 +40,23 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository) : IEnt
         return result;
     }
 
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, params object?[]? id) where TM : class
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, params object?[]? id)
+        where TM : class
     {
         var result = new Result<TM>();
         try
         {
-            var item = await repository.GetByIdAsync(id);
-            if (item is null)
-                throw new InvalidOperationException("Entity not found.");
+            var item =
+                await repository.GetByIdAsync(id)
+                ?? throw new InvalidOperationException("Entity not found.");
 
             foreach (var o in patch.Operations)
-                ValidatePatch(o, result);
+            {
+                if (o.path is "/updated_at" or "/created_at" or "/id")
+                    throw new InvalidOperationException($"{o.path}: This field cannot be updated.");
+
+                ValidatePatch(o);
+            }
 
             patch.ApplyTo(item);
             repository.Update(item);
@@ -66,5 +74,5 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository) : IEnt
 
     protected abstract Expression<Func<T, bool>> Filter(TQuery query);
 
-    protected abstract void ValidatePatch(Operation<T> patch, Result result);
+    protected abstract void ValidatePatch(Operation<T> patch);
 }
