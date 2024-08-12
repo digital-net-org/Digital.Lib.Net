@@ -12,11 +12,6 @@ public static class DataFactoryUtils
             throw new InvalidOperationException(
                 "Entity does not have an int or Guid Id property and thus cannot be created.");
 
-        if (Guid.TryParse(id.ToString(), out var guid))
-            return guid;
-        if (int.TryParse(id.ToString(), out var intId))
-            return intId;
-
-        throw new InvalidOperationException("Id could not be parsed.");
+        return id;
     }
 }

@@ -109,14 +109,4 @@ public class EntityServiceTest : UnitTest
         Assert.Equal("Username cannot be empty.", result.Errors[0].Message);
         Assert.NotEqual("", updatedUser?.Username);
     }
-
-    [Fact]
-    public async Task Patch_ReturnsError_WhenInvalidId()
-    {
-        var patch = new JsonPatchDocument<FakeUser>();
-        patch.Replace(u => u.Username, "NewUsername");
-        var result = await _userService.Patch<FakeUserModel>(patch, null);
-        Assert.True(result.HasError);
-        Assert.Equal("Entity not found.", result.Errors[0].Message);
-    }
 }

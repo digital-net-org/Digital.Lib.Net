@@ -40,16 +40,28 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return result;
     }
 
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, params object?[]? id)
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid id)
+        where TM : class
+    {
+        var entity = await repository.GetByIdAsync(id);
+        if (entity is null) return new Result<TM>().AddError(new InvalidOperationException("Entity not found."));
+        return await Patch<TM>(patch, entity);
+    }
+
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id)
+        where TM : class
+    {
+        var entity = await repository.GetByIdAsync(id);
+        if (entity is null) return new Result<TM>().AddError(new InvalidOperationException("Entity not found."));
+        return await Patch<TM>(patch, entity);
+    }
+
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, T entity)
         where TM : class
     {
         var result = new Result<TM>();
         try
         {
-            var item =
-                await repository.GetByIdAsync(id)
-                ?? throw new InvalidOperationException("Entity not found.");
-
             foreach (var o in patch.Operations)
             {
                 if (o.path is "/updated_at" or "/created_at" or "/id")
@@ -58,11 +70,10 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
                 ValidatePatch(o);
             }
 
-            patch.ApplyTo(item);
-            repository.Update(item);
+            patch.ApplyTo(entity);
+            repository.Update(entity);
             await repository.SaveAsync();
-
-            result.Value = Mapper.Map<T, TM>(item);
+            result.Value = Mapper.Map<T, TM>(entity);
         }
         catch (Exception e)
         {

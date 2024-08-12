@@ -17,7 +17,10 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
         repository.Create(entity);
         repository.Save();
         var id = DataFactoryUtils.ResolveId(entity);
-        entity = repository.GetById(id);
+        if (Guid.TryParse(id.ToString(), out var guid))
+            entity = repository.GetById(guid);
+        if (int.TryParse(id.ToString(), out var intId))
+            entity = repository.GetById(intId);
         return entity ?? throw new InvalidOperationException("Entity could not be created.");
     }
 
@@ -33,7 +36,10 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
         await repository.CreateAsync(entity);
         await repository.SaveAsync();
         var id = DataFactoryUtils.ResolveId(entity);
-        entity = await repository.GetByIdAsync(id);
+        if (Guid.TryParse(id.ToString(), out var guid))
+            entity = await repository.GetByIdAsync(guid);
+        if (int.TryParse(id.ToString(), out var intId))
+            entity = await repository.GetByIdAsync(intId);
         return entity ?? throw new InvalidOperationException("Entity could not be created.");
     }
 
