@@ -40,20 +40,22 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return result;
     }
 
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid id)
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id)
         where TM : class
     {
         var entity = await repository.GetByIdAsync(id);
-        if (entity is null) return new Result<TM>().AddError(new InvalidOperationException("Entity not found."));
-        return await Patch<TM>(patch, entity);
+        return entity is null
+            ? new Result<TM>().AddError(new InvalidOperationException("Entity not found."))
+            : await Patch<TM>(patch, entity);
     }
 
     public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id)
         where TM : class
     {
         var entity = await repository.GetByIdAsync(id);
-        if (entity is null) return new Result<TM>().AddError(new InvalidOperationException("Entity not found."));
-        return await Patch<TM>(patch, entity);
+        return entity is null
+            ? new Result<TM>().AddError(new InvalidOperationException("Entity not found."))
+            : await Patch<TM>(patch, entity);
     }
 
     public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, T entity)

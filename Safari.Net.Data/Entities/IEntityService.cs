@@ -14,7 +14,8 @@ public interface IEntityService<T, in TQuery>
     /// <param name="query">The query to filter entities</param>
     /// <typeparam name="TM">The model to convert the entities to</typeparam>
     /// <returns>QueryResult of the model</returns>
-    QueryResult<TM> Get<TM>(TQuery query) where TM : class;
+    QueryResult<TM> Get<TM>(TQuery query)
+        where TM : class;
 
     /// <summary>
     ///     Patch an entity based on its primary key.
@@ -24,7 +25,8 @@ public interface IEntityService<T, in TQuery>
     /// <typeparam name="TM">The model to convert the entities to</typeparam>
     /// <returns>Result of the model</returns>
     /// <exception cref="InvalidOperationException">If the patch is invalid, use the ValidatePatch method to handle exceptions.</exception>
-    Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid id) where TM : class;
+    Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id)
+        where TM : class;
 
     /// <summary>
     ///     Patch an entity based on its primary key.
@@ -34,5 +36,6 @@ public interface IEntityService<T, in TQuery>
     /// <typeparam name="TM">The model to convert the entities to</typeparam>
     /// <returns>Result of the model</returns>
     /// <exception cref="InvalidOperationException">If the patch is invalid, use the ValidatePatch method to handle exceptions.</exception>
-    Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id) where TM : class;
+    Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id)
+        where TM : class;
 }
