@@ -40,6 +40,28 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return result;
     }
 
+    public Result<TM> Get<TM>(Guid? id)
+        where TM : class
+    {
+        var result = new Result<TM>();
+        var entity = repository.GetById(id);
+        if (entity is null)
+            return result.AddError(new InvalidOperationException("Entity not found."));
+        result.Value = Mapper.Map<T, TM>(entity);
+        return result;
+    }
+
+    public Result<TM> Get<TM>(int id)
+        where TM : class
+    {
+        var result = new Result<TM>();
+        var entity = repository.GetById(id);
+        if (entity is null)
+            return result.AddError(new InvalidOperationException("Entity not found."));
+        result.Value = Mapper.Map<T, TM>(entity);
+        return result;
+    }
+
     public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id)
         where TM : class
     {

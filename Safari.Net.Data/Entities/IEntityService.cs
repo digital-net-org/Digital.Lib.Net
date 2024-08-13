@@ -18,6 +18,24 @@ public interface IEntityService<T, in TQuery>
         where TM : class;
 
     /// <summary>
+    ///    Get an entity based on its primary key. Converts the entity to the provided model.
+    /// </summary>
+    /// <param name="id">The entity primary key</param>
+    /// <typeparam name="TM">The model to convert the entities to</typeparam>
+    /// <returns>Result of the model</returns>
+    Result<TM> Get<TM>(Guid? id)
+        where TM : class;
+
+    /// <summary>
+    ///    Get an entity based on its primary key. Converts the entity to the provided model.
+    /// </summary>
+    /// <param name="id">The entity primary key</param>
+    /// <typeparam name="TM">The model to convert the entities to</typeparam>
+    /// <returns>Result of the model</returns>
+    Result<TM> Get<TM>(int id)
+        where TM : class;
+
+    /// <summary>
     ///     Patch an entity based on its primary key.
     /// </summary>
     /// <param name="patch">The patch body</param>
