@@ -3,8 +3,11 @@ using Safari.Net.Data.Repositories;
 
 namespace Safari.Net.TestTools.Data.Factories;
 
-public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
+public class DataFactory<T>(IRepository<T> repository)
+    where T : EntityBase
 {
+    private readonly List<T> _entities = [];
+
     /// <summary>
     ///     Creates an entity and returns it.
     /// </summary>
@@ -16,6 +19,7 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
         entity ??= Activator.CreateInstance<T>();
         repository.Create(entity);
         repository.Save();
+        _entities.Add(entity);
         var id = DataFactoryUtils.ResolveId(entity);
         if (Guid.TryParse(id.ToString(), out var guid))
             entity = repository.GetById(guid);
@@ -35,6 +39,7 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
         entity ??= Activator.CreateInstance<T>();
         await repository.CreateAsync(entity);
         await repository.SaveAsync();
+        _entities.Add(entity);
         var id = DataFactoryUtils.ResolveId(entity);
         if (Guid.TryParse(id.ToString(), out var guid))
             entity = await repository.GetByIdAsync(guid);
@@ -51,7 +56,8 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
     public List<T> CreateMany(int count)
     {
         var entities = new List<T>();
-        for (var i = 0; i < count; i++) entities.Add(Create());
+        for (var i = 0; i < count; i++)
+            entities.Add(Create());
         return entities;
     }
 
@@ -63,7 +69,19 @@ public class DataFactory<T>(IRepository<T> repository) where T : EntityBase
     public async Task<List<T>> CreateManyAsync(int count)
     {
         var entities = new List<T>();
-        for (var i = 0; i < count; i++) entities.Add(await CreateAsync());
+        for (var i = 0; i < count; i++)
+            entities.Add(await CreateAsync());
         return entities;
+    }
+
+    /// <summary>
+    ///    Cleanup the repository.
+    /// </summary>
+    public void Dispose()
+    {
+        foreach (var entity in _entities)
+            repository.Delete(entity);
+
+        repository.Save();
     }
 }
