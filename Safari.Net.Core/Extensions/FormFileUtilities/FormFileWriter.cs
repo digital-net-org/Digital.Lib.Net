@@ -36,20 +36,4 @@ public static class FormFileWriter
 
         return result;
     }
-
-    public static Result TryRemoveFile(string path)
-    {
-        var result = new Result();
-        try
-        {
-            if (File.Exists(path))
-                File.Delete(path);
-        }
-        catch (Exception ex)
-        {
-            result.AddError(ex);
-        }
-
-        return result;
-    }
 }
