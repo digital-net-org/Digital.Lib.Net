@@ -37,11 +37,11 @@ public class Repository<T, TContext>(TContext context) : IRepository<T>
     public IQueryable<T> Get(Expression<Func<T, bool>> expression) =>
         context.Set<T>().Where(expression);
 
-    public T? GetById(int id) => context.Set<T>().Find(id);
+    public T? GetById(int? id) => context.Set<T>().Find(id);
 
     public T? GetById(Guid? id) => context.Set<T>().Find(id);
 
-    public async Task<T?> GetByIdAsync(int id) => await context.Set<T>().FindAsync(id);
+    public async Task<T?> GetByIdAsync(int? id) => await context.Set<T>().FindAsync(id);
 
     public async Task<T?> GetByIdAsync(Guid? id) => await context.Set<T>().FindAsync(id);
 

@@ -73,7 +73,7 @@ public interface IRepository<T>
     /// </summary>
     /// <param name="id">The primary key of the entity.</param>
     /// <returns>The entity</returns>
-    T? GetById(int id);
+    T? GetById(int? id);
 
     /// <summary>
     ///     Get an entity by its id asynchronously.
@@ -87,7 +87,7 @@ public interface IRepository<T>
     /// </summary>
     /// <param name="id">The primary key of the entity.</param>
     /// <returns>The entity</returns>
-    Task<T?> GetByIdAsync(int id);
+    Task<T?> GetByIdAsync(int? id);
 
     /// <summary>
     ///     Get an entity by its id asynchronously.
