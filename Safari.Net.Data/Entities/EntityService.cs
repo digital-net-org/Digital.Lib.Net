@@ -91,7 +91,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
                 if (o.path is "/updated_at" or "/created_at" or "/id")
                     throw new InvalidOperationException($"{o.path}: This field cannot be updated.");
 
-                ValidatePatch(o);
+                ValidatePatch(o, entity);
             }
 
             patch.ApplyTo(entity);
@@ -109,5 +109,5 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
 
     protected abstract Expression<Func<T, bool>> Filter(TQuery query);
 
-    protected abstract void ValidatePatch(Operation<T> patch);
+    protected abstract void ValidatePatch(Operation<T> patch, T entity);
 }
