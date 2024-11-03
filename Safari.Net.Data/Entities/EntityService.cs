@@ -40,50 +40,27 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return result;
     }
 
-    public Result<TM> Get<TM>(Guid? id)
-        where TM : class
+    public Result<TM> Get<TM>(Guid? id) where TM : class => Get<TM>(repository.GetById(id));
+    public Result<TM> Get<TM>(int id) where TM : class => Get<TM>(repository.GetById(id));
+    private static Result<TM> Get<TM>(T? entity) where TM : class
     {
         var result = new Result<TM>();
-        var entity = repository.GetById(id);
         if (entity is null)
             return result.AddError(new InvalidOperationException("Entity not found."));
         result.Value = Mapper.Map<T, TM>(entity);
         return result;
     }
 
-    public Result<TM> Get<TM>(int id)
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id) where TM : class =>
+        await Patch<TM>(patch, await repository.GetByIdAsync(id));
+    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id) where TM : class =>
+        await Patch<TM>(patch, await repository.GetByIdAsync(id));
+    private async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, T? entity)
         where TM : class
     {
         var result = new Result<TM>();
-        var entity = repository.GetById(id);
         if (entity is null)
             return result.AddError(new InvalidOperationException("Entity not found."));
-        result.Value = Mapper.Map<T, TM>(entity);
-        return result;
-    }
-
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id)
-        where TM : class
-    {
-        var entity = await repository.GetByIdAsync(id);
-        return entity is null
-            ? new Result<TM>().AddError(new InvalidOperationException("Entity not found."))
-            : await Patch<TM>(patch, entity);
-    }
-
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id)
-        where TM : class
-    {
-        var entity = await repository.GetByIdAsync(id);
-        return entity is null
-            ? new Result<TM>().AddError(new InvalidOperationException("Entity not found."))
-            : await Patch<TM>(patch, entity);
-    }
-
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, T entity)
-        where TM : class
-    {
-        var result = new Result<TM>();
         try
         {
             foreach (var o in patch.Operations)
