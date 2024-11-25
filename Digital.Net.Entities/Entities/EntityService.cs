@@ -28,7 +28,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             items = items.AsNoTracking();
             items = items.Skip((query.Index - 1) * query.Size).Take(query.Size);
             items = items.OrderBy(query.OrderBy ?? "CreatedAt");
-            result.Value = Mapper.Map<T, TM>(items.ToList());
+            result.Value = Mapper.MapFromConstructor<T, TM>(items.ToList());
             result.Total = rowCount;
             result.Index = query.Index;
             result.Size = query.Size;
@@ -48,7 +48,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         var result = new Result<TM>();
         if (entity is null)
             return result.AddError(new InvalidOperationException("Entity not found."));
-        result.Value = Mapper.Map<T, TM>(entity);
+        result.Value = Mapper.MapFromConstructor<T, TM>(entity);
         return result;
     }
 
@@ -76,7 +76,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             patch.ApplyTo(entity);
             repository.Update(entity);
             await repository.SaveAsync();
-            result.Value = Mapper.Map<T, TM>(entity);
+            result.Value = Mapper.MapFromConstructor<T, TM>(entity);
         }
         catch (Exception e)
         {
