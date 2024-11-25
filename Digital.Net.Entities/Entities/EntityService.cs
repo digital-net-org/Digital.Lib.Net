@@ -93,8 +93,12 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             predicate = predicate.Add(x => x.CreatedAt >= query.CreatedAt);
         if (query.UpdatedAt.HasValue)
             predicate = predicate.Add(x => x.UpdatedAt >= query.UpdatedAt);
+        if (query.CreatedIn is not null)
+            predicate = predicate.Add(x => x.CreatedAt >= query.CreatedIn.From && x.CreatedAt <= query.CreatedIn.To);
+        if (query.UpdatedIn is not null)
+            predicate = predicate.Add(x => x.UpdatedAt >= query.UpdatedIn.From && x.UpdatedAt <= query.UpdatedIn.To);
 
-        return predicate.Add(Filter(predicate, query));
+        return Filter(predicate, query);
     }
 
     protected abstract Expression<Func<T, bool>> Filter(Expression<Func<T, bool>> predicate, TQuery query);

@@ -1,4 +1,5 @@
-﻿using Digital.Net.Entities.Repositories;
+﻿using Digital.Net.Core.Interval;
+using Digital.Net.Entities.Repositories;
 using Digital.Net.Entities.Test.TestUtilities;
 using Digital.Net.Entities.Test.TestUtilities.Models;
 using Digital.Net.TestTools;
@@ -36,6 +37,37 @@ public class EntityServiceTest : UnitTest
         Assert.Equal(size, result.Size);
         Assert.Equal(index, result.Index);
         Assert.Equal(size, result.Count);
+    }
+
+    [Fact]
+    public void Get_ReturnsCorrectItems_WhenFilteredWithMutationDates()
+    {
+        for (var i = 1; i < 3; i++)
+            _userFactory.Create(new FakeUser { CreatedAt = DateTime.UtcNow.AddDays(-i + 1) });
+
+        var query = new FakeUserQuery { CreatedAt = DateTime.Now.AddDays(-1) };
+        var result = _userService.Get<FakeUserModel>(query);
+        Assert.Equal(2, result.Count);
+    }
+
+    [Fact]
+    public void Get_ReturnsCorrectItems_WhenFilteredWithMutationDateRanges()
+    {
+        var now = DateTime.UtcNow;
+        var users = _userFactory.CreateMany(5);
+        var query = new FakeUserQuery
+        {
+            CreatedIn = new DateRange { From = now, To = now.AddDays(2) }
+        };
+        foreach (var user in users)
+        {
+            var i = users.IndexOf(user);
+            user.CreatedAt = now.AddDays(i);
+            _userRepository.Save();
+        }
+
+        var result = _userService.Get<FakeUserModel>(query);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
