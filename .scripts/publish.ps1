@@ -4,7 +4,7 @@
 param (
     [string]$v, 
     [string]$k,
-    [string[]]$projects = @("Safari.Net.Core", "Safari.Net.Data", "Safari.Net.TestTools")
+    [string[]]$projects = @("Digital.Net.Core", "Digital.Net.Entities", "Digital.Net.TestTools")
 )
 
 foreach ($project in $projects) {
