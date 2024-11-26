@@ -9,10 +9,9 @@ namespace Digital.Net.Entities.Entities.Models;
 /// </summary>
 public abstract class EntityBase
 {
-    [Column("created_at")]
-    [Required]
-    [NoPatch]
+    [Column("created_at"), Required, ReadOnly]
     public DateTime CreatedAt { get; set; }
 
-    [Column("updated_at")] [NoPatch] public DateTime? UpdatedAt { get; init; }
+    [Column("updated_at"), ReadOnly] 
+    public DateTime? UpdatedAt { get; init; }
 }

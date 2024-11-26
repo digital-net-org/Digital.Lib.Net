@@ -6,14 +6,10 @@ using Digital.Net.Core.Predicates;
 using Digital.Net.Entities.Entities.Models;
 using Digital.Net.Entities.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Net.Entities.Entities;
 
-// TODO: Can it be non-abstract?
-// TODO: Add Regex validation attribute (should be returned in the schema)
-// TODO: Add Unit Tests on patcher exceptions
 public abstract class EntityService<T, TQuery>(IRepository<T> repository)
     : IEntityService<T, TQuery>
     where T : EntityBase
@@ -77,9 +73,9 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             var schema = GetSchema();
             foreach (var o in patch.Operations)
             {
-                var property = schema.First(x => x.Path == o.path[1..]);
+                var property = schema.First(x => x.Name == o.path[1..]);
 
-                if (property.IsIdentity || property.IsForeignKey || !property.IsMutable)
+                if (property.IsIdentity || property.IsForeignKey || property.IsReadOnly)
                     throw new InvalidOperationException($"{o.path}: This field is read-only.");
 
                 if (property.IsRequired && o.value is null)
@@ -95,9 +91,9 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
                     repository.Get(x => EF.Property<object>(x, property.Name).Equals(o.value)).Any())
                     throw new InvalidOperationException($"{o.path}: This value violates a unique constraint.");
 
-                // Regex validations
-
-                ValidatePatch(o, entity); // TODO: Remove this method
+                if (property.RegexValidation is not null &&
+                    !property.RegexValidation.IsMatch(o.value?.ToString() ?? ""))
+                    throw new InvalidOperationException($"{o.path}: This value does not meet the requirements.");
             }
 
             patch.ApplyTo(entity);
@@ -129,6 +125,4 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
     }
 
     protected abstract Expression<Func<T, bool>> Filter(Expression<Func<T, bool>> predicate, TQuery query);
-
-    protected abstract void ValidatePatch(Operation<T> patch, T entity);
 }

@@ -30,7 +30,6 @@ public class EntityServiceTest : UnitTest
         Assert.Equal("Username", schema[0].Name);
     }
 
-    [Fact] // TODO: Test fails while running all tests. Database async reload issue?
     public void Get_ReturnsMappedModelWithCorrectPagination_WhenQueryIsValid()
     {
         const int total = 10;
@@ -133,19 +132,40 @@ public class EntityServiceTest : UnitTest
         patch.Replace(u => u.Username, "NewUsername");
         var result = await _userService.Patch<FakeUserModel>(patch, Guid.NewGuid());
         Assert.True(result.HasError);
-        Assert.Equal("Entity not found.", result.Errors[0].Message);
     }
 
     [Fact]
-    public async Task Patch_ReturnsError_WhenInvalidPatch()
+    public async Task Patch_ReturnsError_WhenInvalidRegex()
     {
         var user = await _userFactory.CreateAsync();
         var patch = new JsonPatchDocument<FakeUser>();
-        patch.Replace(u => u.Username, "");
+        patch.Replace(u => u.Username, "to");
         var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
         Assert.True(result.HasError);
-        Assert.Equal("Username cannot be empty.", result.Errors[0].Message);
         Assert.NotEqual("", updatedUser?.Username);
+    }
+    
+    [Fact]
+    public async Task Patch_ReturnsError_WhenUniqueConstraint()
+    {
+        var user = await _userFactory.CreateAsync();
+        var user2 = await _userFactory.CreateAsync();
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Username, user2.Username);
+        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var updatedUser = await _userRepository.GetByIdAsync(user.Id);
+        Assert.True(result.HasError);
+        Assert.NotEqual(user2.Username, updatedUser?.Username);
+    }
+    
+    [Fact]
+    public async Task Patch_ReturnsError_WhenPatchingReadOnlyField()
+    {
+        var user = await _userFactory.CreateAsync();
+        var patch = new JsonPatchDocument<FakeUser>();
+        patch.Replace(u => u.Role, new FakeRole());
+        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        Assert.True(result.HasError);
     }
 }

@@ -25,8 +25,9 @@ public class SchemaPropertyTest : UnitTest
         Assert.Equal("required_property", schemaProperty.Path);
         Assert.Equal(propertyInfo!.PropertyType.Name, schemaProperty.Type);
         Assert.Equal("test_flag", schemaProperty.DataFlag);
+        Assert.Null(schemaProperty.RegexValidation);
         Assert.True(schemaProperty.IsRequired);
-        Assert.True(schemaProperty.IsMutable);
+        Assert.False(schemaProperty.IsReadOnly);
         Assert.False(schemaProperty.IsSecret);
         Assert.False(schemaProperty.IsUnique);
         Assert.False(schemaProperty.IsIdentity);

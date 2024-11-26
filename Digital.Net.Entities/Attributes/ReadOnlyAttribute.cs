@@ -4,6 +4,6 @@ namespace Digital.Net.Entities.Attributes;
 ///     Indicates that the property cannot be patched.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class NoPatchAttribute : Attribute
+public class ReadOnlyAttribute : Attribute
 {
 }

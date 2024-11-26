@@ -18,22 +18,25 @@ public class AttributeAnalyzerTest : UnitTest
     [Index(nameof(UniqueProperty), IsUnique = true)]
     private class TestEntity : EntityBase
     {
-        [Required] public string RequiredProperty { get; set; }
+        [Required]
+        public string RequiredProperty { get; set; }
 
         public string UniqueProperty { get; set; }
 
-        [MaxLength(50)] public string MaxLengthProperty { get; set; }
+        [MaxLength(50)]
+        public string MaxLengthProperty { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdentityProperty { get; set; }
 
-        [ForeignKey("ForeignKeyProperty")] public int ForeignKeyProperty { get; set; }
+        [ForeignKey("ForeignKeyProperty")]
+        public int ForeignKeyProperty { get; set; }
 
-        [Column("form_property")]
-        [DataFlag("test_flag")]
+        [Column("form_property"), DataFlag("test_flag"), ReadOnly]
         public DateTime FormProperty { get; set; }
 
-        [Secret] public string SecretProperty { get; set; }
+        [Secret, RegexValidation("^[a-zA-Z0-9.'@_-]{6,24}$")]
+        public string SecretProperty { get; set; }
     }
 
     [Fact]
@@ -95,4 +98,20 @@ public class AttributeAnalyzerTest : UnitTest
     [Fact]
     public void GetDataFlag_ReturnsNull_ForNonFormProperty() =>
         Assert.Null(AttributeAnalyzer<TestEntity>.GetDataFlag("RequiredProperty"));
+
+    [Fact]
+    public void IsReadOnly_ReturnsFalse_ForNonReadOnlyProperty() =>
+        Assert.False(AttributeAnalyzer<TestEntity>.IsReadOnly("RequiredProperty"));
+
+    [Fact]
+    public void IsReadOnly_ReturnsFalse_ForReadOnlyProperty() =>
+        Assert.True(AttributeAnalyzer<TestEntity>.IsReadOnly("FormProperty"));
+
+    [Fact]
+    public void GetRegex_ReturnsNull_ForNonRegexProperty() =>
+        Assert.Null(AttributeAnalyzer<TestEntity>.GetRegex("RequiredProperty"));
+
+    [Fact]
+    public void GetRegex_ReturnsNotNull_ForRegexProperty() =>
+        Assert.NotNull(AttributeAnalyzer<TestEntity>.GetRegex("SecretProperty"));
 }

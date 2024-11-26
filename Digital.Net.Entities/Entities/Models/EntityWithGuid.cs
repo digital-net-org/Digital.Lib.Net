@@ -8,8 +8,6 @@ namespace Digital.Net.Entities.Entities.Models;
 /// </summary>
 public abstract class EntityWithGuid : EntityBase
 {
-    [Column("id")]
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Column("id"), Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; init; }
 }

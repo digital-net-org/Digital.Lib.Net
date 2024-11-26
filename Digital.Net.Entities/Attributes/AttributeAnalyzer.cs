@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Digital.Net.Entities.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,11 +59,11 @@ public static class AttributeAnalyzer<T> where T : EntityBase
     public static bool IsSecret(PropertyInfo property) =>
         property.GetCustomAttribute<SecretAttribute>() is not null;
 
-    public static bool IsMutable(string propertyName) =>
-        typeof(T).GetProperty(propertyName)?.GetCustomAttribute<NoPatchAttribute>() is null;
+    public static bool IsReadOnly(string propertyName) =>
+        typeof(T).GetProperty(propertyName)?.GetCustomAttribute<ReadOnlyAttribute>() is not null;
 
-    public static bool IsMutable(PropertyInfo property) =>
-        property.GetCustomAttribute<NoPatchAttribute>() is null;
+    public static bool IsReadOnly(PropertyInfo property) =>
+        property.GetCustomAttribute<ReadOnlyAttribute>() is not null;
 
     public static string GetPath(string propertyName) =>
         typeof(T).GetProperty(propertyName)?.GetCustomAttribute<ColumnAttribute>()?.Name ?? propertyName;
@@ -75,4 +76,10 @@ public static class AttributeAnalyzer<T> where T : EntityBase
 
     public static string? GetDataFlag(PropertyInfo property) =>
         property.GetCustomAttribute<DataFlagAttribute>()?.Flag;
+
+    public static Regex? GetRegex(string propertyName) =>
+        typeof(T).GetProperty(propertyName)?.GetCustomAttribute<RegexValidationAttribute>()?.Regex;
+
+    public static Regex? GetRegex(PropertyInfo property) =>
+        property.GetCustomAttribute<RegexValidationAttribute>()?.Regex;
 }

@@ -20,16 +20,4 @@ public class FakeUserService(IRepository<FakeUser> repository)
             predicate = predicate.Add(x => x.Role == query.Role);
         return predicate;
     }
-
-    protected override void ValidatePatch(Operation<FakeUser> patch, FakeUser entity)
-    {
-        if (patch.path == "/Id")
-            throw new InvalidOperationException("Id cannot be updated.");
-        if (patch.path == "/Password")
-            throw new InvalidOperationException("Password cannot be updated using PATCH endpoint.");
-        if (patch.path == "/Username" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
-            throw new InvalidOperationException("Username cannot be empty.");
-        if (patch.path == "/Email" && string.IsNullOrWhiteSpace(patch.value?.ToString()))
-            throw new InvalidOperationException("Email cannot be empty.");
-    }
 }
