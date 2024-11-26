@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Digital.Net.Entities.Attributes;
 
 namespace Digital.Net.Entities.Entities.Models;
 
@@ -8,7 +9,10 @@ namespace Digital.Net.Entities.Entities.Models;
 /// </summary>
 public abstract class EntityBase
 {
-    [Column("created_at")] [Required] public DateTime CreatedAt { get; set; }
+    [Column("created_at")]
+    [Required]
+    [NoPatch]
+    public DateTime CreatedAt { get; set; }
 
-    [Column("updated_at")] public DateTime? UpdatedAt { get; init; }
+    [Column("updated_at")] [NoPatch] public DateTime? UpdatedAt { get; init; }
 }

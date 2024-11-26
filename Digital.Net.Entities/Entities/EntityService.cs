@@ -11,11 +11,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Net.Entities.Entities;
 
+// TODO: Can it be non-abstract?
+// TODO: Add Regex validation attribute (should be returned in the schema)
+// TODO: Add Unit Tests on patcher exceptions
 public abstract class EntityService<T, TQuery>(IRepository<T> repository)
     : IEntityService<T, TQuery>
     where T : EntityBase
     where TQuery : Query
 {
+    public List<SchemaProperty<T>> GetSchema() =>
+        typeof(T).GetProperties().Select(property => new SchemaProperty<T>(property)).ToList();
+
     public QueryResult<TM> Get<TM>(TQuery query)
         where TM : class
     {
@@ -42,7 +48,9 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
     }
 
     public Result<TM> Get<TM>(Guid? id) where TM : class => Get<TM>(repository.GetById(id));
+
     public Result<TM> Get<TM>(int id) where TM : class => Get<TM>(repository.GetById(id));
+
     private static Result<TM> Get<TM>(T? entity) where TM : class
     {
         var result = new Result<TM>();
@@ -54,6 +62,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
 
     public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id) where TM : class =>
         await Patch<TM>(patch, await repository.GetByIdAsync(id));
+
     public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id) where TM : class =>
         await Patch<TM>(patch, await repository.GetByIdAsync(id));
 
@@ -65,12 +74,30 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             return result.AddError(new InvalidOperationException("Entity not found."));
         try
         {
+            var schema = GetSchema();
             foreach (var o in patch.Operations)
             {
-                if (o.path is "/updated_at" or "/created_at" or "/id")
-                    throw new InvalidOperationException($"{o.path}: This field cannot be updated.");
+                var property = schema.First(x => x.Path == o.path[1..]);
 
-                ValidatePatch(o, entity);
+                if (property.IsIdentity || property.IsForeignKey || !property.IsMutable)
+                    throw new InvalidOperationException($"{o.path}: This field is read-only.");
+
+                if (property.IsRequired && o.value is null)
+                    throw new InvalidOperationException($"{o.path}: This field is required and cannot be null.");
+
+                if (property is { IsRequired: true, Type: "String" } && string.IsNullOrWhiteSpace(o.value?.ToString()))
+                    throw new InvalidOperationException($"{o.path}: This field is required and cannot be empty.");
+
+                if (property is { MaxLength: > 0, Type: "String" } && o.value?.ToString()?.Length > property.MaxLength)
+                    throw new InvalidOperationException($"{o.path}: Maximum length exceeded.");
+
+                if (property.IsUnique &&
+                    repository.Get(x => EF.Property<object>(x, property.Name).Equals(o.value)).Any())
+                    throw new InvalidOperationException($"{o.path}: This value violates a unique constraint.");
+
+                // Regex validations
+
+                ValidatePatch(o, entity); // TODO: Remove this method
             }
 
             patch.ApplyTo(entity);

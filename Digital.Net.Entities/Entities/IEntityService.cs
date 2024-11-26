@@ -9,6 +9,13 @@ public interface IEntityService<T, in TQuery>
     where TQuery : Query
 {
     /// <summary>
+    ///     Get a schema of the entity describing its properties.
+    /// </summary>
+    /// <typeparam name="T">The model of the entity</typeparam>
+    /// <returns>Schema of the entity</returns>
+    List<SchemaProperty<T>> GetSchema();
+
+    /// <summary>
     ///     Get entities based on a query. Converts the entities to the provided model.
     /// </summary>
     /// <param name="query">The query to filter entities</param>

@@ -23,6 +23,13 @@ public class EntityServiceTest : UnitTest
         _userService = new FakeUserService(_userRepository);
     }
 
+    [Fact]
+    public void GetSchema_ReturnsCorrectSchema_WhenEntityHasProperties()
+    {
+        var schema = _userService.GetSchema();
+        Assert.Equal("Username", schema[0].Name);
+    }
+
     [Fact] // TODO: Test fails while running all tests. Database async reload issue?
     public void Get_ReturnsMappedModelWithCorrectPagination_WhenQueryIsValid()
     {

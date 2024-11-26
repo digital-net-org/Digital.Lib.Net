@@ -20,7 +20,7 @@ public class ResultMessageTest : UnitTest
     [Fact]
     public void ConstructorTest_ReturnsEnumValues_WhenCastedWithEnum()
     {
-        var result = new ResultMessage(ResultMessageEnum.TestMessage);
+        var result = new ResultMessage(EResultMessage.TestMessage);
         Assert.Equal("Test Message", result.Message);
         Assert.Equal("TEST_MESSAGE", result.Reference);
         Assert.Equal("10", result.Code);
@@ -28,7 +28,7 @@ public class ResultMessageTest : UnitTest
     }
 }
 
-public enum ResultMessageEnum
+public enum EResultMessage
 {
     [Display(Name="Test Message")]
     TestMessage = 10
