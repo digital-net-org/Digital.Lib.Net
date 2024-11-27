@@ -2,7 +2,7 @@
 using Digital.Net.Entities.Services;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Entities.Test.Entities;
+namespace Digital.Net.Entities.Test.Services;
 
 public class QueryUtilsTest : UnitTest
 {

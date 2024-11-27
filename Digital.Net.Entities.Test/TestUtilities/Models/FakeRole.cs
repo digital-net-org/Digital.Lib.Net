@@ -8,7 +8,7 @@ namespace Digital.Net.Entities.Test.TestUtilities.Models;
 public class FakeRole : EntityWithId
 {
     public string Name { get; set; } = Randomizer.GenerateRandomString();
-    public ERole Role { get; set; }
+    public ERole Role { get; set; } = ERole.User;
 }
 
 public enum ERole

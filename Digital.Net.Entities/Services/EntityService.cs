@@ -10,19 +10,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Net.Entities.Services;
 
-public abstract class EntityService<T, TQuery>(IRepository<T> repository)
-    : IEntityService<T, TQuery>
+public class EntityService<T, TQuery>(IRepository<T> repository) : IEntityService<T, TQuery>
     where T : EntityBase
     where TQuery : Query
 {
     public List<SchemaProperty<T>> GetSchema() =>
-        typeof(T).GetProperties().Select(property => new SchemaProperty<T>(property)).ToList();
+        typeof(T)
+            .GetProperties()
+            .Select(property => new SchemaProperty<T>(property))
+            .ToList();
 
-    public QueryResult<TM> Get<TM>(TQuery query)
-        where TM : class
+    public QueryResult<TModel> Get<TModel>(TQuery query) where TModel : class
     {
         query.ValidateParameters();
-        var result = new QueryResult<TM>();
+        var result = new QueryResult<TModel>();
         try
         {
             var items = repository.Get(Filter(query));
@@ -30,7 +31,7 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
             items = items.AsNoTracking();
             items = items.Skip((query.Index - 1) * query.Size).Take(query.Size);
             items = items.OrderBy(query.OrderBy ?? "CreatedAt");
-            result.Value = Mapper.MapFromConstructor<T, TM>(items.ToList());
+            result.Value = Mapper.MapFromConstructor<T, TModel>(items.ToList());
             result.Total = rowCount;
             result.Index = query.Index;
             result.Size = query.Size;
@@ -43,63 +44,41 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return result;
     }
 
-    public Result<TM> Get<TM>(Guid? id) where TM : class => Get<TM>(repository.GetById(id));
+    public Result<TModel> Get<TModel>(Guid? id) where TModel : class => Get<TModel>(repository.GetById(id));
+    public Result<TModel> Get<TModel>(int id) where TModel : class => Get<TModel>(repository.GetById(id));
 
-    public Result<TM> Get<TM>(int id) where TM : class => Get<TM>(repository.GetById(id));
-
-    private static Result<TM> Get<TM>(T? entity) where TM : class
+    private static Result<TModel> Get<TModel>(T? entity) where TModel : class
     {
-        var result = new Result<TM>();
+        var result = new Result<TModel>();
         if (entity is null)
             return result.AddError(new InvalidOperationException("Entity not found."));
-        result.Value = Mapper.MapFromConstructor<T, TM>(entity);
+        result.Value = Mapper.MapFromConstructor<T, TModel>(entity);
         return result;
     }
 
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, Guid? id) where TM : class =>
-        await Patch<TM>(patch, await repository.GetByIdAsync(id));
+    public async Task<Result> Patch(JsonPatchDocument<T> patch, Guid? id) =>
+        await Patch(patch, await repository.GetByIdAsync(id));
 
-    public async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, int id) where TM : class =>
-        await Patch<TM>(patch, await repository.GetByIdAsync(id));
+    public async Task<Result> Patch(JsonPatchDocument<T> patch, int id) =>
+        await Patch(patch, await repository.GetByIdAsync(id));
 
-    private async Task<Result<TM>> Patch<TM>(JsonPatchDocument<T> patch, T? entity)
-        where TM : class
+    private async Task<Result> Patch(JsonPatchDocument<T> patch, T? entity)
     {
-        var result = new Result<TM>();
+        var result = new Result();
         if (entity is null)
             return result.AddError(new InvalidOperationException("Entity not found."));
         try
         {
-            var schema = GetSchema();
             foreach (var o in patch.Operations)
             {
-                var property = schema.First(x => x.Name == o.path[1..]);
-
-                if (property.IsIdentity || property.IsForeignKey || property.IsReadOnly)
-                    throw new InvalidOperationException($"{o.path}: This field is read-only.");
-
-                if (property.IsRequired && o.value is null)
-                    throw new InvalidOperationException($"{o.path}: This field is required and cannot be null.");
-
-                if (property is { IsRequired: true, Type: "String" } && string.IsNullOrWhiteSpace(o.value?.ToString()))
-                    throw new InvalidOperationException($"{o.path}: This field is required and cannot be empty.");
-
-                if (property is { MaxLength: > 0, Type: "String" } && o.value?.ToString()?.Length > property.MaxLength)
-                    throw new InvalidOperationException($"{o.path}: Maximum length exceeded.");
-
-                if (property.IsUnique &&
-                    repository.Get(x => EF.Property<object>(x, property.Name).Equals(o.value)).Any())
-                    throw new InvalidOperationException($"{o.path}: This value violates a unique constraint.");
-
-                if (property.RegexValidation is not null &&
-                    !property.RegexValidation.IsMatch(o.value?.ToString() ?? ""))
-                    throw new InvalidOperationException($"{o.path}: This value does not meet the requirements.");
+                var key = o.path[1..];
+                ValidatePayload(o.value, o.path, x => x.Name == key);
             }
 
             patch.ApplyTo(entity);
             repository.Update(entity);
+            await OnPatch(entity);
             await repository.SaveAsync();
-            result.Value = Mapper.MapFromConstructor<T, TM>(entity);
         }
         catch (Exception e)
         {
@@ -107,6 +86,82 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         }
 
         return result;
+    }
+
+    public async Task<Result> Delete(Guid? id) => await Delete(await repository.GetByIdAsync(id));
+    public async Task<Result> Delete(int id) => await Delete(await repository.GetByIdAsync(id));
+
+    private async Task<Result> Delete(T? entity)
+    {
+        var result = new Result();
+        if (entity is null)
+            return result.AddError(new InvalidOperationException("Entity not found."));
+        try
+        {
+            await OnDelete(entity);
+            repository.Delete(entity);
+            await repository.SaveAsync();
+        }
+        catch (Exception e)
+        {
+            result.AddError(e);
+        }
+
+        return result;
+    }
+
+    public async Task<Result> Create(T entity)
+    {
+        var result = new Result();
+        try
+        {
+            foreach (var property in entity.GetType().GetProperties())
+                ValidatePayload(property.GetValue(entity), property.Name, x => x.Name == property.Name);
+
+            await OnCreate(entity);
+            await repository.CreateAsync(entity);
+            await repository.SaveAsync();
+        }
+        catch (Exception e)
+        {
+            result.AddError(e);
+        }
+
+        return result;
+    }
+
+    private void ValidatePayload(object? value, string path, Expression<Func<SchemaProperty<T>, bool>> schemaPredicate)
+    {
+        var prop = GetSchema().First(schemaPredicate.Compile());
+
+        if (value is null)
+            return;
+
+        if ((prop.IsIdentity || prop.IsForeignKey) && value.ToString() is "00000000-0000-0000-0000-000000000000" or "0")
+            return;
+
+        if (path is "CreatedAt" or "UpdatedAt" && (DateTime)value == DateTime.MinValue)
+            return;
+
+        if (prop.IsIdentity || prop.IsReadOnly)
+            throw new InvalidOperationException($"{path}: This field is read-only.");
+
+        if (prop.IsRequired && value is null)
+            throw new InvalidOperationException($"{path}: This field is required and cannot be null.");
+
+        if (prop is { IsRequired: true, Type: "String" } && string.IsNullOrWhiteSpace(value.ToString()))
+            throw new InvalidOperationException($"{path}: This field is required and cannot be empty.");
+
+        if (prop is { MaxLength: > 0, Type: "String" } && value.ToString()?.Length > prop.MaxLength)
+            throw new InvalidOperationException($"{path}: Maximum length exceeded.");
+
+        if (prop.IsUnique &&
+            repository.Get(x => EF.Property<object>(x, prop.Name).Equals(value)).Any())
+            throw new InvalidOperationException($"{path}: This value violates a unique constraint.");
+
+        if (prop.RegexValidation is not null &&
+            !prop.RegexValidation.IsMatch(value.ToString() ?? ""))
+            throw new InvalidOperationException($"{path}: This value does not meet the requirements.");
     }
 
     private Expression<Func<T, bool>> Filter(TQuery query)
@@ -124,5 +179,8 @@ public abstract class EntityService<T, TQuery>(IRepository<T> repository)
         return Filter(predicate, query);
     }
 
-    protected abstract Expression<Func<T, bool>> Filter(Expression<Func<T, bool>> predicate, TQuery query);
+    protected virtual Task OnCreate(T entity) => Task.CompletedTask;
+    protected virtual Task OnPatch(T entity) => Task.CompletedTask;
+    protected virtual Task OnDelete(T entity) => Task.CompletedTask;
+    protected virtual Expression<Func<T, bool>> Filter(Expression<Func<T, bool>> predicate, TQuery query) => predicate;
 }

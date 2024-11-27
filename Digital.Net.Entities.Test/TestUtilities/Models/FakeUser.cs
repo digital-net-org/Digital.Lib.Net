@@ -20,5 +20,5 @@ public class FakeUser : EntityWithGuid
     public string Email { get; set; } = Randomizer.GenerateRandomString();
 
     [Column("role"), ReadOnly]
-    public virtual FakeRole Role { get; set; } = new();
+    public virtual FakeRole? Role { get; set; }
 }

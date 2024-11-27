@@ -4,15 +4,13 @@ using Digital.Net.Entities.Attributes;
 using Digital.Net.Entities.Models;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Entities.Test.Entities.Models;
+namespace Digital.Net.Entities.Test.Models;
 
 public class SchemaPropertyTest : UnitTest
 {
     private class TestEntity : EntityBase
     {
-        [DataFlag("test_flag")]
-        [Required]
-        [Column("required_property")]
+        [Column("required_property"), DataFlag("test_flag"), Required, ReadOnly]
         public string RequiredProperty { get; set; }
     }
 
@@ -27,7 +25,7 @@ public class SchemaPropertyTest : UnitTest
         Assert.Equal("test_flag", schemaProperty.DataFlag);
         Assert.Null(schemaProperty.RegexValidation);
         Assert.True(schemaProperty.IsRequired);
-        Assert.False(schemaProperty.IsReadOnly);
+        Assert.True(schemaProperty.IsReadOnly);
         Assert.False(schemaProperty.IsSecret);
         Assert.False(schemaProperty.IsUnique);
         Assert.False(schemaProperty.IsIdentity);

@@ -2,15 +2,16 @@
 using Digital.Net.Core.Predicates;
 using Digital.Net.Entities.Repositories;
 using Digital.Net.Entities.Services;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace Digital.Net.Entities.Test.TestUtilities.Models;
 
 public class FakeUserService(IRepository<FakeUser> repository)
     : EntityService<FakeUser, FakeUserQuery>(repository)
 {
-    protected override Expression<Func<FakeUser, bool>> Filter(Expression<Func<FakeUser, bool>> predicate,
-        FakeUserQuery query)
+    protected override Expression<Func<FakeUser, bool>> Filter(
+        Expression<Func<FakeUser, bool>> predicate,
+        FakeUserQuery query
+    )
     {
         if (!string.IsNullOrWhiteSpace(query.Username))
             predicate = predicate.Add(x => x.Username.StartsWith(query.Username));

@@ -7,7 +7,7 @@ using Digital.Net.TestTools.Data;
 using Digital.Net.TestTools.Data.Factories;
 using Microsoft.AspNetCore.JsonPatch;
 
-namespace Digital.Net.Entities.Test.Entities;
+namespace Digital.Net.Entities.Test.Services;
 
 public class EntityServiceTest : UnitTest
 {
@@ -118,10 +118,9 @@ public class EntityServiceTest : UnitTest
         var user = await _userFactory.CreateAsync();
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Username, "NewUsername");
-        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
         Assert.NotNull(result);
-        Assert.Equal("NewUsername", result.Value?.Username);
         Assert.Equal("NewUsername", updatedUser?.Username);
     }
 
@@ -130,7 +129,7 @@ public class EntityServiceTest : UnitTest
     {
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Username, "NewUsername");
-        var result = await _userService.Patch<FakeUserModel>(patch, Guid.NewGuid());
+        var result = await _userService.Patch(patch, Guid.NewGuid());
         Assert.True(result.HasError);
     }
 
@@ -140,7 +139,7 @@ public class EntityServiceTest : UnitTest
         var user = await _userFactory.CreateAsync();
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Username, "to");
-        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
         Assert.True(result.HasError);
         Assert.NotEqual("", updatedUser?.Username);
@@ -153,7 +152,7 @@ public class EntityServiceTest : UnitTest
         var user2 = await _userFactory.CreateAsync();
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Username, user2.Username);
-        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
         Assert.True(result.HasError);
         Assert.NotEqual(user2.Username, updatedUser?.Username);
@@ -165,7 +164,48 @@ public class EntityServiceTest : UnitTest
         var user = await _userFactory.CreateAsync();
         var patch = new JsonPatchDocument<FakeUser>();
         patch.Replace(u => u.Role, new FakeRole());
-        var result = await _userService.Patch<FakeUserModel>(patch, user.Id);
+        var result = await _userService.Patch(patch, user.Id);
+        Assert.True(result.HasError);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsSuccess_WhenEntityIsValid()
+    {
+        var user = new FakeUser
+        {
+            Username = "NewUser",
+            Password = "SecretPassword123!",
+            Email = "user@mail.com"
+        };
+        var result = await _userService.Create(user);
+        var createdUser = await _userRepository.GetByIdAsync(user.Id);
+        Assert.False(result.HasError);
+        Assert.NotNull(createdUser);
+        Assert.Equal("NewUser", createdUser?.Username);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsError_WhenEntityIsInvalid()
+    {
+        var user = new FakeUser();
+        var result = await _userService.Create(user);
+        Assert.True(result.HasError);
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsSuccess_WhenEntityExists()
+    {
+        var user = await _userFactory.CreateAsync();
+        var result = await _userService.Delete(user.Id);
+        var deletedUser = await _userRepository.GetByIdAsync(user.Id);
+        Assert.False(result.HasError);
+        Assert.Null(deletedUser);
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsError_WhenEntityDoesNotExist()
+    {
+        var result = await _userService.Delete(Guid.NewGuid());
         Assert.True(result.HasError);
     }
 }
