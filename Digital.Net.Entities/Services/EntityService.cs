@@ -51,7 +51,7 @@ public class EntityService<T, TQuery>(IRepository<T> repository) : IEntityServic
     {
         var result = new Result<TModel>();
         if (entity is null)
-            return result.AddError(new InvalidOperationException("Entity not found."));
+            return result.AddError(new KeyNotFoundException("Entity not found."));
         result.Value = Mapper.MapFromConstructor<T, TModel>(entity);
         return result;
     }
@@ -66,7 +66,7 @@ public class EntityService<T, TQuery>(IRepository<T> repository) : IEntityServic
     {
         var result = new Result();
         if (entity is null)
-            return result.AddError(new InvalidOperationException("Entity not found."));
+            return result.AddError(new KeyNotFoundException("Entity not found."));
         try
         {
             foreach (var o in patch.Operations)
@@ -95,7 +95,7 @@ public class EntityService<T, TQuery>(IRepository<T> repository) : IEntityServic
     {
         var result = new Result();
         if (entity is null)
-            return result.AddError(new InvalidOperationException("Entity not found."));
+            return result.AddError(new KeyNotFoundException("Entity not found."));
         try
         {
             await OnDelete(entity);

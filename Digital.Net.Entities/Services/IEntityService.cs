@@ -16,7 +16,7 @@ public interface IEntityService<T, TQuery>
     List<SchemaProperty<T>> GetSchema();
 
     /// <summary>
-    ///     Get entities based on a query. Converts the entities to the provided model.
+    ///     Get entities based on a query. Converts the entities to the provided model using constructor.
     /// </summary>
     /// <param name="query">The query to filter entities</param>
     /// <typeparam name="TModel">The model to convert the entities to</typeparam>
@@ -24,7 +24,7 @@ public interface IEntityService<T, TQuery>
     QueryResult<TModel> Get<TModel>(TQuery query) where TModel : class;
 
     /// <summary>
-    ///    Get an entity based on its primary key. Converts the entity to the provided model.
+    ///    Get an entity based on its primary key. Converts the entity to the provided model using constructor.
     /// </summary>
     /// <param name="id">The entity primary key</param>
     /// <typeparam name="TModel">The model to convert the entities to</typeparam>
@@ -32,7 +32,7 @@ public interface IEntityService<T, TQuery>
     Result<TModel> Get<TModel>(Guid? id) where TModel : class;
 
     /// <summary>
-    ///    Get an entity based on its primary key. Converts the entity to the provided model.
+    ///    Get an entity based on its primary key. Converts the entity to the provided model using constructor.
     /// </summary>
     /// <param name="id">The entity primary key</param>
     /// <typeparam name="TModel">The model to convert the entities to</typeparam>
@@ -45,8 +45,11 @@ public interface IEntityService<T, TQuery>
     /// <param name="patch">The patch body</param>
     /// <param name="id">The entity primary key</param>
     /// <returns>Result of the model</returns>
+    /// <exception cref="KeyNotFoundException">
+    ///     If the entity is not found, throws an exceptions.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
-    ///      If the patch is invalid, throws an exceptions.
+    ///     If the patch is invalid, throws an exceptions.
     /// </exception>
     Task<Result> Patch(JsonPatchDocument<T> patch, Guid? id);
 
@@ -56,13 +59,16 @@ public interface IEntityService<T, TQuery>
     /// <param name="patch">The patch body</param>
     /// <param name="id">The entity primary key</param>
     /// <returns>Result of the model</returns>
+    /// <exception cref="KeyNotFoundException">
+    ///     If the entity is not found, throws an exceptions.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
-    ///      If the patch is invalid, throws an exceptions.
+    ///     If the patch is invalid, throws an exceptions.
     /// </exception>
     Task<Result> Patch(JsonPatchDocument<T> patch, int id);
 
     /// <summary>
-    ///     Create a new entity.
+    ///     Create a new entity. Converts the payload to the entity using fields and properties mapping.
     /// </summary>
     /// <param name="entity">The entity to create</param>
     /// <returns>Result of the model</returns>
@@ -76,7 +82,7 @@ public interface IEntityService<T, TQuery>
     /// </summary>
     /// <param name="id">The entity primary key</param>
     /// <returns>Result of the model</returns>
-    /// <exception cref="InvalidOperationException">
+    /// <exception cref="KeyNotFoundException">
     ///     If the entity is not found, throws an exceptions.
     /// </exception>
     Task<Result> Delete(Guid? id);
@@ -86,7 +92,7 @@ public interface IEntityService<T, TQuery>
     /// </summary>
     /// <param name="id">The entity primary key</param>
     /// <returns>Result of the model</returns>
-    /// <exception cref="InvalidOperationException">
+    /// <exception cref="KeyNotFoundException">
     ///     If the entity is not found, throws an exceptions.
     /// </exception>
     Task<Result> Delete(int id);
