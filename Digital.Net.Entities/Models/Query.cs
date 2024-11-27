@@ -1,6 +1,7 @@
 ﻿using Digital.Net.Core.Interval;
+using Digital.Net.Entities.Services;
 
-namespace Digital.Net.Entities.Entities;
+namespace Digital.Net.Entities.Models;
 
 public class Query
 {

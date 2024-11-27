@@ -1,6 +1,6 @@
 ﻿using Digital.Net.Core.Messages;
 
-namespace Digital.Net.Entities.Entities;
+namespace Digital.Net.Entities.Models;
 
 public class QueryResult<T> : Result<T> where T : class
 {

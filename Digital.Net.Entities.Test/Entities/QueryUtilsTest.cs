@@ -1,4 +1,5 @@
-﻿using Digital.Net.Entities.Entities;
+﻿using Digital.Net.Entities.Models;
+using Digital.Net.Entities.Services;
 using Digital.Net.TestTools;
 
 namespace Digital.Net.Entities.Test.Entities;

@@ -1,4 +1,6 @@
-﻿namespace Digital.Net.Entities.Entities;
+﻿using Digital.Net.Entities.Models;
+
+namespace Digital.Net.Entities.Services;
 
 public static class QueryUtils
 {

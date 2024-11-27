@@ -1,4 +1,4 @@
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Digital.Net.Entities.Repositories;
 
 namespace Digital.Net.TestTools.Data.Factories;

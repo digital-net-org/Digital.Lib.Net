@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Digital.Net.Core.Predicates;
-using Digital.Net.Entities.Entities;
 using Digital.Net.Entities.Repositories;
+using Digital.Net.Entities.Services;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace Digital.Net.Entities.Test.TestUtilities.Models;

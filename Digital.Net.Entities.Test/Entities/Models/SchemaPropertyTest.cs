@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Digital.Net.Entities.Attributes;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Digital.Net.TestTools;
 
 namespace Digital.Net.Entities.Test.Entities.Models;

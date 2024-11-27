@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Digital.Net.Entities.Attributes;
 
-namespace Digital.Net.Entities.Entities.Models;
+namespace Digital.Net.Entities.Models;
 
 /// <summary>
 ///     Base class for all entities with Timestamps

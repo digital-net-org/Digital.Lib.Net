@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 
 namespace Digital.Net.Entities.Repositories;
 

@@ -3,12 +3,12 @@ using System.Linq.Expressions;
 using Digital.Net.Core.Messages;
 using Digital.Net.Core.Models;
 using Digital.Net.Core.Predicates;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Digital.Net.Entities.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
-namespace Digital.Net.Entities.Entities;
+namespace Digital.Net.Entities.Services;
 
 public abstract class EntityService<T, TQuery>(IRepository<T> repository)
     : IEntityService<T, TQuery>

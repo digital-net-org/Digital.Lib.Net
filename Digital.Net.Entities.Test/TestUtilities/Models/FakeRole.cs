@@ -1,5 +1,5 @@
 using Digital.Net.Core.Random;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Net.Entities.Test.TestUtilities.Models;

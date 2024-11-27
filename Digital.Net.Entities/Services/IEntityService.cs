@@ -1,8 +1,8 @@
 ﻿using Digital.Net.Core.Messages;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Microsoft.AspNetCore.JsonPatch;
 
-namespace Digital.Net.Entities.Entities;
+namespace Digital.Net.Entities.Services;
 
 public interface IEntityService<T, in TQuery>
     where T : EntityBase

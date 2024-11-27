@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Digital.Net.Entities.Attributes;
 
-namespace Digital.Net.Entities.Entities.Models;
+namespace Digital.Net.Entities.Models;
 
 public class SchemaProperty<T>(PropertyInfo propertyInfo) where T : EntityBase
 {

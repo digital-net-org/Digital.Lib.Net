@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Digital.Net.Entities.Entities.Models;
+using Digital.Net.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Net.Entities.Attributes;
