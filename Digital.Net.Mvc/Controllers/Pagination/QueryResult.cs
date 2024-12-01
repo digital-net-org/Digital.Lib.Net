@@ -1,6 +1,6 @@
 ﻿using Digital.Net.Core.Messages;
 
-namespace Digital.Net.Entities.Models;
+namespace Digital.Net.Mvc.Controllers.Pagination;
 
 public class QueryResult<T> : Result<T> where T : class
 {

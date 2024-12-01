@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 
 namespace Digital.Net.Entities.Services;
 
-public interface IEntityService<T, TQuery>
-    where T : EntityBase
-    where TQuery : Query
+public interface IEntityService<T> where T : EntityBase
 {
     /// <summary>
     ///     Get a schema of the entity describing its properties.
@@ -14,14 +12,6 @@ public interface IEntityService<T, TQuery>
     /// <typeparam name="T">The model of the entity</typeparam>
     /// <returns>Schema of the entity</returns>
     List<SchemaProperty<T>> GetSchema();
-
-    /// <summary>
-    ///     Get entities based on a query. Converts the entities to the provided model using constructor.
-    /// </summary>
-    /// <param name="query">The query to filter entities</param>
-    /// <typeparam name="TModel">The model to convert the entities to</typeparam>
-    /// <returns>QueryResult of the model</returns>
-    QueryResult<TModel> Get<TModel>(TQuery query) where TModel : class;
 
     /// <summary>
     ///    Get an entity based on its primary key. Converts the entity to the provided model using constructor.

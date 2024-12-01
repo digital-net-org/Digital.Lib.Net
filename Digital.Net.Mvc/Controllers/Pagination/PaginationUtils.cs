@@ -1,8 +1,6 @@
-﻿using Digital.Net.Entities.Models;
+﻿namespace Digital.Net.Mvc.Controllers.Pagination;
 
-namespace Digital.Net.Entities.Services;
-
-public static class QueryUtils
+public static class PaginationUtils
 {
     public const int DefaultIndex = 1;
     public const int DefaultSize = 50;

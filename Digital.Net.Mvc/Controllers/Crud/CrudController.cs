@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Digital.Net.Core.Extensions.HttpUtilities;
 using Digital.Net.Core.Messages;
 using Digital.Net.Core.Models;
 using Digital.Net.Entities.Models;
@@ -8,23 +7,35 @@ using Digital.Net.Mvc.Formatters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Digital.Net.Mvc.Controllers;
+namespace Digital.Net.Mvc.Controllers.Crud;
 
 [Route("[controller]")]
-public abstract class CrudController<T, TDto, TDtoLight, TQuery, TPayload>(
+public abstract class CrudController<T, TDto, TPayload>(
     IHttpContextAccessor contextAccessor,
-    IEntityService<T, TQuery> entityService
+    IEntityService<T> entityService
 ) : ControllerBase
     where T : EntityBase
     where TDto : class
-    where TDtoLight : class
-    where TQuery : Query
     where TPayload : class
 {
+    private readonly HttpContext Context =
+        contextAccessor.HttpContext ?? throw new NullReferenceException("Http Context is not defined");
+
+    [HttpGet("/schema")]
+    public ActionResult<Result<List<SchemaProperty<T>>>> GetSchema()
+    {
+        if (!OnAuthorize(Context))
+            return Unauthorized();
+
+        return Ok(entityService.GetSchema());
+    }
+    
     [HttpGet("{id}")]
     public ActionResult<Result<TDto>> GetById(string id) // TODO: Test this
     {
-        OnAuthorize(contextAccessor.GetContext());
+        if (!OnAuthorize(Context))
+            return Unauthorized();
+        
         var result = new Result<TDto>();
 
         if (Guid.TryParse(id, out var guidId))
@@ -37,17 +48,12 @@ public abstract class CrudController<T, TDto, TDtoLight, TQuery, TPayload>(
         return result.HasError ? NotFound(result) : Ok(result);
     }
 
-    [HttpGet("")]
-    public ActionResult<QueryResult<TDtoLight>> Get([FromQuery] TQuery query)
-    {
-        OnAuthorize(contextAccessor.GetContext());
-        return Ok(entityService.Get<TDtoLight>(query));
-    }
-
     [HttpPost("")]
     public async Task<ActionResult<Result>> Post([FromBody] TPayload payload)
     {
-        OnAuthorize(contextAccessor.GetContext());
+        if (!OnAuthorize(Context))
+            return Unauthorized();
+        
         var result = await entityService.Create(Mapper.Map<TPayload, T>(payload));
         return result.HasError ? BadRequest(result) : Ok(result);
     }
@@ -55,7 +61,9 @@ public abstract class CrudController<T, TDto, TDtoLight, TQuery, TPayload>(
     [HttpPatch("{id}")]
     public async Task<ActionResult<Result>> Patch(string id, [FromBody] JsonElement patch)
     {
-        OnAuthorize(contextAccessor.GetContext());
+        if (!OnAuthorize(Context))
+            return Unauthorized();
+        
         var result = new Result();
 
         if (Guid.TryParse(id, out var guidId))
@@ -76,7 +84,9 @@ public abstract class CrudController<T, TDto, TDtoLight, TQuery, TPayload>(
     [HttpDelete("{id}")]
     public async Task<ActionResult<Result>> Delete(string id)
     {
-        OnAuthorize(contextAccessor.GetContext());
+        if (!OnAuthorize(Context))
+            return Unauthorized();
+            
         var result = new Result();
 
         if (Guid.TryParse(id, out var guidId))
@@ -89,5 +99,11 @@ public abstract class CrudController<T, TDto, TDtoLight, TQuery, TPayload>(
         return result.HasError ? NotFound(result) : Ok(result);
     }
 
-    public virtual void OnAuthorize(HttpContext context) { }
+    public bool IsGetSchemaExecution() => ControllerContext.ActionDescriptor.ActionName == "GetSchema";
+    public bool IsGetExecution() => ControllerContext.ActionDescriptor.ActionName == "GetById";
+    public bool IsPostExecution() => ControllerContext.ActionDescriptor.ActionName == "Post";
+    public bool IsPatchExecution() => ControllerContext.ActionDescriptor.ActionName == "Patch";
+    public bool IsDeleteExecution() => ControllerContext.ActionDescriptor.ActionName == "Delete";
+
+    public virtual bool OnAuthorize(HttpContext context) => true;
 }

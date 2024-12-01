@@ -1,17 +1,17 @@
-﻿using Digital.Net.Entities.Models;
-using Digital.Net.Entities.Services;
+﻿using Digital.Net.Mvc.Controllers.Pagination;
 using Digital.Net.TestTools;
+using Xunit;
 
-namespace Digital.Net.Entities.Test.Services;
+namespace Digital.Net.Mvc.Test.Controllers.Pagination;
 
-public class QueryUtilsTest : UnitTest
+public class PaginationUtilsTest : UnitTest
 {
     [Fact]
     public void ValidateParameters_SetsDefaultIndex_WhenIndexIsLessThanOne()
     {
         var query = new Query { Index = -1, Size = 1 };
         query.ValidateParameters();
-        Assert.Equal(QueryUtils.DefaultIndex, query.Index);
+        Assert.Equal(PaginationUtils.DefaultIndex, query.Index);
     }
 
     [Fact]
@@ -19,6 +19,6 @@ public class QueryUtilsTest : UnitTest
     {
         var query = new Query { Index = 1, Size = -1 };
         query.ValidateParameters();
-        Assert.Equal(QueryUtils.DefaultSize, query.Size);
+        Assert.Equal(PaginationUtils.DefaultSize, query.Size);
     }
 }

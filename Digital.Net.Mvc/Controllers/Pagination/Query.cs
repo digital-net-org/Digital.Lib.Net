@@ -1,12 +1,11 @@
 ﻿using Digital.Net.Core.Interval;
-using Digital.Net.Entities.Services;
 
-namespace Digital.Net.Entities.Models;
+namespace Digital.Net.Mvc.Controllers.Pagination;
 
 public class Query
 {
-    public int Index { get; set; } = QueryUtils.DefaultIndex;
-    public int Size { get; set; } = QueryUtils.DefaultSize;
+    public int Index { get; set; } = PaginationUtils.DefaultIndex;
+    public int Size { get; set; } = PaginationUtils.DefaultSize;
     public string? OrderBy { get; set; }
 
     public DateRange? CreatedIn { get; set; }
