@@ -22,16 +22,11 @@ public abstract class CrudController<T, TDto, TPayload>(
         contextAccessor.HttpContext ?? throw new NullReferenceException("Http Context is not defined");
 
     [HttpGet("/schema")]
-    public ActionResult<Result<List<SchemaProperty<T>>>> GetSchema()
-    {
-        if (!OnAuthorize(Context))
-            return Unauthorized();
+    public ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() =>
+        OnAuthorize(Context) ? Ok(entityService.GetSchema()) : Unauthorized();
 
-        return Ok(entityService.GetSchema());
-    }
-    
     [HttpGet("{id}")]
-    public ActionResult<Result<TDto>> GetById(string id) // TODO: Test this
+    public ActionResult<Result<TDto>> GetById(string id)
     {
         if (!OnAuthorize(Context))
             return Unauthorized();
