@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Digital.Net.Mvc.Controllers.Crud;
 
-[Route("[controller]")]
+[ApiController, Route("[controller]")]
 public abstract class CrudController<T, TDto, TPayload>(
     IHttpContextAccessor contextAccessor,
     IEntityService<T> entityService
@@ -18,17 +18,17 @@ public abstract class CrudController<T, TDto, TPayload>(
     where TDto : class
     where TPayload : class
 {
-    private readonly HttpContext Context =
+    private readonly HttpContext _context =
         contextAccessor.HttpContext ?? throw new NullReferenceException("Http Context is not defined");
 
-    [HttpGet("/schema")]
+    [HttpGet("schema")]
     public ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() =>
-        OnAuthorize(Context) ? Ok(entityService.GetSchema()) : Unauthorized();
+        OnAuthorize(_context) ? Ok(entityService.GetSchema()) : Unauthorized();
 
     [HttpGet("{id}")]
     public ActionResult<Result<TDto>> GetById(string id)
     {
-        if (!OnAuthorize(Context))
+        if (!OnAuthorize(_context))
             return Unauthorized();
         
         var result = new Result<TDto>();
@@ -46,7 +46,7 @@ public abstract class CrudController<T, TDto, TPayload>(
     [HttpPost("")]
     public async Task<ActionResult<Result>> Post([FromBody] TPayload payload)
     {
-        if (!OnAuthorize(Context))
+        if (!OnAuthorize(_context))
             return Unauthorized();
         
         var result = await entityService.Create(Mapper.Map<TPayload, T>(payload));
@@ -56,7 +56,7 @@ public abstract class CrudController<T, TDto, TPayload>(
     [HttpPatch("{id}")]
     public async Task<ActionResult<Result>> Patch(string id, [FromBody] JsonElement patch)
     {
-        if (!OnAuthorize(Context))
+        if (!OnAuthorize(_context))
             return Unauthorized();
         
         var result = new Result();
@@ -79,7 +79,7 @@ public abstract class CrudController<T, TDto, TPayload>(
     [HttpDelete("{id}")]
     public async Task<ActionResult<Result>> Delete(string id)
     {
-        if (!OnAuthorize(Context))
+        if (!OnAuthorize(_context))
             return Unauthorized();
             
         var result = new Result();
@@ -94,11 +94,16 @@ public abstract class CrudController<T, TDto, TPayload>(
         return result.HasError ? NotFound(result) : Ok(result);
     }
 
+    [NonAction]
     public bool IsGetSchemaExecution() => ControllerContext.ActionDescriptor.ActionName == "GetSchema";
+    [NonAction]
     public bool IsGetExecution() => ControllerContext.ActionDescriptor.ActionName == "GetById";
+    [NonAction]
     public bool IsPostExecution() => ControllerContext.ActionDescriptor.ActionName == "Post";
+    [NonAction]
     public bool IsPatchExecution() => ControllerContext.ActionDescriptor.ActionName == "Patch";
+    [NonAction]
     public bool IsDeleteExecution() => ControllerContext.ActionDescriptor.ActionName == "Delete";
-
-    public virtual bool OnAuthorize(HttpContext context) => true;
+    [NonAction]
+    protected virtual bool OnAuthorize(HttpContext context) => true;
 }
