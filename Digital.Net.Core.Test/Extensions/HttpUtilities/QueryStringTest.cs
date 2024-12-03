@@ -1,7 +1,7 @@
 using Digital.Net.Core.Extensions.HttpUtilities;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Extensions.HttpUtilities;
+namespace Digital.Net.Core.Test.Extensions.HttpUtilities;
 
 public class QueryStringTests : UnitTest
 {

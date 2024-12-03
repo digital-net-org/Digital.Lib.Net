@@ -3,7 +3,7 @@ using Digital.Net.TestTools;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace Digital.Net.Core.Tests.Extensions.FormFileUtilities;
+namespace Digital.Net.Core.Test.Extensions.FormFileUtilities;
 
 public class FormFileInfoTest : UnitTest
 {

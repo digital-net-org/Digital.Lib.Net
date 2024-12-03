@@ -1,7 +1,7 @@
 using Digital.Net.Core.Errors;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Errors;
+namespace Digital.Net.Core.Test.Errors;
 
 public class TryCatchUtilitiesTests : UnitTest
 {

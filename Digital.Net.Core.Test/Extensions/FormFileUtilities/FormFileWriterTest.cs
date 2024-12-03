@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Stream = System.IO.Stream;
 
-namespace Digital.Net.Core.Tests.Extensions.FormFileUtilities;
+namespace Digital.Net.Core.Test.Extensions.FormFileUtilities;
 
 public class FormFileWriterTest : UnitTest
 {

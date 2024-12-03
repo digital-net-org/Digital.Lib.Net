@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Core", "Digital.Net.Core\Digital.Net.Core.csproj", "{9FFBD08A-6DB0-4091-A045-EA47F001A8EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Core.Tests", "Digital.Net.Core.Tests\Digital.Net.Core.Tests.csproj", "{366922BE-9242-4C3D-A26F-1788B5C9A5AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Core.Test", "Digital.Net.Core.Test\Digital.Net.Core.Test.csproj", "{366922BE-9242-4C3D-A26F-1788B5C9A5AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.TestTools", "Digital.Net.TestTools\Digital.Net.TestTools.csproj", "{541986DE-D5CA-4781-8FF9-F15008CE232F}"
 EndProject

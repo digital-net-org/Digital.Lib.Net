@@ -1,7 +1,7 @@
 using Digital.Net.Core.Random;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Random;
+namespace Digital.Net.Core.Test.Random;
 
 public class RandomizerTests : UnitTest
 {

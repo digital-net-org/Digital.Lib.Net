@@ -1,7 +1,7 @@
 ﻿using Digital.Net.Core.Extensions.StringUtilities;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Extensions.StringUtilities;
+namespace Digital.Net.Core.Test.Extensions.StringUtilities;
 
 public class StringConverterTest : UnitTest
 {

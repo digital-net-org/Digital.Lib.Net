@@ -1,7 +1,7 @@
 using Digital.Net.Core.Extensions.EnumUtilities;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Extensions.EnumUtilities;
+namespace Digital.Net.Core.Test.Extensions.EnumUtilities;
 
 public class EnumValuesTest : UnitTest
 {

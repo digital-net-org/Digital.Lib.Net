@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Digital.Net.Core.Predicates;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Predicates;
+namespace Digital.Net.Core.Test.Predicates;
 
 public class PredicateBuilderTest : UnitTest
 {

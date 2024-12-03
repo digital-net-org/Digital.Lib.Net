@@ -1,7 +1,7 @@
 
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Mapper;
+namespace Digital.Net.Core.Test.Mapper;
 
 public class MapperTests : UnitTest
 {

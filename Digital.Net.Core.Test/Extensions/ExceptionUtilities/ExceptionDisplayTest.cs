@@ -1,7 +1,7 @@
 ﻿using Digital.Net.Core.Extensions.ExceptionUtilities;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Extensions.ExceptionUtilities;
+namespace Digital.Net.Core.Test.Extensions.ExceptionUtilities;
 
 public class ExceptionDisplayTest : UnitTest
 {

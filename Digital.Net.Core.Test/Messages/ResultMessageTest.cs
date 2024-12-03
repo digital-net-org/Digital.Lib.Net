@@ -2,7 +2,7 @@
 using Digital.Net.Core.Messages;
 using Digital.Net.TestTools;
 
-namespace Digital.Net.Core.Tests.Messages;
+namespace Digital.Net.Core.Test.Messages;
 
 public class ResultMessageTest : UnitTest
 {
