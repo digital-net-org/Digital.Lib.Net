@@ -1,6 +1,4 @@
-﻿# Usage: .\publish.ps1 -k nugetKey
-
-param (
+﻿param (
     [string]$key
 )
 
