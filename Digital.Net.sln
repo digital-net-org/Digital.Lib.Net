@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Mvc", "Digital.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Mvc.Test", "Digital.Net.Mvc.Test\Digital.Net.Mvc.Test.csproj", "{5465A879-4BB8-4804-BECC-BCC6744D7A0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Http", "Digital.Net.Http\Digital.Net.Http.csproj", "{86BA6977-8CE0-4D84-B210-D8A20F8749EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Http.Test", "Digital.Net.Http.Test\Digital.Net.Http.Test.csproj", "{D91DB0C2-D5E1-45C0-9DFD-805AD41BD9D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +58,13 @@ Global
 		{5465A879-4BB8-4804-BECC-BCC6744D7A0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5465A879-4BB8-4804-BECC-BCC6744D7A0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5465A879-4BB8-4804-BECC-BCC6744D7A0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86BA6977-8CE0-4D84-B210-D8A20F8749EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86BA6977-8CE0-4D84-B210-D8A20F8749EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86BA6977-8CE0-4D84-B210-D8A20F8749EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86BA6977-8CE0-4D84-B210-D8A20F8749EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D91DB0C2-D5E1-45C0-9DFD-805AD41BD9D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D91DB0C2-D5E1-45C0-9DFD-805AD41BD9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D91DB0C2-D5E1-45C0-9DFD-805AD41BD9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D91DB0C2-D5E1-45C0-9DFD-805AD41BD9D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
