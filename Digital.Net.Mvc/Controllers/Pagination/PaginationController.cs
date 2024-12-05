@@ -30,7 +30,7 @@ public abstract class PaginationController<T, TDto, TQuery>(
             items = items.AsNoTracking();
             items = items.Skip((query.Index - 1) * query.Size).Take(query.Size);
             items = items.OrderBy(query.OrderBy ?? "CreatedAt");
-            result.Value = TryMap(items.ToList());
+            result.Value = Mapper.TryMap<T, TDto>(items.ToList());
             result.Total = rowCount;
             result.Index = query.Index;
             result.Size = query.Size;
@@ -42,12 +42,6 @@ public abstract class PaginationController<T, TDto, TQuery>(
 
         return Ok(result);
     }
-
-    private static IEnumerable<TDto> TryMap(List<T> items) =>
-        TryCatchUtilities.TryAll(
-            () => Mapper.MapFromConstructor<T, TDto>(items),
-            () => Mapper.Map<T, TDto>(items)
-        ) ?? throw new Exception("Mapping failed. Could not map items to DTOs.");
 
     private Expression<Func<T, bool>> Filter(TQuery query)
     {

@@ -1,7 +1,36 @@
+using Digital.Net.Core.Errors;
+
 namespace Digital.Net.Core.Models;
 
 public static class Mapper
 {
+    /// <summary>
+    ///     Maps an instance of type T to an instance of type TM using both values and properties.
+    /// </summary>
+    /// <param name="item">The instance to map.</param>
+    /// <typeparam name="T">The type of the instance to map.</typeparam>
+    /// <typeparam name="TM">The type to map to.</typeparam>
+    /// <returns>The mapped instance.</returns>
+    public static TM TryMap<T, TM>(T item) where T : class where TM : class =>
+        TryCatchUtilities.TryAll(
+            () => MapFromConstructor<T, TM>(item),
+            () => Map<T, TM>(item)
+        ) ?? throw new Exception("Mapping failed. Could not map item to DTO.");
+
+    /// <summary>
+    ///     Maps a List of instance of type T to a List of instance of type TM using both values and properties.
+    ///     Tries to map using TM's constructor, then using values and properties.
+    /// </summary>
+    /// <param name="items">The List of instances to map.</param>
+    /// <typeparam name="T">The type of the instances to map.</typeparam>
+    /// <typeparam name="TM">The type to map to.</typeparam>
+    /// <returns>The mapped List of instances.</returns>
+    public static IEnumerable<TM> TryMap<T, TM>(List<T> items) where T : class where TM : class =>
+        TryCatchUtilities.TryAll(
+            () => MapFromConstructor<T, TM>(items),
+            () => Map<T, TM>(items)
+        ) ?? throw new Exception("Mapping failed. Could not map items to DTOs.");
+    
     /// <summary>
     ///     Maps an instance of type T to an instance of type TM using both values and properties.
     /// </summary>
