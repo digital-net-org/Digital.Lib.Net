@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Database", "Dig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalTestUtilities", "InternalTestUtilities\InternalTestUtilities.csproj", "{982A3099-3C12-4234-AEA2-C630F40A441C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digital.Net.Database.Test", "Digital.Net.Database.Test\Digital.Net.Database.Test.csproj", "{0A7084FE-3B5D-45E8-BB1B-567FE0FCE520}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,5 +80,9 @@ Global
 		{982A3099-3C12-4234-AEA2-C630F40A441C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{982A3099-3C12-4234-AEA2-C630F40A441C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{982A3099-3C12-4234-AEA2-C630F40A441C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A7084FE-3B5D-45E8-BB1B-567FE0FCE520}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A7084FE-3B5D-45E8-BB1B-567FE0FCE520}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A7084FE-3B5D-45E8-BB1B-567FE0FCE520}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A7084FE-3B5D-45E8-BB1B-567FE0FCE520}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

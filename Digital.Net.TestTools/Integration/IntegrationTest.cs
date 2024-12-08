@@ -7,9 +7,7 @@ using Xunit;
 
 namespace Digital.Net.TestTools.Integration;
 
-public abstract class IntegrationTest<T, TContext>
-    : UnitTest,
-        IClassFixture<AppFactory<T, TContext>>
+public abstract class IntegrationTest<T, TContext> : UnitTest, IClassFixture<AppFactory<T, TContext>>
     where T : class
     where TContext : DbContext
 {
