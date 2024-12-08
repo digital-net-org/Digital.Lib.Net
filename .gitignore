@@ -6,6 +6,7 @@
 
 out/
 release/
+.build/*.nupkg
 
 */**/appsettings.Development.json
 */**/.env
