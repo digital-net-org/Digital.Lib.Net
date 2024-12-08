@@ -11,6 +11,14 @@ namespace Digital.Net.Database;
 
 public static class DbConnector
 {
+    /// <summary>
+    ///     Adds a database connector to the application. The database engine is set to PostgreSql by default.
+    ///     Use the <see cref="DigitalDatabaseOptions" /> to configure the database engine and connection string.
+    /// </summary>
+    /// <typeparam name="TContext">The database context to be used.</typeparam>
+    /// <param name="builder">The web application builder.</param>
+    /// <param name="buildOptions">The action to build the database options.</param>
+    /// <returns>The web application builder.</returns>
     public static WebApplicationBuilder AddDbConnector<TContext>(
         this WebApplicationBuilder builder,
         Action<DigitalDatabaseOptions> buildOptions

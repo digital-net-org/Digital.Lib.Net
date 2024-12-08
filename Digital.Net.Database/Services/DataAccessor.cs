@@ -11,7 +11,6 @@ public class DataAccessor(IOptions<DigitalDatabaseOptions> options) : IDataAcces
 {
     private string ConnectionString => options.Value.ConnectionString;
     private DatabaseEngine DatabaseEngine => options.Value.DatabaseEngine;
-
     public Result ExecuteSql(string query)
     {
         var result = new Result();
