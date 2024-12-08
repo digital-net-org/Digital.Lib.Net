@@ -16,6 +16,10 @@ foreach ($project in $projects) {
 
     $version = $csproj.Project.PropertyGroup.Version
     $version = "${version}".Trim()
+    if ($version -eq "") {
+        continue
+    }
+
     $packageFileName = "${projectName}.${version}.nupkg"
     $packageSource = Join-Path -Path $project.DirectoryName "bin" "Release" $packageFileName
     $packageDestination = Join-Path -Path $project.DirectoryName ".." ".build"
