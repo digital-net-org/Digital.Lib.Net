@@ -10,15 +10,15 @@ namespace Digital.Net.Entities.Test.Repositories;
 public class RepositoryTest : UnitTest
 {
     private readonly DataFactory<FakeRole> _roleFactory;
-    private readonly Repository<FakeRole, TestContext> _roleRepository;
+    private readonly Repository<FakeRole> _roleRepository;
     private readonly DataFactory<FakeUser> _userFactory;
-    private readonly Repository<FakeUser, TestContext> _userRepository;
+    private readonly Repository<FakeUser> _userRepository;
 
     public RepositoryTest()
     {
         var context = new SqliteMemoryDb<TestContext>().Context;
-        _userRepository = new Repository<FakeUser, TestContext>(context);
-        _roleRepository = new Repository<FakeRole, TestContext>(context);
+        _userRepository = new Repository<FakeUser>(context);
+        _roleRepository = new Repository<FakeRole>(context);
         _userFactory = new DataFactory<FakeUser>(_userRepository);
         _roleFactory = new DataFactory<FakeRole>(_roleRepository);
     }

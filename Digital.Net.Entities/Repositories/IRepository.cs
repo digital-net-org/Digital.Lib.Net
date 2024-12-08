@@ -7,17 +7,6 @@ namespace Digital.Net.Entities.Repositories;
 ///     Interface for a repository.
 /// </summary>
 /// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
-/// <example>
-///     Extends Repository class with your context.
-///     <code>
-///     public class MyContextRepository&lt;T&gt;(MyContext context) : Repository&lt;T, MyContext&gt;(context)
-///         where T : EntityBase;
-/// </code>
-///     Then implement this interface using dependency injection.
-///     <code>
-///     services.AddScoped(typeof(IRepository&lt;&gt;), typeof(MyContextRepository&lt;&gt;));
-/// </code>
-/// </example>
 public interface IRepository<T>
     where T : EntityBase
 {

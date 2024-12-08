@@ -12,13 +12,13 @@ namespace Digital.Net.Entities.Test.Services;
 public class EntityServiceTest : UnitTest
 {
     private readonly DataFactory<FakeUser> _userFactory;
-    private readonly Repository<FakeUser, TestContext> _userRepository;
+    private readonly Repository<FakeUser> _userRepository;
     private readonly IEntityService<FakeUser> _userService;
 
     public EntityServiceTest()
     {
         var context = new SqliteMemoryDb<TestContext>().Context;
-        _userRepository = new Repository<FakeUser, TestContext>(context);
+        _userRepository = new Repository<FakeUser>(context);
         _userFactory = new DataFactory<FakeUser>(_userRepository);
         _userService = new EntityService<FakeUser>(_userRepository);
     }

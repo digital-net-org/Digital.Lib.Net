@@ -15,7 +15,7 @@ namespace Digital.Net.Mvc.Test.Controllers.Pagination;
 public class PaginationControllerTest : UnitTest
 {
     private readonly DataFactory<TestIdEntity> _testEntityFactory;
-    private readonly Repository<TestIdEntity, TestContext> _testEntityRepository;
+    private readonly Repository<TestIdEntity> _testEntityRepository;
     private readonly PaginationControllerWithId _paginationController;
 
     private QueryResult<TestIdEntityDto> Test(TestIdEntityQuery query)
@@ -27,7 +27,7 @@ public class PaginationControllerTest : UnitTest
     public PaginationControllerTest()
     {
         var context = new SqliteMemoryDb<TestContext>().Context;
-        _testEntityRepository = new Repository<TestIdEntity, TestContext>(context);
+        _testEntityRepository = new Repository<TestIdEntity>(context);
         _testEntityFactory = new DataFactory<TestIdEntity>(_testEntityRepository);
         _paginationController = new PaginationControllerWithId(_testEntityRepository);
     }
