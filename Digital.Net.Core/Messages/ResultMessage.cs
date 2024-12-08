@@ -23,6 +23,12 @@ public class ResultMessage
         Message = message.GetDisplayName();
     }
 
+    public ResultMessage(string message)
+    {
+        Reference = "UNREFERENCED_MESSAGE";
+        Message = message;
+    }
+
     public string? Code { get; init; }
     public string? Reference { get; init; }
     public string? Message { get; init; }

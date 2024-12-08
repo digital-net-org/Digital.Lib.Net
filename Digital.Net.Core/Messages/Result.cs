@@ -34,6 +34,12 @@ public class Result
         Infos.Add(new ResultMessage(message));
         return this;
     }
+
+    public Result AddInfo(string message)
+    {
+        Infos.Add(new ResultMessage(message));
+        return this;
+    }
 }
 
 public class Result<T> : Result where T : class
@@ -62,6 +68,12 @@ public class Result<T> : Result where T : class
     }
 
     public new Result<T> AddInfo(Enum message)
+    {
+        Infos.Add(new ResultMessage(message));
+        return this;
+    }
+
+    public new Result<T> AddInfo(string message)
     {
         Infos.Add(new ResultMessage(message));
         return this;
