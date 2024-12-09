@@ -24,7 +24,7 @@ public class DataAccessorTest : UnitTest
         _options.SetConnectionString("Host=localhost;Port=5432;Database=None;Username=postgres;Password=postgres");
         _options.SetDatabaseEngine(DatabaseEngine.PostgreSql);
         var result = _dataAccessor.ExecuteSql("");
-        Assert.Equal("NPGSQL_NPGSQLEXCEPTION", result.Errors[0].Reference);
+        Assert.Equal("NPGSQL_POSTGRESEXCEPTION", result.Errors[0].Reference);
     }
 
     [Fact]
