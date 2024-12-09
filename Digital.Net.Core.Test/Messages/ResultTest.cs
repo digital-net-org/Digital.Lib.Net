@@ -62,6 +62,46 @@ public class ResultTest : UnitTest
         );
     }
 
+    [Fact]
+    public void Try_ReturnsResultWithError_WhenExceptionThrown()
+    {
+        var model = new Result();
+        model.Try(() => throw new Exception("Test exception"));
+        var error = model.Errors[0];
+        Assert.Single(model.Errors);
+        Assert.True(model.HasError);
+        Assert.Equal("Test exception", error.Message);
+    }
+
+    [Fact]
+    public void Try_ReturnsResultWithoutError_WhenNoExceptionThrown()
+    {
+        var model = new Result();
+        model.Try(() => { /* No exception */ });
+        Assert.Empty(model.Errors);
+        Assert.False(model.HasError);
+    }
+
+    [Fact]
+    public void TryGeneric_ReturnsResultWithError_WhenExceptionThrown()
+    {
+        var model = new Result<string>();
+        model.Try(() => throw new Exception("Test exception"));
+        var error = model.Errors[0];
+        Assert.Single(model.Errors);
+        Assert.True(model.HasError);
+        Assert.Equal("Test exception", error.Message);
+    }
+
+    [Fact]
+    public void TryGeneric_ReturnsResultWithoutError_WhenNoExceptionThrown()
+    {
+        var model = new Result<string>();
+        model.Try(() => { /* No exception */ });
+        Assert.Empty(model.Errors);
+        Assert.False(model.HasError);
+    }
+
     private enum TestEnum
     {
         [Display(Name = "Test of very simple case")]
