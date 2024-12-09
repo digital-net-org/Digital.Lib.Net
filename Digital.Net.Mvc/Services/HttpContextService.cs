@@ -24,6 +24,8 @@ public class HttpContextService(IHttpContextAccessor contextAccessor) : IHttpCon
     public HttpContext GetHttpContext() =>
         contextAccessor.HttpContext ?? throw new NullReferenceException("Http Context is not defined");
 
+    public string? GetHeaderValue(string header) => Request.Headers[header].FirstOrDefault();
+
     public void SetResponseCookie(
         string content,
         string name,

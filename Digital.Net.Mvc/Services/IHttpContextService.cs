@@ -22,6 +22,13 @@ public interface IHttpContextService
     T? GetItem<T>(string key);
 
     /// <summary>
+    ///     Get a header value from the current HTTP request.
+    /// </summary>
+    /// <param name="header">The header to get the value from.</param>
+    /// <returns>The value of the header.</returns>
+    string? GetHeaderValue(string header);
+
+    /// <summary>
     ///     Set a cookie on the HttpResponse.
     /// </summary>
     /// <param name="content">The content of the cookie.</param>
