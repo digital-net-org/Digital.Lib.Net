@@ -8,6 +8,9 @@ public static class Randomizer
     public const string SmallLetters = "abcdefghijklmnopqrstuvwxyz";
     public const string Numbers = "0123456789";
     public const string SpecialCharacters = "!@#$%^&*()";
+
+    public static string AnyLetter => CapitalLetters + SmallLetters;
+    public static string AnyLetterOrNumber => CapitalLetters + SmallLetters + Numbers;
     public static string AnyCharacter => CapitalLetters + SmallLetters + Numbers + SpecialCharacters;
 
     /// <summary>
