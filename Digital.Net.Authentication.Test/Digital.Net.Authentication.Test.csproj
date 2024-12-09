@@ -9,7 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Digital.Net.Mvc\Digital.Net.Mvc.csproj" />
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Digital.Net.TestTools\Digital.Net.TestTools.csproj"/>
         <ProjectReference Include="..\InternalTestProgram\InternalTestProgram.csproj"/>
     </ItemGroup>
