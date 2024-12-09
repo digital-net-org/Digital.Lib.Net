@@ -8,24 +8,24 @@ namespace InternalTestUtilities.Models;
 
 public class TestIdEntity : EntityWithId
 {
-    [Column("username"), Required]
+    [Column("Username"), Required]
     public string Username { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("password"), Required, Secret]
+    [Column("Password"), Required, Secret]
     public string Password { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("email")]
+    [Column("Email")]
     public string Email { get; set; } = Randomizer.GenerateRandomString();
 }
 
 public class TestGuidEntity : EntityWithGuid
 {
-    [Column("username"), Required]
+    [Column("Username"), Required]
     public string Username { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("password"), Required, Secret]
+    [Column("Password"), Required, Secret]
     public string Password { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("email")]
+    [Column("Email")]
     public string Email { get; set; } = Randomizer.GenerateRandomString();
 }

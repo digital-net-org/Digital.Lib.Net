@@ -10,15 +10,15 @@ namespace InternalTestUtilities.Models;
 [Index(nameof(Username), nameof(Email), IsUnique = true)]
 public class FakeUser : EntityWithGuid
 {
-    [Column("username"), MaxLength(24), Required, RegexValidation("^[a-zA-Z0-9.'@_-]{6,24}$")]
+    [Column("Username"), MaxLength(24), Required, RegexValidation("^[a-zA-Z0-9.'@_-]{6,24}$")]
     public string Username { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("password"), MaxLength(64), Required, Secret]
+    [Column("Password"), MaxLength(64), Required, Secret]
     public string Password { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("email"), MaxLength(254), Required, RegexValidation(@"^[^@]+@[^@]+\.[^@]{2,253}$")]
+    [Column("Email"), MaxLength(254), Required, RegexValidation(@"^[^@]+@[^@]+\.[^@]{2,253}$")]
     public string Email { get; set; } = Randomizer.GenerateRandomString();
 
-    [Column("role"), ReadOnly]
+    [Column("Role"), ReadOnly]
     public virtual FakeRole? Role { get; set; }
 }
