@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Digital.Net.Entities.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,9 @@ public class Repository<T>(DbContext context) : IRepository<T>
 
     public IQueryable<T> Get(Expression<Func<T, bool>> expression) =>
         context.Set<T>().Where(expression);
+
+    public IQueryable<T> DynamicQuery(string predicate, params object?[] args) =>
+        context.Set<T>().Where(predicate, args);
 
     public T? GetById(int? id) => context.Set<T>().Find(id);
 

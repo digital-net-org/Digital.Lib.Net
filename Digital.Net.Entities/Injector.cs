@@ -19,6 +19,7 @@ public static class Injector
         where TContext : DbContext =>
         services
             .AddScoped<DbContext, TContext>()
+            .AddScoped(typeof(ISeeder<>), typeof(Seeder<>))
             .AddScoped(typeof(IRepository<>), typeof(Repository<>))
             .AddScoped(typeof(IEntityService<>), typeof(EntityService<>));
 }

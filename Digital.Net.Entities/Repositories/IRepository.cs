@@ -48,6 +48,14 @@ public interface IRepository<T>
     public IQueryable<T> Get(Expression<Func<T, bool>> expression);
 
     /// <summary>
+    ///     Get entities based on a dynamic query.
+    /// </summary>
+    /// <param name="predicate">The dynamic query to filter entities. Use @0, @1, etc. for arguments</param>
+    /// <param name="args">The arguments for the dynamic query</param>
+    /// <returns>Queryable of entities</returns>
+    IQueryable<T> DynamicQuery(string predicate, params object?[] args);
+    
+    /// <summary>
     ///     Save changes to the database.
     /// </summary>
     public void Save();
