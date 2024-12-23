@@ -90,7 +90,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
     /// <param name="apiKey">The API Key to authorize.</param>
     /// <remarks>Override this method to execute custom logic during API Key authorization.</remarks>
     /// <remarks>Throw an exception to return an unauthorized result.</remarks>
-    protected static void OnApiKeyAuthorization(AuthorizationFilterContext context, string? apiKey, Guid? apiUserId)
+    public virtual void OnApiKeyAuthorization(AuthorizationFilterContext context, string? apiKey, Guid? apiUserId)
     {
     }
 
@@ -100,7 +100,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
     /// <param name="context">The context of the authorization.</param>
     /// <remarks>Override this method to execute custom logic during JWT authorization.</remarks>
     /// <remarks>Throw an exception to return an unauthorized result.</remarks>
-    protected static void OnJwtAuthorization(AuthorizationFilterContext context, string? token, Guid? apiUserId)
+    public virtual void OnJwtAuthorization(AuthorizationFilterContext context, string? token, Guid? apiUserId)
     {
     }
 
@@ -110,7 +110,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
     /// <param name="context">The context of the authorization.</param>
     /// <param name="result">The result of the authorization.</param>
     /// <remarks>Override this method to execute custom logic when authorization fails.</remarks>
-    protected static void OnAuthorizationFailure(AuthorizationFilterContext context, Result result)
+    public virtual void OnAuthorizationFailure(AuthorizationFilterContext context, Result result)
     {
     }
 }

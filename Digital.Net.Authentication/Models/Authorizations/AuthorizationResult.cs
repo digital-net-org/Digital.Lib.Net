@@ -13,7 +13,10 @@ public class AuthorizationResult : Result
     {
         base.Merge(result);
         if (result is AuthorizationResult authResult)
+        {
             IsAuthorized = authResult.IsAuthorized;
+            ApiUserId = authResult.ApiUserId;
+        }
         return this;
     }
 

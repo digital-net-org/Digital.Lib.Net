@@ -53,7 +53,7 @@ public class PaginationControllerTest : UnitTest
         for (var i = 1; i < 3; i++)
             _testEntityFactory.Create(new TestIdEntity { CreatedAt = DateTime.UtcNow.AddDays(-i + 1) });
 
-        var result = Test(new TestIdEntityQuery { CreatedAt = DateTime.Now.AddDays(-1) });
+        var result = Test(new TestIdEntityQuery { CreatedAt = DateTime.UtcNow.AddDays(-1) });
         Assert.Equal(2, result.Count);
     }
 
@@ -84,7 +84,7 @@ public class PaginationControllerTest : UnitTest
         {
             var i = users.IndexOf(user) + 1;
             user.Username = $"User{i}";
-            user.CreatedAt = DateTime.Now.AddDays(-total + i);
+            user.CreatedAt = DateTime.UtcNow.AddDays(-total + i);
             _testEntityRepository.Save();
         }
 

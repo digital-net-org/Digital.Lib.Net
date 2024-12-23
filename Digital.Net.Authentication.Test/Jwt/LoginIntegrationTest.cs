@@ -45,6 +45,17 @@ public class LoginIntegrationTest : IntegrationTest<Program, TestContext>
     }
 
     [Fact]
+    public async Task Login_OnMaxAttempts()
+    {
+        var (user, _) = _testUserFactory.Create();
+        for (var i = 0; i < AuthenticationDefaults.MaxLoginAttempts; i++)
+            await BaseClient.Login(user.Login, "wrongPassword");
+
+        var response = await BaseClient.Login(user.Login, "wrongPassword");
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Login_OnWrongPassword()
     {
         var (user, _) = _testUserFactory.Create();

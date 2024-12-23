@@ -17,10 +17,10 @@ public abstract class CrudController<T, TDto, TPayload>(
     where TPayload : class
 {
     [HttpGet("schema")]
-    public ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() => Ok(entityService.GetSchema());
+    public virtual ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() => Ok(entityService.GetSchema());
 
     [HttpGet("{id}")]
-    public ActionResult<Result<TDto>> GetById(string id)
+    public virtual ActionResult<Result<TDto>> GetById(string id)
     {
         var result = new Result<TDto>();
 
@@ -35,14 +35,14 @@ public abstract class CrudController<T, TDto, TPayload>(
     }
 
     [HttpPost("")]
-    public async Task<ActionResult<Result>> Post([FromBody] TPayload payload)
+    public virtual async Task<ActionResult<Result>> Post([FromBody] TPayload payload)
     {
         var result = await entityService.Create(Mapper.Map<TPayload, T>(payload));
         return result.HasError ? BadRequest(result) : Ok(result);
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult<Result>> Patch(string id, [FromBody] JsonElement patch)
+    public virtual async Task<ActionResult<Result>> Patch(string id, [FromBody] JsonElement patch)
     {
         var result = new Result();
 
@@ -62,7 +62,7 @@ public abstract class CrudController<T, TDto, TPayload>(
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Result>> Delete(string id)
+    public virtual async Task<ActionResult<Result>> Delete(string id)
     {
         var result = new Result();
 
