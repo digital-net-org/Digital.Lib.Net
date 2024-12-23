@@ -10,11 +10,11 @@ public class Seeder<T>(
     ILogger<Seeder<T>> logger,
     IRepository<T> repository
 ) : ISeeder<T>
-    where T : Entity, new()
+    where T : Entity
 {
-    public async Task<Result> SeedAsync(List<T> data)
+    public async Task<Result<List<T>>> SeedAsync(List<T> data)
     {
-        var result = new Result();
+        var result = new Result<List<T>>([]);
         var skip = 0;
 
         foreach (var entity in data)
@@ -33,6 +33,7 @@ public class Seeder<T>(
 
                 await repository.CreateAsync(entity);
                 await repository.SaveAsync();
+                result.Value!.Add(entity);
             }
             catch (Exception e)
             {

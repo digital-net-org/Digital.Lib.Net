@@ -29,7 +29,7 @@ foreach ($project in $projects) {
     Write-Host "Building..."
     Invoke-Expression "dotnet build ${projectPath} -c Release" > $null 2>&1
     Write-Host "Packing..."
-    Invoke-Expression "dotnet pack ${projectPath} -c Release" > $null 2>&1
+    Invoke-Expression "dotnet pack ${projectPath} --no-build -c Release" > $null 2>&1
 
     if (Test-Path -Path $packageDestinationFile) {
         Remove-Item -Path $packageDestinationFile

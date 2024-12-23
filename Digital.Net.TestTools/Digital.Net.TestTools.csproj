@@ -6,7 +6,7 @@
         <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Digital.Net.TestTools</RootNamespace>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup>

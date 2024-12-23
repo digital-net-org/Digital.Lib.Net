@@ -3,7 +3,7 @@ using Digital.Net.Entities.Models;
 
 namespace Digital.Net.Entities.Services;
 
-public interface ISeeder<T> where T : Entity, new()
+public interface ISeeder<T> where T : Entity
 {
     /// <summary>
     ///     Seed data into the database. If the data already exists, it will not be seeded.
@@ -21,5 +21,5 @@ public interface ISeeder<T> where T : Entity, new()
     /// <param name="data">
     ///     A list of entities to seed into the database.
     /// </param>
-    public Task<Result> SeedAsync(List<T> data);
+    public Task<Result<List<T>>> SeedAsync(List<T> data);
 }

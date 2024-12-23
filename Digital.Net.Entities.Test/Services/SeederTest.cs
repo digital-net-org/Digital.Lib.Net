@@ -16,13 +16,23 @@ public class SeederTest : UnitTest
     private readonly Repository<TestUser> _userRepository;
     private readonly ISeeder<TestUser> _userSeeder;
 
-    private readonly TestUser _testUser = new()
-    {
-        Username = "TestUser",
-        Password = "TestPassword",
-        Login = "TestLogin",
-        Email = "TestEmail@email.com"
-    };
+    private readonly List<TestUser> _testUsers =
+    [
+        new()
+        {
+            Username = "TestUser",
+            Password = "TestPassword",
+            Login = "TestLogin",
+            Email = "TestEmail@email.com"
+        },
+        new()
+        {
+            Username = "TestUser2",
+            Password = "TestPassword2",
+            Login = "TestLogin2",
+            Email = "TestEmail2@email.com"
+        }
+    ];
 
     public SeederTest()
     {
@@ -38,18 +48,29 @@ public class SeederTest : UnitTest
     [Fact]
     public async Task SeedAsync_AddEntitiesToDatabase()
     {
-        var seeded = await _userSeeder.SeedAsync([_testUser]);
-        var user = _userRepository.Get(u => u.Username == _testUser.Username);
-        Assert.False(seeded.HasError);
-        Assert.Single(user);
+        var result = await _userSeeder.SeedAsync(_testUsers);
+        var users = _userRepository.Get(x => true);
+        Assert.False(result.HasError);
+        Assert.True(users.Count() == 2);
     }
 
     [Fact]
     public async Task SeedAsync_SkipExistingEntities()
     {
-        await _userFactory.CreateAsync(_testUser);
-        var seeded = await _userSeeder.SeedAsync([_testUser]);
-        Assert.False(seeded.HasError);
-        Assert.Single(_userRepository.Get(u => u.Username == _testUser.Username));
+        await _userFactory.CreateAsync(_testUsers[0]);
+        var result = await _userSeeder.SeedAsync([_testUsers[0]]);
+        Assert.False(result.HasError);
+        Assert.Single(_userRepository.Get(u => u.Username == _testUsers[0].Username));
+    }
+
+    [Fact]
+    public async Task SeedAsync_ReturnsSeededEntities()
+    {
+        await _userFactory.CreateAsync(_testUsers[0]);
+        var result = await _userSeeder.SeedAsync(_testUsers);
+        var user = result.Value!.Find(u => u.Username == _testUsers[1].Username);
+        Assert.False(result.HasError);
+        Assert.Single(result.Value!);
+        Assert.True(user is not null && user.Id != Guid.Empty);
     }
 }
