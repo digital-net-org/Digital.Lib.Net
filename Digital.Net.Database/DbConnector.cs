@@ -27,7 +27,10 @@ public static class DbConnector
     {
         builder.Services.Configure(buildOptions);
         builder.Services.AddScoped<IDataAccessor, DataAccessor>();
-        builder.Services.AddEntityFrameworkProxies();
+
+        if (AspNetEnv.IsTest)
+            builder.Services.AddEntityFrameworkProxies();
+
         builder.Services.AddDbContext<TContext>((provider, opts) =>
         {
             var options = provider.GetRequiredService<IOptions<DigitalDatabaseOptions>>().Value;
@@ -40,6 +43,7 @@ public static class DbConnector
 
             opts.UseLazyLoadingProxies();
         }, ServiceLifetime.Transient);
+
         return builder;
     }
 }
