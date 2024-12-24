@@ -26,6 +26,9 @@ public class TestUser : EntityGuid, IApiUser
     [Column("Role"), ReadOnly]
     public virtual TestRole? Role { get; set; }
 
+    [Column("State")]
+    public TestState State { get; set; } = TestState.StateValue1;
+
     public void Update(NullableTestUser payload)
     {
         Username = payload.Username ?? Username;
@@ -35,6 +38,13 @@ public class TestUser : EntityGuid, IApiUser
         Role = payload.Role ?? Role;
         IsActive = payload.IsActive ?? IsActive;
     }
+}
+
+public enum TestState
+{
+    StateValue1,
+    StateValue2,
+    StateValue3
 }
 
 public class NullableTestUser

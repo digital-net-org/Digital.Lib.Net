@@ -57,6 +57,10 @@ public class Seeder<T>(
             if (value is null)
                 continue;
 
+            value = property.PropertyType.IsEnum
+                ? (int)value
+                : value;
+
             value = property.PropertyType == typeof(string)
                 ? $"\"{value}\""
                 : value;
