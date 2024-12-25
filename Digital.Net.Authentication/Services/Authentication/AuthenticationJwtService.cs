@@ -19,7 +19,10 @@ public class AuthenticationJwtService<TAuthorization>(
 {
     public async Task RevokeTokenAsync(string token)
     {
-        var record = tokenRepository.Get(t => t.Key == token).FirstOrDefault();
+        var record = tokenRepository
+            .Get(t => t.Key == token)
+            .FirstOrDefault();
+
         if (record is null)
             return;
 
@@ -29,22 +32,15 @@ public class AuthenticationJwtService<TAuthorization>(
 
     public async Task RevokeAllTokensAsync(Guid userId)
     {
-        var records = tokenRepository.Get(t => t.ApiUserId == userId);
+        var records = tokenRepository
+            .Get(t => t.ApiUserId == userId)
+            .ToList();
+
         foreach (var record in records)
+        {
             tokenRepository.Delete(record);
-        await tokenRepository.SaveAsync();
-    }
-
-    public async Task RevokeAllTokensAsync(string token)
-    {
-        var record = tokenRepository.Get(t => t.Key == token).FirstOrDefault();
-        if (record is null)
-            return;
-
-        var records = tokenRepository.Get(t => t.ApiUserId == record.ApiUserId);
-        foreach (var rec in records)
-            tokenRepository.Delete(rec);
-        await tokenRepository.SaveAsync();
+            await tokenRepository.SaveAsync();
+        }
     }
 
     public string GenerateBearerToken(Guid userId)
@@ -93,11 +89,17 @@ public class AuthenticationJwtService<TAuthorization>(
     private void HandleMaxConcurrentSessions(Guid userId)
     {
         var maxTokenAllowed = jwtOptionService.MaxConcurrentSessions;
-        var userTokens = tokenRepository.Get(t => t.ApiUserId == userId && t.ExpiredAt > DateTime.UtcNow);
-        if (userTokens.Count() < maxTokenAllowed)
+        var userTokens = tokenRepository
+            .Get(t => t.ApiUserId == userId && t.ExpiredAt > DateTime.UtcNow)
+            .ToList();
+
+        if (userTokens.Count < maxTokenAllowed)
             return;
 
-        var tokens = userTokens.OrderByDescending(t => t.CreatedAt).Skip(maxTokenAllowed -1);
+        var tokens = userTokens
+            .OrderByDescending(t => t.CreatedAt)
+            .Skip(maxTokenAllowed - 1);
+
         foreach (var token in tokens)
         {
             tokenRepository.Delete(token);
