@@ -17,7 +17,8 @@ public abstract class CrudController<T, TDto, TPayload>(
     where TPayload : class
 {
     [HttpGet("schema")]
-    public virtual ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() => Ok(entityService.GetSchema());
+    public virtual ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() => 
+        Ok(new Result<List<SchemaProperty<T>>>(entityService.GetSchema()));
 
     [HttpGet("{id}")]
     public virtual ActionResult<Result<TDto>> GetById(string id)
