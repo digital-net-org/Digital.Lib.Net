@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Digital.Net.Core.Extensions.StringUtilities;
 using Digital.Net.Core.Messages;
 using Digital.Net.Core.Models;
 using Digital.Net.Entities.Models;
@@ -43,7 +44,7 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
         {
             foreach (var o in patch.Operations)
             {
-                var key = o.path[1..];
+                var key = o.path.ExtractFromPath().First();
                 ValidatePayload(o.value, o.path, x => x.Name == key);
             }
 

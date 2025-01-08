@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Digital.Net.Entities.Models;
@@ -16,9 +17,19 @@ public class Repository<T>(DbContext context) : IRepository<T>
 
     public async Task CreateAsync(T entity) => await context.Set<T>().AddAsync(entity);
 
-    public void Update(T entity) => context.Set<T>().Update(entity);
+    public void Update(T entity)
+    {
+        UpdateNestedEntities(entity);
+        context.Set<T>().Update(entity);
+    }
 
-    public void UpdateRange(IEnumerable<T> entities) => context.Set<T>().UpdateRange(entities);
+    public void UpdateRange(IEnumerable<T> entities)
+    {
+        var enumerable = entities as T[] ?? entities.ToArray();
+        foreach (var entity in enumerable)
+            UpdateNestedEntities(entity);
+        context.Set<T>().UpdateRange(enumerable);
+    }
 
     public void Delete(T entity) => context.Set<T>().Remove(entity);
 
@@ -50,6 +61,24 @@ public class Repository<T>(DbContext context) : IRepository<T>
     {
         AddTimestamps();
         context.SaveChanges();
+    }
+
+    private void UpdateNestedEntities(T entity)
+    {
+        var properties = entity.GetType().GetProperties();
+        foreach (var property in properties)
+        {
+            if (!property.PropertyType.IsGenericType ||
+                property.PropertyType.GetGenericTypeDefinition() != typeof(List<>))
+                continue;
+            var values = property.GetValue(entity);
+
+            if (values is null)
+                continue;
+
+            foreach (var item in (IEnumerable)values)
+                context.Entry(item).State = EntityState.Modified;
+        }
     }
 
     private void AddTimestamps()

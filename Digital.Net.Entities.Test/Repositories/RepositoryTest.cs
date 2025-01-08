@@ -94,6 +94,19 @@ public class RepositoryTest : UnitTest
     }
 
     [Fact]
+    public void Update_ShouldUpdateNestedEntities()
+    {
+        const string payload = "UpdatedNestedObject";
+        var user = _userFactory.Create();
+
+        user.NestedObject.Name = payload;
+        _userRepository.Update(user);
+        _userRepository.Save();
+        var updatedUser = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault()!;
+        Assert.Equal(payload, updatedUser.NestedObject.Name);
+    }
+
+    [Fact]
     public void UpdateRange_ShouldUpdateEntities()
     {
         var users = _userFactory.CreateMany(15).Skip(10).ToList();
