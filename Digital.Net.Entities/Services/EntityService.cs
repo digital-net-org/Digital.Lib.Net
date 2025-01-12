@@ -107,7 +107,7 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
     {
         var prop = GetSchema().FirstOrDefault(schemaPredicate.Compile());
 
-        if (value is null)
+        if (value is null || prop is null)
             return;
 
         if ((prop.IsIdentity || prop.IsForeignKey) && value.ToString() is "00000000-0000-0000-0000-000000000000" or "0")
