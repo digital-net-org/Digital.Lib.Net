@@ -45,7 +45,7 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
             foreach (var o in patch.Operations)
             {
                 var key = o.path.ExtractFromPath().First();
-                ValidatePayload(o.value, o.path, x => x.Name == key);
+                ValidatePayload(o.value, o.path, x => x.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase));
             }
 
             patch.ApplyTo(entity);
@@ -105,7 +105,7 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
 
     private void ValidatePayload(object? value, string path, Expression<Func<SchemaProperty<T>, bool>> schemaPredicate)
     {
-        var prop = GetSchema().First(schemaPredicate.Compile());
+        var prop = GetSchema().FirstOrDefault(schemaPredicate.Compile());
 
         if (value is null)
             return;
