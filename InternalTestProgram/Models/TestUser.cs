@@ -30,7 +30,7 @@ public class TestUser : EntityGuid, IApiUser
     public TestState State { get; set; } = TestState.StateValue1;
 
     [Column("NestedObject")]
-    public TestNestedObject NestedObject { get; set; } = new();
+    public virtual TestNestedObject NestedObject { get; set; } = new();
 
     public void Update(NullableTestUser payload)
     {
