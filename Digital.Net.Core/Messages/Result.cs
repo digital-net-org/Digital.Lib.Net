@@ -53,6 +53,9 @@ public class Result
         }
         return this;
     }
+    
+    public bool HasErrorException<TException>() where TException : Exception =>
+        Errors.Any(error => error.IsExceptionOfType<TException>());
 }
 
 public class Result<T> : Result where T : class

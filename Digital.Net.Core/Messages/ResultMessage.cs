@@ -28,9 +28,13 @@ public class ResultMessage
         Reference = "UNREFERENCED_MESSAGE";
         Message = message;
     }
+    
+    public bool IsExceptionOfType<TException>() where TException : Exception =>
+        Exception is TException;
 
     public string? Code { get; init; }
     public string? Reference { get; init; }
     public string? Message { get; init; }
     public string? StackTrace { get; init; }
+    private Exception? Exception { get; init; }
 }
