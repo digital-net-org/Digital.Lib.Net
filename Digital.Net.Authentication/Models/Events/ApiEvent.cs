@@ -27,7 +27,7 @@ public abstract class ApiEvent : EntityId, IApiEvent
 
     public IApiEvent SetError(Result? result)
     {
-        if (result is not null && result.HasError)
+        if (result is not null && result.HasError())
         {
             var trace = JsonSerializer.Serialize(result.Errors);
             ErrorTrace = trace.Length > 4096 ? trace[..4096] : trace;

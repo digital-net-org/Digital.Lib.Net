@@ -60,7 +60,7 @@ public class AuthenticationService<TApiUser, TAuthorization>(
         else
         {
             userResult = await ValidateCredentials(login, password);
-            state = userResult.HasError ? ApiEventState.Failed : ApiEventState.Success;
+            state = userResult.HasError() ? ApiEventState.Failed : ApiEventState.Success;
         }
 
         result.Merge(userResult);
@@ -73,7 +73,7 @@ public class AuthenticationService<TApiUser, TAuthorization>(
             login
         );
 
-        if (result.HasError)
+        if (result.HasError())
             return result;
 
         result.Value = authenticationJwtService.GenerateBearerToken(userResult.Value!.Id);
@@ -92,7 +92,7 @@ public class AuthenticationService<TApiUser, TAuthorization>(
 
         var tokenResult = authorizationJwtService.AuthorizeApiUserRefresh(token);
         result.Merge(tokenResult);
-        if (result.HasError)
+        if (result.HasError())
             return result;
 
         httpContextService.SetResponseCookie(

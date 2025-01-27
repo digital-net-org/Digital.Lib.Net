@@ -1,8 +1,11 @@
+using System.Text.Json;
+using Digital.Net.Core.Messages;
 using Digital.Net.Entities.Services;
 using Digital.Net.Mvc.Controllers.Pagination;
 using Digital.Net.Mvc.Test.TestUtilities.Controllers;
 using Digital.Net.TestTools;
 using InternalTestProgram.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -11,11 +14,11 @@ namespace Digital.Net.Mvc.Test.Controllers.Crud;
 
 public class CrudControllerTest : UnitTest
 {
-    private readonly Mock<IEntityService<TestIdEntity>> _idEntityServiceMock = new();
-    private readonly Mock<IEntityService<TestGuidEntity>> _guidEntityServiceMock = new();
+    private readonly CrudControllerWithGuid _crudGuidController;
 
     private readonly CrudControllerWithId _crudIdController;
-    private readonly CrudControllerWithGuid _crudGuidController;
+    private readonly Mock<IEntityService<TestGuidEntity>> _guidEntityServiceMock = new();
+    private readonly Mock<IEntityService<TestIdEntity>> _idEntityServiceMock = new();
 
     public CrudControllerTest()
     {
@@ -25,6 +28,9 @@ public class CrudControllerTest : UnitTest
         _guidEntityServiceMock
             .Setup(x => x.Get<TestGuidEntityDto>(It.IsAny<Guid>()))
             .Returns(new QueryResult<TestGuidEntityDto>());
+        _guidEntityServiceMock
+            .Setup(x => x.Patch(It.IsAny<JsonPatchDocument<TestGuidEntity>>(), It.IsAny<Guid>()))
+            .ReturnsAsync(new Result().AddError(new InvalidOperationException()));
 
         _crudIdController = new CrudControllerWithId(_idEntityServiceMock.Object);
         _crudGuidController = new CrudControllerWithGuid(_guidEntityServiceMock.Object);
@@ -51,5 +57,16 @@ public class CrudControllerTest : UnitTest
     {
         var result = _crudGuidController.GetById("invalidId");
         Assert.IsType<NotFoundObjectResult>(result.Result);
+    }
+
+    [Fact]
+    public async Task Patch_InvalidPayload_ShouldReturnBadRequest()
+    {
+        var jsonPatch = JsonDocument
+            .Parse("[{ \"op\": \"replace\", \"path\": \"/name\", \"value\": \"newName\" }]")
+            .RootElement;
+
+        var result = await _crudGuidController.Patch(Guid.NewGuid().ToString(), jsonPatch);
+        Assert.IsType<BadRequestObjectResult>(result.Result);
     }
 }

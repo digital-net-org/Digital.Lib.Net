@@ -14,15 +14,9 @@ namespace Digital.Net.Mvc.Test.Controllers.Pagination;
 
 public class PaginationControllerTest : UnitTest
 {
+    private readonly PaginationControllerWithId _paginationController;
     private readonly DataFactory<TestIdEntity> _testEntityFactory;
     private readonly Repository<TestIdEntity> _testEntityRepository;
-    private readonly PaginationControllerWithId _paginationController;
-
-    private QueryResult<TestIdEntityDto> Test(TestIdEntityQuery query)
-    {
-        var actionResult = _paginationController.Get(query).Result as OkObjectResult;
-        return actionResult?.Value as QueryResult<TestIdEntityDto> ?? new QueryResult<TestIdEntityDto>();
-    }
 
     public PaginationControllerTest()
     {
@@ -30,6 +24,12 @@ public class PaginationControllerTest : UnitTest
         _testEntityRepository = new Repository<TestIdEntity>(context);
         _testEntityFactory = new DataFactory<TestIdEntity>(_testEntityRepository);
         _paginationController = new PaginationControllerWithId(_testEntityRepository);
+    }
+
+    private QueryResult<TestIdEntityDto> Test(TestIdEntityQuery query)
+    {
+        var actionResult = _paginationController.Get(query).Result as OkObjectResult;
+        return actionResult?.Value as QueryResult<TestIdEntityDto> ?? new QueryResult<TestIdEntityDto>();
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class PaginationControllerTest : UnitTest
         const int total = 10;
         _testEntityFactory.CreateMany(total);
         var result = Test(new TestIdEntityQuery { OrderBy = "Lol" });
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
         Assert.NotEmpty(result.Errors);
     }
 }

@@ -21,7 +21,7 @@ public abstract class AuthenticationController<TApiUser>(
 
         if (result.Errors.Any(e => e.Reference == new AuthenticationTooManyAttemptsException().GetReference()))
             return StatusCode(429);
-        if (result.HasError || result.Value is null)
+        if (result.HasError() || result.Value is null)
             return Unauthorized();
         return Ok(result);
     }
@@ -30,7 +30,7 @@ public abstract class AuthenticationController<TApiUser>(
     public virtual ActionResult<Result<string>> RefreshTokens()
     {
         var result = authenticationService.RefreshTokens();
-        return result.HasError ? Unauthorized() : Ok(result);
+        return result.HasError() ? Unauthorized() : Ok(result);
     }
 
     [HttpPost("logout")]

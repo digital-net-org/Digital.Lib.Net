@@ -14,6 +14,7 @@ public class ResultMessage
         Message = message?.GetDisplayName() ?? ex.Message;
         Reference = message?.ToReferenceString() ?? ex.GetReference();
         StackTrace = ex.StackTrace;
+        Exception = ex;
     }
 
     public ResultMessage(Enum message)
@@ -33,4 +34,7 @@ public class ResultMessage
     public string? Reference { get; init; }
     public string? Message { get; init; }
     public string? StackTrace { get; init; }
+    private Exception? Exception { get; }
+    public bool IsExceptionOfType<TException>() where TException : Exception =>
+        Exception is TException;
 }

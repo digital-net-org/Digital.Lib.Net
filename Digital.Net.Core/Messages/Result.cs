@@ -8,7 +8,13 @@ public class Result
     public List<ResultMessage> Errors { get; init; } = [];
     public List<ResultMessage> Infos { get; init; } = [];
 
-    public bool HasError => Errors.Count > 0;
+    public bool HasError() => Errors.Count > 0;
+
+    public bool HasError<TException>() where TException : Exception
+    {
+        var result = Errors.Any(error => error.IsExceptionOfType<TException>());
+        return result;
+    }
 
     public Result Merge(Result result)
     {
@@ -51,6 +57,7 @@ public class Result
         {
             AddError(ex);
         }
+
         return this;
     }
 }
@@ -102,6 +109,7 @@ public class Result<T> : Result where T : class
         {
             AddError(ex);
         }
+
         return this;
     }
 }

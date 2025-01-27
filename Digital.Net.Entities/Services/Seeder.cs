@@ -42,7 +42,7 @@ public class Seeder<T>(
 
         if (skip > 0)
             logger.LogInformation($"Skipped {skip} {nameof(T)} entities because they already exist.");
-        if (result.HasError)
+        if (result.HasError())
             logger.LogError($"One or more entities could not be seeded: {result.Errors}");
 
         return result;
