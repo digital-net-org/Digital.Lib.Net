@@ -22,7 +22,7 @@ public class FormFileWriterTest : UnitTest
             .Callback<Stream>(s => stream.CopyTo(s));
 
         var result = _mockFormFile.Object.TryWriteFile(TestPath);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.True(File.Exists(TestPath));
         File.Delete(TestPath);
     }
@@ -35,7 +35,7 @@ public class FormFileWriterTest : UnitTest
             .Throws(new Exception("Test exception"));
 
         var result = _mockFormFile.Object.TryWriteFile(TestPath);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class FormFileWriterTest : UnitTest
             .Returns<Stream, CancellationToken>((s, t) => stream.CopyToAsync(s, t));
 
         var result = await _mockFormFile.Object.TryWriteFileAsync(TestPath);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.True(File.Exists(TestPath));
         File.Delete(TestPath);
     }
@@ -60,7 +60,7 @@ public class FormFileWriterTest : UnitTest
             .ThrowsAsync(new Exception("Test exception"));
 
         var result = await _mockFormFile.Object.TryWriteFileAsync(TestPath);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 
     private static MemoryStream Setup()

@@ -50,7 +50,7 @@ public class SeederTest : UnitTest
     {
         var result = await _userSeeder.SeedAsync(_testUsers);
         var users = _userRepository.Get(x => true);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.True(users.Count() == 2);
     }
 
@@ -59,7 +59,7 @@ public class SeederTest : UnitTest
     {
         await _userFactory.CreateAsync(_testUsers[0]);
         var result = await _userSeeder.SeedAsync([_testUsers[0]]);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.Single(_userRepository.Get(u => u.Username == _testUsers[0].Username));
     }
 
@@ -69,7 +69,7 @@ public class SeederTest : UnitTest
         await _userFactory.CreateAsync(_testUsers[0]);
         var result = await _userSeeder.SeedAsync(_testUsers);
         var user = result.Value!.Find(u => u.Username == _testUsers[1].Username);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.Single(result.Value!);
         Assert.True(user is not null && user.Id != Guid.Empty);
     }

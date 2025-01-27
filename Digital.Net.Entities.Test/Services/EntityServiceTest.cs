@@ -48,7 +48,7 @@ public class EntityServiceTest : UnitTest
         var patch = new JsonPatchDocument<TestUser>();
         patch.Replace(u => u.Username, "NewUsername");
         var result = await _userService.Patch(patch, Guid.NewGuid());
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class EntityServiceTest : UnitTest
         patch.Replace(u => u.Username, "to");
         var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
         Assert.NotEqual("", updatedUser?.Username);
     }
     
@@ -72,7 +72,7 @@ public class EntityServiceTest : UnitTest
         patch.Replace(u => u.Username, user2.Username);
         var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
         Assert.NotEqual(user2.Username, updatedUser?.Username);
     }
     
@@ -83,7 +83,7 @@ public class EntityServiceTest : UnitTest
         var patch = new JsonPatchDocument<TestUser>();
         patch.Replace(u => u.Role, new TestRole());
         var result = await _userService.Patch(patch, user.Id);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class EntityServiceTest : UnitTest
         };
         var result = await _userService.Create(user);
         var createdUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.NotNull(createdUser);
         Assert.Equal("NewUser", createdUser?.Username);
     }
@@ -107,7 +107,7 @@ public class EntityServiceTest : UnitTest
     {
         var user = new TestUser();
         var result = await _userService.Create(user);
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class EntityServiceTest : UnitTest
         var user = await _userFactory.CreateAsync();
         var result = await _userService.Delete(user.Id);
         var deletedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.False(result.HasError);
+        Assert.False(result.HasError());
         Assert.Null(deletedUser);
     }
 
@@ -124,6 +124,6 @@ public class EntityServiceTest : UnitTest
     public async Task Delete_ReturnsError_WhenEntityDoesNotExist()
     {
         var result = await _userService.Delete(Guid.NewGuid());
-        Assert.True(result.HasError);
+        Assert.True(result.HasError());
     }
 }

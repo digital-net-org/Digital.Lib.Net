@@ -38,7 +38,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
             result.Merge(AuthorizeApiKey(context));
         if (Type.HasFlag(AuthorizeType.Jwt) && result.IsAuthorized is false)
             result.Merge(AuthorizeJwt(context));
-        if (!result.HasError || result.IsAuthorized)
+        if (!result.HasError() || result.IsAuthorized)
         {
             var contextService = context.HttpContext.RequestServices.GetRequiredService<IHttpContextService>();
             contextService.AddItem(AuthenticationDefaults.ApiContextAuthorizationKey, result);
@@ -60,7 +60,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
 
         result.Merge(service.AuthorizeApiUser(apiKey));
         result.Try(() => OnApiKeyAuthorization(context, apiKey, result.ApiUserId));
-        if (!result.HasError)
+        if (!result.HasError())
             result.Authorize();
 
         return result;
@@ -77,7 +77,7 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
 
         result.Merge(service.AuthorizeApiUser(token));
         result.Try(() => OnJwtAuthorization(context, token, result.ApiUserId));
-        if (!result.HasError)
+        if (!result.HasError())
             result.Authorize();
 
         return result;

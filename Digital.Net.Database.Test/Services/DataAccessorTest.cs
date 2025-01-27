@@ -3,6 +3,7 @@ using Digital.Net.Database.Services;
 using Digital.Net.TestTools;
 using Microsoft.Extensions.Options;
 using Moq;
+using Npgsql;
 
 namespace Digital.Net.Database.Test.Services;
 
@@ -24,7 +25,7 @@ public class DataAccessorTest : UnitTest
         _options.SetConnectionString("Host=localhost;Port=5432;Database=None;Username=postgres;Password=postgres");
         _options.SetDatabaseEngine(DatabaseEngine.PostgreSql);
         var result = _dataAccessor.ExecuteSql("");
-        Assert.True(result.Errors[0].Reference is "NPGSQL_POSTGRESEXCEPTION" or "NPGSQL_NPGSQLEXCEPTION");
+        Assert.True(result.HasError<PostgresException>());
     }
 
     [Fact]
