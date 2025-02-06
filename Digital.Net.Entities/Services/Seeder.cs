@@ -54,7 +54,7 @@ public class Seeder<T>(
         foreach (var property in properties)
         {
             var value = property.GetValue(entity);
-            if (value is null)
+            if (value is null || property.PropertyType.IsEntity())
                 continue;
 
             value = property.PropertyType.IsEnum
