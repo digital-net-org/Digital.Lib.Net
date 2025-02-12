@@ -1,5 +1,5 @@
-using Digital.Net.Authentication.Controllers;
-using Digital.Net.Authentication.Services.Authentication;
+using Digital.Lib.Net.Authentication.Controllers;
+using Digital.Lib.Net.Authentication.Services.Authentication;
 using InternalTestProgram.Models;
 using Microsoft.AspNetCore.Mvc;
 

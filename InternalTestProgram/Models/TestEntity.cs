@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Digital.Net.Core.Random;
-using Digital.Net.Entities.Attributes;
-using Digital.Net.Entities.Models;
+using Digital.Lib.Net.Core.Random;
+using Digital.Lib.Net.Entities.Attributes;
+using Digital.Lib.Net.Entities.Models;
 
 namespace InternalTestProgram.Models;
 

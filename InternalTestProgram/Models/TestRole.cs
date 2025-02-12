@@ -1,5 +1,5 @@
-using Digital.Net.Core.Random;
-using Digital.Net.Entities.Models;
+using Digital.Lib.Net.Core.Random;
+using Digital.Lib.Net.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternalTestProgram.Models;

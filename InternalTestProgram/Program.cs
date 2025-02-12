@@ -1,8 +1,8 @@
-﻿using Digital.Net.Authentication;
-using Digital.Net.Authentication.Options.Jwt;
-using Digital.Net.Database;
-using Digital.Net.Database.Options;
-using Digital.Net.Entities;
+﻿using Digital.Lib.Net.Authentication;
+using Digital.Lib.Net.Authentication.Options.Jwt;
+using Digital.Lib.Net.Database;
+using Digital.Lib.Net.Database.Options;
+using Digital.Lib.Net.Entities;
 using InternalTestProgram.Models;
 
 namespace InternalTestProgram;

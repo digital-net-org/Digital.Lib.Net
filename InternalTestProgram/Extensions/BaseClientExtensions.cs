@@ -1,6 +1,6 @@
-using Digital.Net.Authentication.Controllers.Models;
-using Digital.Net.Core.Extensions.HttpUtilities;
-using Digital.Net.Core.Messages;
+using Digital.Lib.Net.Authentication.Controllers.Models;
+using Digital.Lib.Net.Core.Extensions.HttpUtilities;
+using Digital.Lib.Net.Core.Messages;
 using Newtonsoft.Json;
 
 namespace InternalTestProgram.Extensions;

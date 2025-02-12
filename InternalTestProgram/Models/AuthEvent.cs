@@ -1,4 +1,4 @@
-using Digital.Net.Authentication.Services.Authentication.Events;
+using Digital.Lib.Net.Authentication.Services.Authentication.Events;
 
 namespace InternalTestProgram.Models;
 

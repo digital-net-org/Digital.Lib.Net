@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Digital.Net.Authentication.Models;
-using Digital.Net.Core.Random;
-using Digital.Net.Entities.Attributes;
-using Digital.Net.Entities.Models;
+using Digital.Lib.Net.Authentication.Models;
+using Digital.Lib.Net.Core.Random;
+using Digital.Lib.Net.Entities.Attributes;
+using Digital.Lib.Net.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternalTestProgram.Models;

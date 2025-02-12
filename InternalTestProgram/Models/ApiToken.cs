@@ -1,4 +1,4 @@
-using Digital.Net.Authentication.Models.Authorizations;
+using Digital.Lib.Net.Authentication.Models.Authorizations;
 
 namespace InternalTestProgram.Models;
 

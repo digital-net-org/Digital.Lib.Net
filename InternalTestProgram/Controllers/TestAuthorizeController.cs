@@ -1,4 +1,4 @@
-using Digital.Net.Authentication.Attributes;
+using Digital.Lib.Net.Authentication.Attributes;
 using InternalTestProgram.Models;
 using Microsoft.AspNetCore.Mvc;
 

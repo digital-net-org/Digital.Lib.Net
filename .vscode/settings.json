@@ -1,5 +1,5 @@
 {
-    "dotnet.defaultSolution": "Safari.Net.sln",
+    "dotnet.defaultSolution": "Digital.Lib.Net.sln",
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "csharpier.csharpier-vscode",
     "editor.codeActionsOnSave": {

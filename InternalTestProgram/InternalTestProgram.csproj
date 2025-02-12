@@ -13,11 +13,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Digital.Net.Authentication\Digital.Net.Authentication.csproj"/>
-        <ProjectReference Include="..\Digital.Net.Core\Digital.Net.Core.csproj" />
-        <ProjectReference Include="..\Digital.Net.Database\Digital.Net.Database.csproj" />
-        <ProjectReference Include="..\Digital.Net.Mvc\Digital.Net.Mvc.csproj" />
-        <ProjectReference Include="..\Digital.Net.TestTools\Digital.Net.TestTools.csproj"/>
+        <ProjectReference Include="..\Digital.Lib.Net.Authentication\Digital.Lib.Net.Authentication.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.Core\Digital.Lib.Net.Core.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.Database\Digital.Lib.Net.Database.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.Mvc\Digital.Lib.Net.Mvc.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.TestTools\Digital.Lib.Net.TestTools.csproj" />
     </ItemGroup>
 
     <ItemGroup>
