@@ -1,8 +1,8 @@
 using Microsoft.Data.Sqlite;
 
-namespace Digital.Lib.Net.Database.Utils;
+namespace Digital.Lib.Net.TestTools.Data;
 
-public static class DatabaseUtils
+public static class SqliteUtils
 {
     public const string InMemoryConnectionString = "Filename=:memory:";
 

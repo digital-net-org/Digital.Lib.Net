@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Digital.Lib.Net.Core.Environment;
-using Digital.Lib.Net.Database.Utils;
+using Digital.Lib.Net.TestTools.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -17,7 +17,7 @@ public class AppFactory<T, TContext> : WebApplicationFactory<T> where T : class 
 
     public AppFactory()
     {
-        _connection = DatabaseUtils.InMemorySqliteConnection;
+        _connection = SqliteUtils.InMemorySqliteConnection;
         _connection.Open();
     }
 

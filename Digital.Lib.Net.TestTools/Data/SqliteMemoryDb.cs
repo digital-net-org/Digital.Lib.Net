@@ -1,4 +1,3 @@
-using Digital.Lib.Net.Database.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ public sealed class SqliteMemoryDb<T> : IDisposable where T : DbContext
 
     public SqliteMemoryDb()
     {
-        _connection = DatabaseUtils.InMemorySqliteConnection;
+        _connection = SqliteUtils.InMemorySqliteConnection;
         var contextOptions = new DbContextOptionsBuilder<T>().UseSqlite(_connection).Options;
         _connection.Open();
         Context = (T)Activator.CreateInstance(typeof(T), contextOptions)! ?? throw new InvalidOperationException();
