@@ -1,11 +1,15 @@
 using Digital.Lib.Net.Entities.Models;
 using Digital.Lib.Net.Entities.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.TestTools.Data.Factories;
 
-public class DataFactory<T>(IRepository<T> repository)
+public class DataFactory<T, TContext>(TContext context)
     where T : Entity
+    where TContext : DbContext
 {
+    public readonly IRepository<T, TContext> Repository = new Repository<T, TContext>(context);
+
     private readonly List<T> _entities = [];
 
     /// <summary>
@@ -17,14 +21,14 @@ public class DataFactory<T>(IRepository<T> repository)
     public T Create(T? entity = null)
     {
         entity ??= Activator.CreateInstance<T>();
-        repository.Create(entity);
-        repository.Save();
+        Repository.Create(entity);
+        Repository.Save();
         _entities.Add(entity);
         var id = DataFactoryUtils.ResolveId(entity);
         if (Guid.TryParse(id.ToString(), out var guid))
-            entity = repository.GetById(guid);
+            entity = Repository.GetById(guid);
         if (int.TryParse(id.ToString(), out var intId))
-            entity = repository.GetById(intId);
+            entity = Repository.GetById(intId);
         return entity ?? throw new InvalidOperationException("Entity could not be created.");
     }
 
@@ -37,14 +41,14 @@ public class DataFactory<T>(IRepository<T> repository)
     public async Task<T> CreateAsync(T? entity = null)
     {
         entity ??= Activator.CreateInstance<T>();
-        await repository.CreateAsync(entity);
-        await repository.SaveAsync();
+        await Repository.CreateAsync(entity);
+        await Repository.SaveAsync();
         _entities.Add(entity);
         var id = DataFactoryUtils.ResolveId(entity);
         if (Guid.TryParse(id.ToString(), out var guid))
-            entity = await repository.GetByIdAsync(guid);
+            entity = await Repository.GetByIdAsync(guid);
         if (int.TryParse(id.ToString(), out var intId))
-            entity = await repository.GetByIdAsync(intId);
+            entity = await Repository.GetByIdAsync(intId);
         return entity ?? throw new InvalidOperationException("Entity could not be created.");
     }
 
@@ -80,8 +84,8 @@ public class DataFactory<T>(IRepository<T> repository)
     public void Dispose()
     {
         foreach (var entity in _entities)
-            repository.Delete(entity);
+            Repository.Delete(entity);
 
-        repository.Save();
+        Repository.Save();
     }
 }

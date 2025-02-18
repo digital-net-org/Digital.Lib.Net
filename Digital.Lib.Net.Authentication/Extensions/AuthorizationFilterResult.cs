@@ -6,11 +6,11 @@ namespace Digital.Lib.Net.Authentication.Extensions;
 
 public static class AuthorizationFilterResult
 {
-    public static Result SetUnauthorisedResult(this AuthorizationFilterContext context)
+    public static Result RejectAuthorization(this AuthorizationFilterContext context, int statusCode)
     {
         var result = new Result();
         result.AddError(new UnauthorizedAccessException());
-        context.Result = new JsonResult(result) { StatusCode = 401 };
+        context.Result = new JsonResult(result) { StatusCode = statusCode };
         return result;
     }
 }

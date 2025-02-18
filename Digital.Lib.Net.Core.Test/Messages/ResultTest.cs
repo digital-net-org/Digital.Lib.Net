@@ -20,30 +20,6 @@ public class ResultTest : UnitTest
     }
 
     [Fact]
-    public void AddError_ReturnsResult_WhenEnum()
-    {
-        var model = new Result();
-        const TestEnum errorType = TestEnum.Test;
-        model.AddError(errorType);
-        var error = model.Errors[0];
-        Assert.Single((IEnumerable)model.Errors);
-        Assert.True(model.HasError());
-        Assert.Equal(errorType.GetDisplayName(), error.Message);
-    }
-
-    [Fact]
-    public void AddInfo_ReturnsResult_WhenEnum()
-    {
-        var model = new Result();
-        const TestEnum infoType = TestEnum.Test;
-        model.AddInfo(infoType);
-        var info = model.Infos[0];
-        Assert.Single(model.Infos);
-        Assert.False(model.HasError());
-        Assert.Equal(infoType.GetDisplayName(), info.Message);
-    }
-
-    [Fact]
     public void Merge_ReturnsResultWithNewErrors()
     {
         var model1 = new Result<string>("Test");

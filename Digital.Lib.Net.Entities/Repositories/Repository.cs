@@ -10,17 +10,49 @@ namespace Digital.Lib.Net.Entities.Repositories;
 ///     Repository class for a database context.
 /// </summary>
 /// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
-public class Repository<T>(DbContext context) : IRepository<T>
+/// <typeparam name="TContext">The entity DbContext.</typeparam>
+public class Repository<T, TContext>(TContext context) : IRepository<T, TContext>
     where T : Entity
+    where TContext : DbContext
 {
     public void Create(T entity) => context.Set<T>().Add(entity);
 
     public async Task CreateAsync(T entity) => await context.Set<T>().AddAsync(entity);
 
+    public T CreateAndSave(T entity)
+    {
+        context.Set<T>().Add(entity);
+        Save();
+        return entity;
+    }
+
+    public async Task<T> CreateAndSaveAsync(T entity)
+    {
+        context.Set<T>().Add(entity);
+        await SaveAsync();
+        return entity;
+    }
+
     public void Update(T entity)
     {
         UpdateNestedEntities(entity);
         context.Set<T>().Update(entity);
+    }
+
+    public T UpdateAndSave(T entity)
+    {
+        UpdateNestedEntities(entity);
+        context.Set<T>().Update(entity);
+        Save();
+        return entity;
+    }
+
+    public async Task<T> UpdateAndSaveAsync(T entity)
+    {
+        UpdateNestedEntities(entity);
+        context.Set<T>().Update(entity);
+        await SaveAsync();
+        return entity;
     }
 
     public void UpdateRange(IEnumerable<T> entities)
@@ -33,8 +65,13 @@ public class Repository<T>(DbContext context) : IRepository<T>
 
     public void Delete(T entity) => context.Set<T>().Remove(entity);
 
-    public IQueryable<T> Get(Expression<Func<T, bool>> expression) =>
-        context.Set<T>().Where(expression);
+    public IQueryable<T> Get(Expression<Func<T, bool>>? expression = null)
+    {
+        var set = context.Set<T>();
+        return expression is not null
+            ? set.Where(expression)
+            : set.AsQueryable();
+    }
 
     public IQueryable<T> DynamicQuery(string predicate, params object?[] args) =>
         context.Set<T>().Where(predicate, args);
@@ -49,7 +86,8 @@ public class Repository<T>(DbContext context) : IRepository<T>
 
     public int Count(Expression<Func<T, bool>> expression) => context.Set<T>().Count(expression);
 
-    public Task<int> CountAsync(Expression<Func<T, bool>> expression) => context.Set<T>().CountAsync(expression);
+    public Task<int> CountAsync(Expression<Func<T, bool>> expression) =>
+        context.Set<T>().CountAsync(expression);
 
     public async Task SaveAsync()
     {
@@ -68,8 +106,10 @@ public class Repository<T>(DbContext context) : IRepository<T>
         var properties = entity.GetType().GetProperties();
         foreach (var property in properties)
         {
-            if (!property.PropertyType.IsGenericType ||
-                property.PropertyType.GetGenericTypeDefinition() != typeof(List<>))
+            if (
+                !property.PropertyType.IsGenericType
+                || property.PropertyType.GetGenericTypeDefinition() != typeof(List<>)
+            )
                 continue;
             var values = property.GetValue(entity);
 
@@ -86,9 +126,7 @@ public class Repository<T>(DbContext context) : IRepository<T>
         var now = DateTime.UtcNow;
         var entities = context
             .ChangeTracker.Entries()
-            .Where(x =>
-                x is { Entity: Entity, State: EntityState.Added or EntityState.Modified }
-            );
+            .Where(x => x is { Entity: Entity, State: EntityState.Added or EntityState.Modified });
         foreach (var entity in entities)
         {
             var property = entity.State is EntityState.Added ? "CreatedAt" : "UpdatedAt";

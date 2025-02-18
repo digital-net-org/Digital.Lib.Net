@@ -1,5 +1,0 @@
-using Digital.Lib.Net.Authentication.Models.Authorizations;
-
-namespace InternalTestProgram.Models;
-
-public class ApiToken : AuthorizationToken;

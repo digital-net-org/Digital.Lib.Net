@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Entities.Test.Attributes;
 
-// ReSharper disable once InconsistentNaming
 public class AttributeAnalyzerTest : UnitTest
 {
     private enum ETestFlag

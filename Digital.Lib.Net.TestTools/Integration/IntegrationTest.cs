@@ -1,7 +1,5 @@
-using Digital.Lib.Net.Core.Environment;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -12,7 +10,6 @@ public abstract class IntegrationTest<T, TContext> : UnitTest, IClassFixture<App
     where TContext : DbContext
 {
     protected readonly List<HttpClient> Clients = [];
-    protected readonly IConfiguration Configuration;
     protected readonly WebApplicationFactory<T> Factory;
 
     protected HttpClient BaseClient => Clients.First();
@@ -21,14 +18,10 @@ public abstract class IntegrationTest<T, TContext> : UnitTest, IClassFixture<App
     {
         Factory = fixture;
         Clients.Add(Factory.CreateClient());
-        Configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", true)
-            .AddJsonFile($"appsettings.{AspNetEnv.Test}.json", true)
-            .AddEnvironmentVariables()
-            .Build();
     }
 
-    protected TContext GetContext() => Factory.Services.GetRequiredService<TContext>();
+    protected TService GetService<TService>() where TService : notnull =>
+        Factory.Services.GetRequiredService<TService>();
 
     protected void CreateClient(int? amount = 1)
     {

@@ -39,6 +39,31 @@ public static class ApplicationSettings
             .AddEnvironmentVariables();
 
     /// <summary>
+    ///     Verify if mandatory settings are sets.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
+    public static WebApplicationBuilder ValidateApplicationSettings(this WebApplicationBuilder builder)
+    {
+        var mandatorySettings = new[]
+        {
+            "Domain",
+            "ConnectionStrings:Default",
+            "Auth:JwtSecret"
+        };
+
+        foreach (var setting in mandatorySettings)
+        {
+            var value = builder.Configuration.GetSection(setting).Value;
+            if (string.IsNullOrWhiteSpace(value))
+                throw new NullReferenceException($"Missing mandatory configuration section: {setting}");
+        }
+
+        return builder;
+    }
+
+    /// <summary>
     ///     Get the connection string from the provided WebApplicationBuilder.
     /// </summary>
     /// <param name="builder">The WebApplicationBuilder.</param>
@@ -58,16 +83,4 @@ public static class ApplicationSettings
     /// <returns>The connection string or null.</returns>
     public static string? GetConnectionString(string[]? args) =>
         args is not null && args.Length > 0 ? args[0] : null;
-
-
-    /// <summary>
-    ///     Get the connection string from the provided project appsettings files.
-    /// </summary>
-    /// <param name="projectName">The name of the project.</param>
-    /// <param name="target">The target connection string.</param>
-    /// <returns>The connection string.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when no connection string is found.</exception>
-    public static string GetExternalConnectionString(string projectName, string target = "Default") =>
-        new ConfigurationBuilder().AddProjectSettings(projectName).Build().GetConnectionString(target)
-        ?? throw new InvalidOperationException($"No connection string found in {projectName} appsettings files");
 }

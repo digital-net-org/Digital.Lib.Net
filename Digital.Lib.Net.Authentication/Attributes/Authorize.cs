@@ -1,11 +1,9 @@
 using Digital.Lib.Net.Authentication.Exceptions;
-using Digital.Lib.Net.Authentication.Models;
-using Digital.Lib.Net.Authentication.Models.Authorizations;
-using Digital.Lib.Net.Authentication.Options;
 using Digital.Lib.Net.Authentication.Services.Authorization;
 using Digital.Lib.Net.Authentication.Extensions;
-using Digital.Lib.Net.Core.Messages;
-using Digital.Lib.Net.Entities.Models;
+using Digital.Lib.Net.Authentication.Models;
+using Digital.Lib.Net.Authentication.Options;
+using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Mvc.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,22 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Digital.Lib.Net.Authentication.Attributes;
 
 /// <summary>
-///     Used to authorize an "API user". The authorization can be done using an API Key, a JWT token, or both.
+///     Used to authorize a User to use a controller.
+///     The authorization can be done using an API Key, a JWT token, or both.
 ///     The authorization result is stored in the Api Context.
 /// </summary>
 /// <param name="type">The type of authorization to use.</param>
-/// <typeparam name="TApiUser">
-///     The type of the API user. The provided type is used to define the correct Repository to look for the user.
-///     Must implement <see cref="EntityGuid" /> and <see cref="IApiUser" />.
-/// </typeparam>
-/// <remarks>
-///     An Api user should only use a GUID as an identifier. Thus, you can register as many API users types as you want.
-/// </remarks>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuthorizationFilter
-    where TApiUser : EntityGuid, IApiUser
+public class AuthorizeAttribute(AuthorizeType type, UserRole role = UserRole.User) : Attribute, IAuthorizationFilter
 {
     private AuthorizeType Type { get; } = type;
+    public UserRole Role { get; set; } = role;
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -38,28 +30,27 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
             result.Merge(AuthorizeApiKey(context));
         if (Type.HasFlag(AuthorizeType.Jwt) && result.IsAuthorized is false)
             result.Merge(AuthorizeJwt(context));
-        if (!result.HasError() || result.IsAuthorized)
+        if (result.Role < Role)
+            result.Forbid();
+        if (!result.HasError() || result is { IsAuthorized: true, IsForbidden: false })
         {
             var contextService = context.HttpContext.RequestServices.GetRequiredService<IHttpContextService>();
-            contextService.AddItem(AuthenticationDefaults.ApiContextAuthorizationKey, result);
+            contextService.AddItem(DefaultAuthenticationOptions.ApiContextAuthorizationKey, result);
             return;
         }
-
-        OnAuthorizationFailure(context, result);
-        context.SetUnauthorisedResult();
+        context.RejectAuthorization(result.IsForbidden ? 403 : 401);
     }
 
     private AuthorizationResult AuthorizeApiKey(AuthorizationFilterContext context)
     {
         var result = new AuthorizationResult();
-        var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationApiKeyService<TApiUser>>();
+        var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationApiKeyService>();
         var apiKey = service.GetRequestKey();
 
         if (Type.HasFlag(AuthorizeType.Jwt) && apiKey is null)
             return result;
 
-        result.Merge(service.AuthorizeApiUser(apiKey));
-        result.Try(() => OnApiKeyAuthorization(context, apiKey, result.ApiUserId));
+        result.Merge(service.AuthorizeUser(apiKey));
         if (!result.HasError())
             result.Authorize();
 
@@ -69,48 +60,16 @@ public class AuthorizeAttribute<TApiUser>(AuthorizeType type) : Attribute, IAuth
     private AuthorizationResult AuthorizeJwt(AuthorizationFilterContext context)
     {
         var result = new AuthorizationResult();
-        var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationJwtService<TApiUser>>();
+        var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationJwtService>();
         var token = service.GetRequestKey();
 
         if (token is null)
-            return result.AddError(new AuthorizationTokenNotFoundException());
+            return result.AddError(new TokenNotFoundException());
 
-        result.Merge(service.AuthorizeApiUser(token));
-        result.Try(() => OnJwtAuthorization(context, token, result.ApiUserId));
+        result.Merge(service.AuthorizeUser(token));
         if (!result.HasError())
             result.Authorize();
 
         return result;
-    }
-
-    /// <summary>
-    ///     Executes custom logic for API Key authorization.
-    /// </summary>
-    /// <param name="context">The context of the authorization.</param>
-    /// <param name="apiKey">The API Key to authorize.</param>
-    /// <remarks>Override this method to execute custom logic during API Key authorization.</remarks>
-    /// <remarks>Throw an exception to return an unauthorized result.</remarks>
-    public virtual void OnApiKeyAuthorization(AuthorizationFilterContext context, string? apiKey, Guid? apiUserId)
-    {
-    }
-
-    /// <summary>
-    ///     Executes custom logic for JWT authorization.
-    /// </summary>
-    /// <param name="context">The context of the authorization.</param>
-    /// <remarks>Override this method to execute custom logic during JWT authorization.</remarks>
-    /// <remarks>Throw an exception to return an unauthorized result.</remarks>
-    public virtual void OnJwtAuthorization(AuthorizationFilterContext context, string? token, Guid? apiUserId)
-    {
-    }
-
-    /// <summary>
-    ///     Executes custom logic for authorization failure.
-    /// </summary>
-    /// <param name="context">The context of the authorization.</param>
-    /// <param name="result">The result of the authorization.</param>
-    /// <remarks>Override this method to execute custom logic when authorization fails.</remarks>
-    public virtual void OnAuthorizationFailure(AuthorizationFilterContext context, Result result)
-    {
     }
 }

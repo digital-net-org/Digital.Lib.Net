@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
+using Digital.Lib.Net.Core.Exceptions;
 using Digital.Lib.Net.Core.Extensions.StringUtilities;
 using Digital.Lib.Net.Core.Messages;
 using Digital.Lib.Net.Core.Models;
+using Digital.Lib.Net.Entities.Exceptions;
 using Digital.Lib.Net.Entities.Models;
 using Digital.Lib.Net.Entities.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
@@ -9,18 +11,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Entities.Services;
 
-public class EntityService<T>(IRepository<T> repository) : IEntityService<T> where T : Entity
+public class EntityService<T, TContext>(IRepository<T, TContext> repository) : IEntityService<T, TContext>
+    where T : Entity
+    where TContext : DbContext
 {
     public List<SchemaProperty<T>> GetSchema() =>
-        typeof(T)
-            .GetProperties()
-            .Select(property => new SchemaProperty<T>(property))
-            .ToList();
+        typeof(T).GetProperties().Select(property => new SchemaProperty<T>(property)).ToList();
 
-    public Result<TModel> Get<TModel>(Guid? id) where TModel : class => Get<TModel>(repository.GetById(id));
-    public Result<TModel> Get<TModel>(int id) where TModel : class => Get<TModel>(repository.GetById(id));
+    public Result<TModel> Get<TModel>(Guid? id)
+        where TModel : class => Get<TModel>(repository.GetById(id));
 
-    private static Result<TModel> Get<TModel>(T? entity) where TModel : class
+    public Result<TModel> Get<TModel>(int id)
+        where TModel : class => Get<TModel>(repository.GetById(id));
+
+    private static Result<TModel> Get<TModel>(T? entity)
+        where TModel : class
     {
         var result = new Result<TModel>();
         if (entity is null)
@@ -39,13 +44,17 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
     {
         var result = new Result();
         if (entity is null)
-            return result.AddError(new KeyNotFoundException("Entity not found."));
+            return result.AddError(new ResourceNotFoundException());
         try
         {
             foreach (var o in patch.Operations)
             {
                 var key = o.path.ExtractFromPath().First();
-                ValidatePayload(o.value, o.path, x => x.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase));
+                ValidatePatchPayload(
+                    o.value,
+                    o.path,
+                    GetSchema().FirstOrDefault(x => x.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
+                );
             }
 
             patch.ApplyTo(entity);
@@ -62,6 +71,7 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
     }
 
     public async Task<Result> Delete(Guid? id) => await Delete(await repository.GetByIdAsync(id));
+
     public async Task<Result> Delete(int id) => await Delete(await repository.GetByIdAsync(id));
 
     private async Task<Result> Delete(T? entity)
@@ -89,7 +99,11 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
         try
         {
             foreach (var property in entity.GetType().GetProperties())
-                ValidatePayload(property.GetValue(entity), property.Name, x => x.Name == property.Name);
+                ValidatePayload(
+                    property.GetValue(entity),
+                    property.Name,
+                    GetSchema().FirstOrDefault(x => x.Name == property.Name)
+                );
 
             await OnCreate(entity);
             await repository.CreateAsync(entity);
@@ -103,41 +117,75 @@ public class EntityService<T>(IRepository<T> repository) : IEntityService<T> whe
         return result;
     }
 
-    private void ValidatePayload(object? value, string path, Expression<Func<SchemaProperty<T>, bool>> schemaPredicate)
+    private void ValidatePatchPayload(
+        object? value,
+        string path,
+        SchemaProperty<T>? property
+    )
     {
-        var prop = GetSchema().FirstOrDefault(schemaPredicate.Compile());
-
-        if (value is null || prop is null)
+        if (value is null || property is null)
             return;
 
-        if ((prop.IsIdentity || prop.IsForeignKey) && value.ToString() is "00000000-0000-0000-0000-000000000000" or "0")
+        ValidatePayload(value, path, property);
+
+        if (property.IsIdentity || property.IsReadOnly)
+            throw new EntityValidationException($"{path}: This field is read-only.");
+    }
+
+    private void ValidatePayload(
+        object? value,
+        string path,
+        SchemaProperty<T>? property
+    )
+    {
+        if (value is null || property is null)
+            return;
+
+        if (
+            (property.IsIdentity || property.IsForeignKey)
+            && value.ToString() is "00000000-0000-0000-0000-000000000000" or "0"
+        )
             return;
 
         if (path is "CreatedAt" or "UpdatedAt" && (DateTime)value == DateTime.MinValue)
             return;
 
-        if (prop.IsIdentity || prop.IsReadOnly)
-            throw new InvalidOperationException($"{path}: This field is read-only.");
+        if (property.IsRequired && value is null)
+            throw new EntityValidationException(
+                $"{path}: This field is required and cannot be null."
+            );
 
-        if (prop.IsRequired && value is null)
-            throw new InvalidOperationException($"{path}: This field is required and cannot be null.");
+        if (
+            property is { IsRequired: true, Type: "String" }
+            && string.IsNullOrWhiteSpace(value.ToString())
+        )
+            throw new EntityValidationException(
+                $"{path}: This field is required and cannot be empty."
+            );
 
-        if (prop is { IsRequired: true, Type: "String" } && string.IsNullOrWhiteSpace(value.ToString()))
-            throw new InvalidOperationException($"{path}: This field is required and cannot be empty.");
+        if (property is { MaxLength: > 0, Type: "String" } && value.ToString()?.Length > property.MaxLength)
+            throw new EntityValidationException($"{path}: Maximum length exceeded.");
 
-        if (prop is { MaxLength: > 0, Type: "String" } && value.ToString()?.Length > prop.MaxLength)
-            throw new InvalidOperationException($"{path}: Maximum length exceeded.");
+        if (
+            property.IsUnique
+            && repository.Get(x => EF.Property<object>(x, property.Name).Equals(value)).Any()
+        )
+            throw new EntityValidationException(
+                $"{path}: This value violates a unique constraint."
+            );
 
-        if (prop.IsUnique &&
-            repository.Get(x => EF.Property<object>(x, prop.Name).Equals(value)).Any())
-            throw new InvalidOperationException($"{path}: This value violates a unique constraint.");
-
-        if (prop.RegexValidation is not null &&
-            !prop.RegexValidation.IsMatch(value.ToString() ?? ""))
-            throw new InvalidOperationException($"{path}: This value does not meet the requirements.");
+        if (
+            property.RegexValidation is not null
+            && !property.RegexValidation.IsMatch(value.ToString() ?? "")
+        )
+            throw new EntityValidationException(
+                $"{path}: This value does not meet the requirements."
+            );
     }
 
     protected virtual Task OnCreate(T entity) => Task.CompletedTask;
+
     protected virtual Task OnPatch(T entity) => Task.CompletedTask;
+
     protected virtual Task OnDelete(T entity) => Task.CompletedTask;
 }

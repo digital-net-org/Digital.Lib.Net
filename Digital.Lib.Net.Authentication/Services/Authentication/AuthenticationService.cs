@@ -1,72 +1,98 @@
 using System.Security.Authentication;
 using Digital.Lib.Net.Authentication.Exceptions;
 using Digital.Lib.Net.Authentication.Models;
-using Digital.Lib.Net.Authentication.Models.Authorizations;
-using Digital.Lib.Net.Authentication.Models.Events;
-using Digital.Lib.Net.Authentication.Services.Authentication.ApiUsers;
-using Digital.Lib.Net.Authentication.Services.Authentication.Events;
+using Digital.Lib.Net.Authentication.Options;
 using Digital.Lib.Net.Authentication.Services.Authorization;
-using Digital.Lib.Net.Authentication.Services.Options;
-using Digital.Lib.Net.Authentication.Services.Security;
 using Digital.Lib.Net.Core.Messages;
-using Digital.Lib.Net.Entities.Models;
+using Digital.Lib.Net.Entities.Context;
+using Digital.Lib.Net.Entities.Models.ApiTokens;
+using Digital.Lib.Net.Entities.Models.Events;
+using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Repositories;
+using Digital.Lib.Net.Events.Services;
 using Digital.Lib.Net.Mvc.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Authentication.Services.Authentication;
 
-public class AuthenticationService<TApiUser, TAuthorization>(
+public class AuthenticationService(
     IHttpContextService httpContextService,
-    IJwtOptionService jwtOptions,
-    IAuthenticationEventService<TApiUser> authenticationEventService,
+    IAuthenticationOptionService authenticationOptionService,
     IAuthenticationJwtService authenticationJwtService,
-    IAuthorizationJwtService<TApiUser> authorizationJwtService,
-    IApiUserService<TApiUser> apiUserService,
-    IRepository<TApiUser> apiUserRepository,
-    IRepository<TAuthorization> tokenRepository
-) : IAuthenticationService<TApiUser>
-    where TApiUser : EntityGuid, IApiUser
-    where TAuthorization : AuthorizationToken
+    IAuthorizationJwtService authorizationJwtService,
+    IEventService eventService,
+    IRepository<User, DigitalContext> userRepository,
+    IRepository<ApiToken, DigitalContext> tokenRepository,
+    IRepository<Event, DigitalContext> eventRepository
+) : IAuthenticationService
 {
-    public async Task<Result<TApiUser>> ValidateCredentials(string login, string password)
+    public Guid? GetAuthenticatedUserId() =>
+        httpContextService
+            .GetItem<AuthorizationResult>(DefaultAuthenticationOptions.ApiContextAuthorizationKey)
+            ?.UserId;
+    public User? GetAuthenticatedUser() =>
+        userRepository.GetById(GetAuthenticatedUserId());
+    public async Task<User?> GetAuthenticatedUserAsync() =>
+        await userRepository.GetByIdAsync(GetAuthenticatedUserId());
+
+    public async Task<Result<User>> UpdatePasswordAsync(User user, string currentPassword, string newPassword)
     {
-        var result = new Result<TApiUser>
-        {
-            Value = await apiUserRepository.Get(u => u.Login == login).FirstOrDefaultAsync()
-        };
+        var result = new Result<User>();
 
-        if (result.Value is null)
-            result.AddError(new AuthenticationInvalidCredentialsException());
-        else if (!result.Value.IsActive)
-            result.AddError(new AuthenticationInactiveUserException());
-        else if (!HashService.VerifyPassword(result.Value, password))
-            result.AddError(new AuthenticationInvalidCredentialsException());
+        if (!PasswordUtils.VerifyPassword(user, currentPassword))
+            return result.AddError(new InvalidCredentialsException());
+        if (!authenticationOptionService.PasswordRegex.IsMatch(newPassword))
+            return result.AddError(new PasswordMalformedException());
 
+        user.Password = PasswordUtils.HashPassword(newPassword);
+        userRepository.Update(user);
+        await userRepository.SaveAsync();
         return result;
     }
 
-    public async Task<Result<string>> Login(string login, string password)
+    public async Task<int> GetLoginAttemptCountAsync(User? user = null)
     {
-        ApiEventState state;
-        var result = new Result<string>();
-        var userResult = new Result<TApiUser>();
+        if (user is null)
+            return 0;
+        var threshold = DateTime.UtcNow.Subtract(authenticationOptionService.GetMaxLoginAttemptsThreshold());
+        return await eventRepository.CountAsync(
+            e =>
+                e.CreatedAt > threshold
+                && e.Name == AuthenticationEvents.Login
+                && e.State == EventState.Failed
+                && e.IpAddress == httpContextService.IpAddress
+                && e.UserId == user.Id
+        );
+    }
 
-        if (authenticationEventService.HasTooManyAttempts(login))
+    public async Task<Result<User>> ValidateCredentialsAsync(string login, string password)
+    {
+        var result = new Result<User>
         {
-            result.AddError(new AuthenticationTooManyAttemptsException());
-            state = ApiEventState.Failed;
-        }
-        else
-        {
-            userResult = await ValidateCredentials(login, password);
-            state = userResult.HasError() ? ApiEventState.Failed : ApiEventState.Success;
-        }
+            Value = await userRepository.Get(u => u.Login == login).FirstOrDefaultAsync()
+        };
+
+        if (await GetLoginAttemptCountAsync(result.Value) >= DefaultAuthenticationOptions.MaxLoginAttempts)
+            result.AddError(new TooManyAttemptsException());
+        if (result.Value is null)
+            result.AddError(new InvalidCredentialsException());
+        else if (!result.Value.IsActive)
+            result.AddError(new InactiveUserException());
+        else if (!PasswordUtils.VerifyPassword(result.Value, password))
+            result.AddError(new InvalidCredentialsException());
+        return result;
+    }
+
+    public async Task<Result<string>> LoginAsync(string login, string password)
+    {
+        var result = new Result<string>();
+        var userResult = await ValidateCredentialsAsync(login, password);
+        var state = userResult.HasError() ? EventState.Failed : EventState.Success;
 
         result.Merge(userResult);
 
-        await authenticationEventService.RegisterEventAsync(
-            AuthenticationEventType.Login,
+        await eventService.RegisterEventAsync(
+            AuthenticationEvents.Login,
             state,
             result,
             userResult.Value?.Id,
@@ -79,66 +105,66 @@ public class AuthenticationService<TApiUser, TAuthorization>(
         result.Value = authenticationJwtService.GenerateBearerToken(userResult.Value!.Id);
         httpContextService.SetResponseCookie(
             authenticationJwtService.GenerateRefreshToken(userResult.Value.Id),
-            jwtOptions.CookieName,
-            jwtOptions.GetRefreshTokenExpirationDate()
+            authenticationOptionService.CookieName,
+            authenticationOptionService.GetRefreshTokenExpirationDate()
         );
         return result;
     }
 
     public Result<string> RefreshTokens()
     {
-        var token = httpContextService.Request.Cookies[jwtOptions.CookieName];
+        var token = httpContextService.Request.Cookies[authenticationOptionService.CookieName];
         var result = new Result<string>();
 
-        var tokenResult = authorizationJwtService.AuthorizeApiUserRefresh(token);
+        var tokenResult = authorizationJwtService.AuthorizeRefreshToken(token);
         result.Merge(tokenResult);
         if (result.HasError())
             return result;
 
         httpContextService.SetResponseCookie(
-            authenticationJwtService.GenerateRefreshToken(tokenResult.ApiUserId),
-            jwtOptions.CookieName,
-            jwtOptions.GetRefreshTokenExpirationDate()
+            authenticationJwtService.GenerateRefreshToken(tokenResult.UserId),
+            authenticationOptionService.CookieName,
+            authenticationOptionService.GetRefreshTokenExpirationDate()
         );
-        result.Value = authenticationJwtService.GenerateBearerToken(tokenResult.ApiUserId);
+        result.Value = authenticationJwtService.GenerateBearerToken(tokenResult.UserId);
         return result;
     }
 
-    public async Task<Result> Logout()
+    public async Task<Result> LogoutAsync()
     {
         var result = new Result();
-        var refreshToken = httpContextService.Request.Cookies[jwtOptions.CookieName];
+        var refreshToken = httpContextService.Request.Cookies[authenticationOptionService.CookieName];
         if (refreshToken is null)
             return result.AddError(new AuthenticationException());
 
         await authenticationJwtService.RevokeTokenAsync(refreshToken);
-        httpContextService.Response.Cookies.Delete(jwtOptions.CookieName);
+        httpContextService.Response.Cookies.Delete(authenticationOptionService.CookieName);
 
-        await authenticationEventService.RegisterEventAsync(
-            AuthenticationEventType.Logout,
-            ApiEventState.Success,
+        await eventService.RegisterEventAsync(
+            AuthenticationEvents.Logout,
+            EventState.Success,
             null,
-            apiUserService.GetAuthenticatedUserId()
+            GetAuthenticatedUserId()
         );
         return result;
     }
 
-    public async Task<Result> LogoutAll()
+    public async Task<Result> LogoutAllAsync()
     {
         var result = new Result();
-        var refreshToken = httpContextService.Request.Cookies[jwtOptions.CookieName];
-        var apiUserId = tokenRepository.Get(u => u.Key == refreshToken).FirstOrDefault()?.ApiUserId;
-        if (apiUserId is null)
+        var refreshToken = httpContextService.Request.Cookies[authenticationOptionService.CookieName];
+        var userId = tokenRepository.Get(u => u.Key == refreshToken).FirstOrDefault()?.UserId;
+        if (userId is null)
             return result.AddError(new AuthenticationException());
 
-        await authenticationJwtService.RevokeAllTokensAsync(apiUserId.Value);
-        httpContextService.Response.Cookies.Delete(jwtOptions.CookieName);
+        await authenticationJwtService.RevokeAllTokensAsync(userId.Value);
+        httpContextService.Response.Cookies.Delete(authenticationOptionService.CookieName);
 
-        await authenticationEventService.RegisterEventAsync(
-            AuthenticationEventType.LogoutAll,
-            ApiEventState.Success,
+        await eventService.RegisterEventAsync(
+            AuthenticationEvents.LogoutAll,
+            EventState.Success,
             null,
-            apiUserId
+            userId
         );
         return result;
     }

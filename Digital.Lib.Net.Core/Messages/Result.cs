@@ -23,21 +23,9 @@ public class Result
         return this;
     }
 
-    public Result AddError(Exception ex, Enum? message = null)
+    public Result AddError(Exception ex)
     {
-        Errors.Add(new ResultMessage(ex, message));
-        return this;
-    }
-
-    public Result AddError(Enum message)
-    {
-        Errors.Add(new ResultMessage(message));
-        return this;
-    }
-
-    public Result AddInfo(Enum message)
-    {
-        Infos.Add(new ResultMessage(message));
+        Errors.Add(new ResultMessage(ex));
         return this;
     }
 
@@ -75,41 +63,27 @@ public class Result<T> : Result where T : class
 
     public T? Value { get; set; }
 
-    public new Result<T> AddError(Exception ex, Enum? message = null)
+    public new Result<T> Merge(Result result)
     {
-        Errors.Add(new ResultMessage(ex, message));
+        base.Merge(result);
         return this;
     }
 
-    public new Result<T> AddError(Enum message)
+    public new Result<T> AddError(Exception ex)
     {
-        Errors.Add(new ResultMessage(message));
-        return this;
-    }
-
-    public new Result<T> AddInfo(Enum message)
-    {
-        Infos.Add(new ResultMessage(message));
+        base.AddError(ex);
         return this;
     }
 
     public new Result<T> AddInfo(string message)
     {
-        Infos.Add(new ResultMessage(message));
+        base.AddInfo(message);
         return this;
     }
 
     public new Result<T> Try(Action action)
     {
-        try
-        {
-            action();
-        }
-        catch (Exception ex)
-        {
-            AddError(ex);
-        }
-
+        base.Try(action);
         return this;
     }
 }

@@ -16,20 +16,4 @@ public class ResultMessageTest : UnitTest
         Assert.Equal(ex.StackTrace, result.StackTrace);
         Assert.Matches(@"0x[0-9A-F]{8}", result.Code);
     }
-
-    [Fact]
-    public void ConstructorTest_ReturnsEnumValues_WhenCastedWithEnum()
-    {
-        var result = new ResultMessage(EResultMessage.TestMessage);
-        Assert.Equal("Test Message", result.Message);
-        Assert.Equal("TEST_MESSAGE", result.Reference);
-        Assert.Equal("10", result.Code);
-        Assert.Null(result.StackTrace);
-    }
-}
-
-public enum EResultMessage
-{
-    [Display(Name="Test Message")]
-    TestMessage = 10
 }

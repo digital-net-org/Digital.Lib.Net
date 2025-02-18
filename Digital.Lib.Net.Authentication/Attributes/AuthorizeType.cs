@@ -4,5 +4,6 @@ namespace Digital.Lib.Net.Authentication.Attributes;
 public enum AuthorizeType
 {
     ApiKey,
-    Jwt
+    Jwt,
+    Any = ApiKey | Jwt
 }

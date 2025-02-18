@@ -1,12 +1,10 @@
 using System.Data.Common;
-using Digital.Lib.Net.Core.Environment;
 using Digital.Lib.Net.TestTools.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.TestTools.Integration;
@@ -21,18 +19,11 @@ public class AppFactory<T, TContext> : WebApplicationFactory<T> where T : class 
         _connection.Open();
     }
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.UseEnvironment(AspNetEnv.Test);
-        builder.UseConfiguration(CreateConfigurationBuilder());
-        builder.ConfigureTestServices(s => { AddMemoryDatabase(s, _connection); });
-    }
-
-    private static IConfigurationRoot CreateConfigurationBuilder()
-    {
-        var config = new ConfigurationBuilder();
-        return config.Build();
-    }
+    protected override void ConfigureWebHost(IWebHostBuilder builder) =>
+        builder
+            .UseTestEnvironment()
+            .UseTestConfiguration()
+            .ConfigureTestServices(s => { AddMemoryDatabase(s, _connection); });
 
     protected override void Dispose(bool disposing)
     {

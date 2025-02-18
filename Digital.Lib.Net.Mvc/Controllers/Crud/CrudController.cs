@@ -5,14 +5,16 @@ using Digital.Lib.Net.Entities.Models;
 using Digital.Lib.Net.Entities.Services;
 using Digital.Lib.Net.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Mvc.Controllers.Crud;
 
 [ApiController, Route("[controller]")]
-public abstract class CrudController<T, TDto, TPayload>(
-    IEntityService<T> entityService
+public abstract class CrudController<T, TContext, TDto, TPayload>(
+    IEntityService<T, TContext> entityService
 ) : ControllerBase
     where T : Entity
+    where TContext : DbContext
     where TDto : class
     where TPayload : class
 {

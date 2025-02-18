@@ -10,10 +10,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Digital.Lib.Net.Mvc.Controllers.Pagination;
 
 [Route("[controller]")]
-public abstract class PaginationController<T, TDto, TQuery>(
-    IRepository<T> repository
+public abstract class PaginationController<T, TContext, TDto, TQuery>(
+    IRepository<T, TContext> repository
 ) : ControllerBase
     where T : Entity
+    where TContext : DbContext
     where TDto : class
     where TQuery : Query
 {
