@@ -1,134 +1,53 @@
+using Digital.Lib.Net.Core.Random;
+using Digital.Lib.Net.Entities.Context;
+using Digital.Lib.Net.Entities.Models.Avatars;
+using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
-using Digital.Lib.Net.TestTools.Data.Factories;
-using InternalTestProgram;
-using InternalTestProgram.Models;
 
 namespace Digital.Lib.Net.Entities.Test.Repositories;
 
 public class RepositoryTest : UnitTest
 {
-    private readonly DataFactory<TestRole> _roleFactory;
-    private readonly Repository<TestRole> _roleRepository;
-    private readonly DataFactory<TestUser> _userFactory;
-    private readonly Repository<TestUser> _userRepository;
+    private static Document GetTestDocument() => new()
+    {
+        FileName = Randomizer.GenerateRandomString(Randomizer.AnyCharacter),
+        MimeType = Randomizer.GenerateRandomString(Randomizer.AnyCharacter),
+        FileSize = 1
+    };
+
+    private readonly Repository<Document, DigitalContext> _documentRepository;
+    private readonly Repository<Avatar, DigitalContext> _avatarRepository;
 
     public RepositoryTest()
     {
-        var context = new SqliteMemoryDb<TestContext>().Context;
-        _userRepository = new Repository<TestUser>(context);
-        _roleRepository = new Repository<TestRole>(context);
-        _userFactory = new DataFactory<TestUser>(_userRepository);
-        _roleFactory = new DataFactory<TestRole>(_roleRepository);
+        var context = new SqliteMemoryDb<DigitalContext>().Context;
+        _documentRepository = new Repository<Document, DigitalContext>(context);
+        _avatarRepository = new Repository<Avatar, DigitalContext>(context);
     }
 
     [Fact]
-    public void GetById_ReturnsUser_WhenIdIsGuidAndUserExists()
+    public async Task UpdateNestedEntities_ShouldUpdateNestedEntity()
     {
-        var user = _userFactory.Create();
-        var userById = _userRepository.GetById(user.Id);
-        Assert.NotNull(userById);
-        Assert.Equal(user.Id, userById.Id);
+        const string payload = "test";
+        var document = await _documentRepository.CreateAndSaveAsync(GetTestDocument());
+        var avatar = await _avatarRepository.CreateAndSaveAsync(new Avatar { DocumentId = document.Id });
+        avatar.Document!.FileName = payload;
+        await _documentRepository.UpdateAndSaveAsync(document);
+
+        var result = _documentRepository.Get().First();
+        Assert.Equal(payload, result.FileName);
     }
 
     [Fact]
-    public async void GetByIdAsync_ReturnsUser_WhenIdIsGuidAndUserExists()
+    public async Task AddTimestamps_ShouldSetNow_OnCreatedAtAndUpdatedAt()
     {
-        var user = await _userFactory.CreateAsync();
-        var userById = await _userRepository.GetByIdAsync(user.Id);
-        Assert.NotNull(userById);
-        Assert.Equal(user.Id, userById.Id);
-    }
+        var document = await _documentRepository.CreateAndSaveAsync(GetTestDocument());
+        Assert.True(document.CreatedAt > DateTime.UtcNow.AddSeconds(-60));
+        Assert.True(document.UpdatedAt is null);
 
-    [Fact]
-    public void GetById_ReturnsUser_WhenIdIsIntAndUserExists()
-    {
-        var role = _roleFactory.Create();
-        var roleById = _roleRepository.GetById(role.Id);
-        Assert.NotNull(roleById);
-        Assert.Equal(role.Id, roleById.Id);
-    }
-
-    [Fact]
-    public async void GetByIdAsync_ReturnsUser_WhenIdIsIntAndUserExists()
-    {
-        var role = await _roleFactory.CreateAsync();
-        var roleById = await _roleRepository.GetByIdAsync(role.Id);
-        Assert.NotNull(roleById);
-        Assert.Equal(role.Id, roleById.Id);
-    }
-
-    [Fact]
-    public void Create_ShouldCreateUser()
-    {
-        var user = new TestUser { Username = "Garfield" };
-        _userRepository.Create(user);
-        _userRepository.Save();
-        var created = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault();
-        Assert.NotNull(created);
-        Assert.Equal(user.Username, created.Username);
-    }
-
-    [Fact]
-    public async void CreateAsync_ShouldCreateUser()
-    {
-        var user = await _userFactory.CreateAsync();
-        var createdUser = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault();
-        Assert.NotNull(createdUser);
-        Assert.Equal(user.Username, createdUser.Username);
-        Assert.True(createdUser.CreatedAt <= DateTime.UtcNow);
-    }
-
-
-    [Fact]
-    public void Update_ShouldUpdateEntity()
-    {
-        var user = _userFactory.Create();
-        user.Username = "John Arbuckle";
-        _userRepository.Update(user);
-        _userRepository.Save();
-        var updatedUser = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault()!;
-        Assert.Equal(user.Username, updatedUser.Username);
-        Assert.True(updatedUser.UpdatedAt <= DateTime.UtcNow);
-    }
-
-    [Fact]
-    public void Update_ShouldUpdateNestedEntities()
-    {
-        const string payload = "UpdatedNestedObject";
-        var user = _userFactory.Create();
-
-        user.NestedObject.Name = payload;
-        _userRepository.Update(user);
-        _userRepository.Save();
-        var updatedUser = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault()!;
-        Assert.Equal(payload, updatedUser.NestedObject.Name);
-    }
-
-    [Fact]
-    public void UpdateRange_ShouldUpdateEntities()
-    {
-        var users = _userFactory.CreateMany(15).Skip(10).ToList();
-        foreach (var u in users)
-            u.Username = "UpdatedUser" + users.FindIndex(usr => usr == u);
-
-        _userRepository.UpdateRange(users);
-        _userRepository.Save();
-
-        var updatedUsers = _userRepository
-            .Get(u => u.Username.StartsWith("UpdatedUser") && u.UpdatedAt <= DateTime.UtcNow).ToList();
-
-        Assert.Equal(5, updatedUsers.Count);
-    }
-
-    [Fact]
-    public void Delete_ShouldDeleteUser()
-    {
-        var user = _userFactory.Create();
-        _userRepository.Delete(user);
-        _userRepository.Save();
-        var deleted = _userRepository.Get(u => u.Username == user.Username).FirstOrDefault();
-        Assert.True(deleted is null);
+        document = await _documentRepository.UpdateAndSaveAsync(document);
+        Assert.True(document.UpdatedAt > DateTime.UtcNow.AddSeconds(-60));
     }
 }

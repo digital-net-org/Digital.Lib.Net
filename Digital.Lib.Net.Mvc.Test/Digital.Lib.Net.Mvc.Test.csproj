@@ -11,7 +11,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Digital.Lib.Net.Mvc\Digital.Lib.Net.Mvc.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.TestTools\Digital.Lib.Net.TestTools.csproj" />
-        <ProjectReference Include="..\InternalTestProgram\InternalTestProgram.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

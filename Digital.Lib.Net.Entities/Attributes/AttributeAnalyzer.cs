@@ -12,7 +12,8 @@ namespace Digital.Lib.Net.Entities.Attributes;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 // ReSharper disable once InconsistentNaming
-public static class AttributeAnalyzer<T> where T : Entity
+public static class AttributeAnalyzer<T>
+    where T : Entity
 {
     public static bool IsRequired(string propertyName) =>
         typeof(T).GetProperty(propertyName)?.GetCustomAttribute<RequiredAttribute>() is not null;
@@ -38,14 +39,13 @@ public static class AttributeAnalyzer<T> where T : Entity
 
     public static bool IsIdentity(string propertyName) =>
         typeof(T)
-            .GetProperty(propertyName)?
-            .GetCustomAttribute<DatabaseGeneratedAttribute>()?
-            .DatabaseGeneratedOption == DatabaseGeneratedOption.Identity;
+            .GetProperty(propertyName)
+            ?.GetCustomAttribute<DatabaseGeneratedAttribute>()
+            ?.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity;
 
     public static bool IsIdentity(PropertyInfo property) =>
-        property
-            .GetCustomAttribute<DatabaseGeneratedAttribute>()?
-            .DatabaseGeneratedOption == DatabaseGeneratedOption.Identity;
+        property.GetCustomAttribute<DatabaseGeneratedAttribute>()?.DatabaseGeneratedOption
+        == DatabaseGeneratedOption.Identity;
 
     public static bool IsForeignKey(string propertyName) =>
         typeof(T).GetProperty(propertyName)?.GetCustomAttribute<ForeignKeyAttribute>() is not null;
@@ -66,7 +66,8 @@ public static class AttributeAnalyzer<T> where T : Entity
         property.GetCustomAttribute<ReadOnlyAttribute>() is not null;
 
     public static string GetPath(string propertyName) =>
-        typeof(T).GetProperty(propertyName)?.GetCustomAttribute<ColumnAttribute>()?.Name ?? propertyName;
+        typeof(T).GetProperty(propertyName)?.GetCustomAttribute<ColumnAttribute>()?.Name
+        ?? propertyName;
 
     public static string GetPath(PropertyInfo property) =>
         property.GetCustomAttribute<ColumnAttribute>()?.Name ?? property.Name;

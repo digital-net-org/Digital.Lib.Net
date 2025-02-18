@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>0.3.0</Version>
         <TargetFramework>net9.0</TargetFramework>
         <LangVersion>12</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -18,6 +17,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Digital.Lib.Net.Core\Digital.Lib.Net.Core.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Entities\Digital.Lib.Net.Entities.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.Events\Digital.Lib.Net.Events.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Mvc\Digital.Lib.Net.Mvc.csproj" />
     </ItemGroup>
 

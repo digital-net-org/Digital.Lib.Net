@@ -1,10 +1,13 @@
 ﻿using Digital.Lib.Net.Core.Messages;
 using Digital.Lib.Net.Entities.Models;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Entities.Services;
 
-public interface IEntityService<T> where T : Entity
+public interface IEntityService<T, TContext>
+    where T : Entity
+    where TContext : DbContext
 {
     /// <summary>
     ///     Get a schema of the entity describing its properties.
@@ -19,7 +22,8 @@ public interface IEntityService<T> where T : Entity
     /// <param name="id">The entity primary key</param>
     /// <typeparam name="TModel">The model to convert the entities to</typeparam>
     /// <returns>Result of the model</returns>
-    Result<TModel> Get<TModel>(Guid? id) where TModel : class;
+    Result<TModel> Get<TModel>(Guid? id)
+        where TModel : class;
 
     /// <summary>
     ///    Get an entity based on its primary key. Converts the entity to the provided model using constructor.
@@ -27,7 +31,8 @@ public interface IEntityService<T> where T : Entity
     /// <param name="id">The entity primary key</param>
     /// <typeparam name="TModel">The model to convert the entities to</typeparam>
     /// <returns>Result of the model</returns>
-    Result<TModel> Get<TModel>(int id) where TModel : class;
+    Result<TModel> Get<TModel>(int id)
+        where TModel : class;
 
     /// <summary>
     ///     Patch an entity based on its primary key.

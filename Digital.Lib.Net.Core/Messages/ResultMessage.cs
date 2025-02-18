@@ -8,20 +8,13 @@ namespace Digital.Lib.Net.Core.Messages;
 /// </summary>
 public class ResultMessage
 {
-    public ResultMessage(Exception ex, Enum? message = null)
+    public ResultMessage(Exception ex, string? message = null)
     {
         Code = message?.GetHashCode().ToString() ?? ex.GetFormattedErrorCode();
-        Message = message?.GetDisplayName() ?? ex.Message;
-        Reference = message?.ToReferenceString() ?? ex.GetReference();
+        Message = message ?? ex.Message;
+        Reference = ex.GetReference();
         StackTrace = ex.StackTrace;
         Exception = ex;
-    }
-
-    public ResultMessage(Enum message)
-    {
-        Code = message.GetHashCode().ToString();
-        Reference = message.ToReferenceString();
-        Message = message.GetDisplayName();
     }
 
     public ResultMessage(string message)

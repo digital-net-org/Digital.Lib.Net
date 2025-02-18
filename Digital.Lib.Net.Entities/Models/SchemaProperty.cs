@@ -4,7 +4,8 @@ using Digital.Lib.Net.Entities.Attributes;
 
 namespace Digital.Lib.Net.Entities.Models;
 
-public class SchemaProperty<T>(PropertyInfo propertyInfo) where T : Entity
+public class SchemaProperty<T>(PropertyInfo propertyInfo)
+    where T : Entity
 {
     public string Name { get; } = propertyInfo.Name;
     public string Path { get; } = AttributeAnalyzer<T>.GetPath(propertyInfo);

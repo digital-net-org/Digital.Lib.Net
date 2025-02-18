@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Digital.Lib.Net.Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Entities.Repositories;
 
@@ -7,8 +8,9 @@ namespace Digital.Lib.Net.Entities.Repositories;
 ///     Interface for a repository.
 /// </summary>
 /// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
-public interface IRepository<T>
+public interface IRepository<T, TContext>
     where T : Entity
+    where TContext : DbContext
 {
     /// <summary>
     ///     Create a new entity
@@ -23,6 +25,20 @@ public interface IRepository<T>
     public Task CreateAsync(T entity);
 
     /// <summary>
+    ///     Create a new entity and save it directly.
+    /// </summary>
+    /// <param name="entity">The entity to create</param>
+    /// <returns>The created entity</returns>
+    public T CreateAndSave(T entity);
+
+    /// <summary>
+    ///     Create a new entity asynchronously and save it directly.
+    /// </summary>
+    /// <param name="entity">The entity to create</param>
+    /// <returns>The created entity</returns>
+    public Task<T> CreateAndSaveAsync(T entity);
+
+    /// <summary>
     ///     Delete an entity
     /// </summary>
     /// <param name="entity">The entity to delete</param>
@@ -35,6 +51,18 @@ public interface IRepository<T>
     public void Update(T entity);
 
     /// <summary>
+    ///     Update an entity and save it directly.
+    /// </summary>
+    /// <param name="entity">The entity to update</param>
+    public T UpdateAndSave(T entity);
+
+    /// <summary>
+    ///     Update an entity and save it directly asynchronously.
+    /// </summary>
+    /// <param name="entity">The entity to update</param>
+    public Task<T> UpdateAndSaveAsync(T entity);
+
+    /// <summary>
     ///     Update a range of entities.
     /// </summary>
     /// <param name="entities">The entities to update</param>
@@ -45,7 +73,7 @@ public interface IRepository<T>
     /// </summary>
     /// <param name="expression">The predicate to filter entities</param>
     /// <returns>Queryable of entities</returns>
-    public IQueryable<T> Get(Expression<Func<T, bool>> expression);
+    public IQueryable<T> Get(Expression<Func<T, bool>>? expression = null);
 
     /// <summary>
     ///     Get entities based on a dynamic query.
@@ -54,7 +82,7 @@ public interface IRepository<T>
     /// <param name="args">The arguments for the dynamic query</param>
     /// <returns>Queryable of entities</returns>
     IQueryable<T> DynamicQuery(string predicate, params object?[] args);
-    
+
     /// <summary>
     ///     Save changes to the database.
     /// </summary>

@@ -1,12 +1,11 @@
 using Digital.Lib.Net.Core.Interval;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.Mvc.Controllers.Pagination;
+using Digital.Lib.Net.Mvc.Test.TestUtilities.Context;
 using Digital.Lib.Net.Mvc.Test.TestUtilities.Controllers;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
 using Digital.Lib.Net.TestTools.Data.Factories;
-using InternalTestProgram;
-using InternalTestProgram.Models;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -15,14 +14,14 @@ namespace Digital.Lib.Net.Mvc.Test.Controllers.Pagination;
 public class PaginationControllerTest : UnitTest
 {
     private readonly PaginationControllerWithId _paginationController;
-    private readonly DataFactory<TestIdEntity> _testEntityFactory;
-    private readonly Repository<TestIdEntity> _testEntityRepository;
+    private readonly DataFactory<TestIdEntity, MvcTestContext> _testEntityFactory;
+    private readonly Repository<TestIdEntity, MvcTestContext> _testEntityRepository;
 
     public PaginationControllerTest()
     {
-        var context = new SqliteMemoryDb<TestContext>().Context;
-        _testEntityRepository = new Repository<TestIdEntity>(context);
-        _testEntityFactory = new DataFactory<TestIdEntity>(_testEntityRepository);
+        var context = new SqliteMemoryDb<MvcTestContext>().Context;
+        _testEntityRepository = new Repository<TestIdEntity, MvcTestContext>(context);
+        _testEntityFactory = new DataFactory<TestIdEntity, MvcTestContext>(context);
         _paginationController = new PaginationControllerWithId(_testEntityRepository);
     }
 

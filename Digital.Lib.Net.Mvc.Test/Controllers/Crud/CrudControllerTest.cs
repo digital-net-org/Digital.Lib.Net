@@ -2,9 +2,9 @@ using System.Text.Json;
 using Digital.Lib.Net.Core.Messages;
 using Digital.Lib.Net.Entities.Services;
 using Digital.Lib.Net.Mvc.Controllers.Pagination;
+using Digital.Lib.Net.Mvc.Test.TestUtilities.Context;
 using Digital.Lib.Net.Mvc.Test.TestUtilities.Controllers;
 using Digital.Lib.Net.TestTools;
-using InternalTestProgram.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,8 +17,8 @@ public class CrudControllerTest : UnitTest
     private readonly CrudControllerWithGuid _crudGuidController;
 
     private readonly CrudControllerWithId _crudIdController;
-    private readonly Mock<IEntityService<TestGuidEntity>> _guidEntityServiceMock = new();
-    private readonly Mock<IEntityService<TestIdEntity>> _idEntityServiceMock = new();
+    private readonly Mock<IEntityService<TestGuidEntity, MvcTestContext>> _guidEntityServiceMock = new();
+    private readonly Mock<IEntityService<TestIdEntity, MvcTestContext>> _idEntityServiceMock = new();
 
     public CrudControllerTest()
     {
