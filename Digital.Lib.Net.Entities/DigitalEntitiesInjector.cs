@@ -35,37 +35,36 @@ public static class DigitalEntitiesInjector
     /// <summary>
     ///     Add the DigitalContext and register Entities services for them.
     /// </summary>
-    /// <param name="services"></param>
+    /// <param name="builder"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDigitalContext(this IServiceCollection services)
+    public static WebApplicationBuilder AddDigitalContext(this WebApplicationBuilder builder)
     {
-        services.AddScoped<DigitalContext>();
-        services.AddDigitalEntities<Avatar>();
-        services.AddDigitalEntities<Document>();
-        services.AddDigitalEntities<User>();
-        services.AddDigitalEntities<ApiToken>();
-        services.AddDigitalEntities<ApiKey>();
-        services.AddDigitalEntities<Event>();
-        return services;
+        builder.AddNpgsqlContext<DigitalContext>();
+        builder.Services
+            .AddDigitalEntities<Avatar>()
+            .AddDigitalEntities<Document>()
+            .AddDigitalEntities<User>()
+            .AddDigitalEntities<ApiToken>()
+            .AddDigitalEntities<ApiKey>()
+            .AddDigitalEntities<Event>();
+        return builder;
     }
 
     /// <summary>
     ///     Add data seeds to services.
     /// </summary>
-    /// <param name="builder"></param>
+    /// <param name="services"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddDataSeeds(this WebApplicationBuilder builder)
+    public static IServiceCollection AddDataSeeds(this IServiceCollection services)
     {
         if (AspNetEnv.IsDevelopment)
         {
-            builder.Services.AddScoped<ISeed, DevUserSeed>();
+            services.AddScoped<ISeed, DevUserSeed>();
         }
-
         if (AspNetEnv.IsTest)
         {
-            builder.Services.AddScoped<ISeed, TestUserSeed>();
+            services.AddScoped<ISeed, TestUserSeed>();
         }
-
-        return builder;
+        return services;
     }
 }
