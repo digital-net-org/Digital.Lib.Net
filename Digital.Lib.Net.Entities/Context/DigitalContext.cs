@@ -10,7 +10,7 @@ namespace Digital.Lib.Net.Entities.Context;
 
 public class DigitalContext(DbContextOptions<DigitalContext> options) : DbContext(options)
 {
-    public const string Schema = "DigitalNet";
+    public const string Schema = "digital_core";
 
     public DbSet<Avatar> Avatars { get; init; }
     public DbSet<Document> Documents { get; init; }

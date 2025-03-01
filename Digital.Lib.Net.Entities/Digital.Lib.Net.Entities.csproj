@@ -33,13 +33,5 @@
     <ItemGroup>
         <ProjectReference Include="..\Digital.Lib.Net.Core\Digital.Lib.Net.Core.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include=".config\dotnet-tools.json"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Migrations\"/>
-    </ItemGroup>
     
 </Project>
