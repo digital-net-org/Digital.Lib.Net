@@ -39,20 +39,21 @@ public static class DefaultSwaggerConfig
         return builder;
     }
 
-    public static void UseSwaggerPage(
-        this WebApplication app,
+    public static IApplicationBuilder UseSwaggerPage(
+        this IApplicationBuilder app,
         string applicationName,
         string version
     )
     {
-        if (!AspNetEnv.IsDevelopment)
-            return;
-
-        app.UseSwagger(opts => { opts.SerializeAsV2 = true; });
-        app.UseSwaggerUI(opts =>
+        if (AspNetEnv.IsDevelopment)
         {
-            opts.SwaggerEndpoint($"/swagger/{version}/swagger.json", $"{applicationName} API {version}");
-            opts.RoutePrefix = "swagger";
-        });
+            app.UseSwagger(opts => { opts.SerializeAsV2 = true; });
+            app.UseSwaggerUI(opts =>
+            {
+                opts.SwaggerEndpoint($"/swagger/{version}/swagger.json", $"{applicationName} API {version}");
+                opts.RoutePrefix = "swagger";
+            });
+        }
+        return app;
     }
 }
