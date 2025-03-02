@@ -10,6 +10,7 @@ using Digital.Lib.Net.Core.Extensions.StringUtilities;
 using Digital.Lib.Net.Events.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Digital.Lib.Net.Authentication;
 
@@ -27,9 +28,7 @@ public static class DigitalAuthenticationInjector
     )
     {
         services.ConfigureOptions(buildOptions);
-
-        if (!services.IsInjected(typeof(IEventService)))
-            services.AddScoped<IEventService, EventService>();
+        services.TryAddScoped<IEventService, EventService>();
 
         services
             .AddScoped<IAuthenticationOptionService, AuthenticationOptionService>()

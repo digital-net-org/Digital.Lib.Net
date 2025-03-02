@@ -3,6 +3,7 @@ using Digital.Lib.Net.Mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Digital.Lib.Net.Mvc;
 
@@ -12,10 +13,7 @@ public static class DigitalMvcInjector
     {
         services.AddControllers();
         services.AddScoped<IHttpContextService, HttpContextService>();
-
-        if (!services.IsInjected(typeof(IHttpContextAccessor)))
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         return services;
     }
 

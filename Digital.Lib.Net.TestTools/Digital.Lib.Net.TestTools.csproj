@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Digital.Lib.Net.Bootstrap\Digital.Lib.Net.Bootstrap.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Core\Digital.Lib.Net.Core.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Entities\Digital.Lib.Net.Entities.csproj" />
     </ItemGroup>
