@@ -1,4 +1,4 @@
-using System.Data.Common;
+using Digital.Lib.Net.Bootstrap.Services;
 using Digital.Lib.Net.TestTools.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.TestTools.Integration;
 
-public class AppFactory<T, TContext> : WebApplicationFactory<T> where T : class where TContext : DbContext
+public class AppFactory<T> : WebApplicationFactory<T> where T : class
 {
     private readonly SqliteConnection _connection;
 
@@ -23,7 +23,7 @@ public class AppFactory<T, TContext> : WebApplicationFactory<T> where T : class 
         builder
             .UseTestEnvironment()
             .UseTestConfiguration()
-            .ConfigureTestServices(s => { AddMemoryDatabase(s, _connection); });
+            .ConfigureTestServices(s => { ReplaceDatabasesWithMemory(s, _connection); });
 
     protected override void Dispose(bool disposing)
     {
@@ -31,36 +31,19 @@ public class AppFactory<T, TContext> : WebApplicationFactory<T> where T : class 
         _connection.Dispose();
     }
 
-    public static void AddMemoryDatabase(IServiceCollection services, SqliteConnection connection)
+    public static void ReplaceDatabasesWithMemory(IServiceCollection services, SqliteConnection connection)
     {
-        RemoveDbContext<TContext>(services);
-        CreateDbContext<TContext>(services, connection);
-        services.BuildServiceProvider().GetService<TContext>()?.Database.EnsureCreated();
-    }
+        var descriptors = services.GetEfDescriptors();
 
-    private static void RemoveDbContext<TC>(IServiceCollection services)
-        where TC : DbContext
-    {
-        var dbContextDescriptor = services.SingleOrDefault(d =>
-            d.ServiceType == typeof(DbContextOptions<TC>)
-        );
-        var dbConnectionDescriptor = services.SingleOrDefault(d =>
-            d.ServiceType == typeof(DbConnection)
-        );
-        if (dbContextDescriptor is not null) services.Remove(dbContextDescriptor);
-        if (dbConnectionDescriptor is not null) services.Remove(dbConnectionDescriptor);
-    }
+        foreach (var descriptor in descriptors)
+            services.Remove(descriptor);
 
-    private static void CreateDbContext<TC>(IServiceCollection services, SqliteConnection connection)
-        where TC : DbContext =>
-        services
-            .AddEntityFrameworkSqlite()
-            .AddDbContext<TC>(
-                options =>
-                {
-                    options.UseSqlite(connection);
-                    options.UseInternalServiceProvider(services.BuildServiceProvider());
-                },
-                ServiceLifetime.Singleton
-            );
+        foreach (var descriptor in descriptors.GetContextDescriptors())
+        {
+            descriptor
+                .GetAddDbContextMethod()
+                .Invoke(null, [services, (Action<DbContextOptionsBuilder>)(o => o.UseSqlite(connection)), null, null]);
+            services.EnsureDbContextCreated(descriptor);
+        }
+    }
 }

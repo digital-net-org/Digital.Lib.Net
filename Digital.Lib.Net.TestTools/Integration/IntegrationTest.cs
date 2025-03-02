@@ -1,3 +1,5 @@
+using Digital.Lib.Net.Entities.Models;
+using Digital.Lib.Net.Entities.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -5,16 +7,15 @@ using Xunit;
 
 namespace Digital.Lib.Net.TestTools.Integration;
 
-public abstract class IntegrationTest<T, TContext> : UnitTest, IClassFixture<AppFactory<T, TContext>>
+public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>>
     where T : class
-    where TContext : DbContext
 {
     protected readonly List<HttpClient> Clients = [];
     protected readonly WebApplicationFactory<T> Factory;
 
     protected HttpClient BaseClient => Clients.First();
 
-    protected IntegrationTest(AppFactory<T, TContext> fixture)
+    protected IntegrationTest(AppFactory<T> fixture)
     {
         Factory = fixture;
         Clients.Add(Factory.CreateClient());
@@ -22,6 +23,14 @@ public abstract class IntegrationTest<T, TContext> : UnitTest, IClassFixture<App
 
     protected TService GetService<TService>() where TService : notnull =>
         Factory.Services.GetRequiredService<TService>();
+
+    protected IRepository<TEntity, TContext> GetRepository<TEntity, TContext>()
+        where TContext : DbContext
+        where TEntity : Entity
+    {
+        var context = Factory.Services.GetRequiredService<TContext>();
+        return new Repository<TEntity, TContext>(context);
+    }
 
     protected void CreateClient(int? amount = 1)
     {
