@@ -12,7 +12,6 @@ public class UserTest
         Email = "email",
         Login = "email",
         Password = "password",
-        Role = UserRole.Admin,
         Avatar = null,
         IsActive = true,
         CreatedAt = DateTime.UtcNow,
@@ -30,7 +29,6 @@ public class UserTest
         Assert.Equal(TestUser.Username, dto.Username);
         Assert.Equal(TestUser.Email, dto.Email);
         Assert.Equal(TestUser.Login, dto.Login);
-        Assert.Equal(TestUser.Role, dto.Role);
         Assert.Equal(TestUser.IsActive, dto.IsActive);
         Assert.Equal(TestUser.CreatedAt, dto.CreatedAt);
         Assert.Equal(TestUser.UpdatedAt, dto.UpdatedAt);

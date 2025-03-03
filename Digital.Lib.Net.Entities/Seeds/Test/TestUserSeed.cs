@@ -34,15 +34,16 @@ public class TestUserSeed(
         var result = new List<User>();
         for (var i = 0; i < userAmount; i++)
         {
-            result.Add(new User
-            {
+            result.Add(
+                new User
+                {
                     Username = Randomizer.GenerateRandomString(Randomizer.AnyLetter, 20),
                     Login = Randomizer.GenerateRandomString(Randomizer.AnyLetterOrNumber, 12),
                     Password = TestUserPassword,
                     Email = Randomizer.GenerateRandomEmail(),
-                    Role = i < 1 ? UserRole.SuperAdmin : i < 2 ? UserRole.Admin : UserRole.User,
                     IsActive = i < userAmount - 1
-            });
+                }
+            );
         }
         return result;
     }

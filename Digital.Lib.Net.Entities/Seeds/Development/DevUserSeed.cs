@@ -30,31 +30,10 @@ public class DevUserSeed(
     [
         new()
         {
-            Username = "admin",
-            Login = "admin",
-            Password = DevUserPassword,
-            Email = "fake-admin@fake.com",
-            Role = UserRole.Admin,
-            IsActive = true
-        },
-
-        new()
-        {
-            Username = "superAdmin",
-            Login = "superAdmin",
-            Password = DevUserPassword,
-            Email = "fake-super-admin@fake.com",
-            Role = UserRole.SuperAdmin,
-            IsActive = true
-        },
-
-        new()
-        {
             Username = "user",
             Login = "user",
             Password = DevUserPassword,
             Email = "fake-user@fake.com",
-            Role = UserRole.User,
             IsActive = true
         }
     ];

@@ -14,7 +14,6 @@ public class UserDto
         Username = userModel.Username;
         Login = userModel.Login;
         Email = userModel.Email;
-        Role = userModel.Role;
         Avatar = userModel.Avatar is not null ? new AvatarDto(userModel.Avatar) : null;
         IsActive = userModel.IsActive;
         CreatedAt = userModel.CreatedAt;
@@ -25,7 +24,6 @@ public class UserDto
     public string? Username { get; init; }
     public string? Login { get; init; }
     public string? Email { get; init; }
-    public UserRole Role { get; init; }
     public AvatarDto? Avatar { get; init; }
     public bool IsActive { get; init; }
     public DateTime CreatedAt { get; init; }

@@ -21,9 +21,6 @@ public class User : EntityGuid
     [Column("Email"), MaxLength(254), Required, RegexValidation(RegularExpressions.EmailPattern)]
     public required string Email { get; set; }
 
-    [Column("Role"), Required]
-    public UserRole Role { get; set; } = UserRole.User;
-
     [Column("AvatarId"), ForeignKey("Avatar")]
     public Guid? AvatarId { get; set; }
 
