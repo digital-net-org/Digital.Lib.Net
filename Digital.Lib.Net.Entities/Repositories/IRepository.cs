@@ -69,11 +69,17 @@ public interface IRepository<T, TContext>
     public void UpdateRange(IEnumerable<T> entities);
 
     /// <summary>
+    ///     Get all entities.
+    /// </summary>
+    /// <returns>Queryable of entities</returns>
+    public IQueryable<T> Get();
+
+    /// <summary>
     ///     Get entities based on a predicate.
     /// </summary>
     /// <param name="expression">The predicate to filter entities</param>
     /// <returns>Queryable of entities</returns>
-    public IQueryable<T> Get(Expression<Func<T, bool>>? expression = null);
+    public IQueryable<T> Get(Expression<Func<T, bool>> expression);
 
     /// <summary>
     ///     Get entities based on a dynamic query.

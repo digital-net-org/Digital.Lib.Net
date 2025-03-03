@@ -65,13 +65,8 @@ public class Repository<T, TContext>(TContext context) : IRepository<T, TContext
 
     public void Delete(T entity) => context.Set<T>().Remove(entity);
 
-    public IQueryable<T> Get(Expression<Func<T, bool>>? expression = null)
-    {
-        var set = context.Set<T>();
-        return expression is not null
-            ? set.Where(expression)
-            : set.AsQueryable();
-    }
+    public IQueryable<T> Get() => context.Set<T>().AsQueryable();
+    public IQueryable<T> Get(Expression<Func<T, bool>> expression) => context.Set<T>().Where(expression);
 
     public IQueryable<T> DynamicQuery(string predicate, params object?[] args) =>
         context.Set<T>().Where(predicate, args);
