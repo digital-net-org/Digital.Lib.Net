@@ -1,17 +1,19 @@
 using Digital.Lib.Net.Core.Messages;
-using Digital.Lib.Net.Entities.Models.Users;
 
 namespace Digital.Lib.Net.Authentication.Models;
 
 public class AuthorizationResult : Result
 {
-    public Guid UserId { get; set; }
-    public UserRole Role { get; set; }
-
+    public Guid UserId { get; private set; } = Guid.Empty;
     public bool IsForbidden { get; private set; }
-    public void Forbid() => IsForbidden = true;
     public bool IsAuthorized { get; private set; }
-    public void Authorize() => IsAuthorized = true;
+    public void Forbid() => IsForbidden = true;
+    public void Authorize(Guid userId)
+    {
+        IsAuthorized = true;
+        UserId = userId;
+        ClearErrors();
+    }
 
     public new AuthorizationResult Merge(Result result)
     {
@@ -19,7 +21,8 @@ public class AuthorizationResult : Result
         if (result is AuthorizationResult authResult)
         {
             IsAuthorized = authResult.IsAuthorized;
-            UserId = authResult.UserId;
+            IsForbidden = authResult.IsForbidden;
+            UserId = authResult.UserId != Guid.Empty ? authResult.UserId : UserId;
         }
         return this;
     }

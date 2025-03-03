@@ -1,9 +1,7 @@
-using Digital.Lib.Net.Authentication.Exceptions;
 using Digital.Lib.Net.Authentication.Services.Authorization;
 using Digital.Lib.Net.Authentication.Extensions;
 using Digital.Lib.Net.Authentication.Models;
 using Digital.Lib.Net.Authentication.Options;
-using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Mvc.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,10 +15,9 @@ namespace Digital.Lib.Net.Authentication.Attributes;
 /// </summary>
 /// <param name="type">The type of authorization to use.</param>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class AuthorizeAttribute(AuthorizeType type, UserRole role = UserRole.User) : Attribute, IAuthorizationFilter
+public class AuthorizeAttribute(AuthorizeType type) : Attribute, IAuthorizationFilter
 {
     private AuthorizeType Type { get; } = type;
-    public UserRole Role { get; set; } = role;
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -28,48 +25,39 @@ public class AuthorizeAttribute(AuthorizeType type, UserRole role = UserRole.Use
 
         if (Type.HasFlag(AuthorizeType.ApiKey))
             result.Merge(AuthorizeApiKey(context));
-        if (Type.HasFlag(AuthorizeType.Jwt) && result.IsAuthorized is false)
+        if (Type.HasFlag(AuthorizeType.Jwt) && !result.IsAuthorized)
             result.Merge(AuthorizeJwt(context));
-        if (result.Role < Role)
-            result.Forbid();
-        if (!result.HasError() || result is { IsAuthorized: true, IsForbidden: false })
+
+        if (result is { IsAuthorized: false })
         {
-            var contextService = context.HttpContext.RequestServices.GetRequiredService<IHttpContextService>();
-            contextService.AddItem(DefaultAuthenticationOptions.ApiContextAuthorizationKey, result);
+            context.RejectAuthorization(401);
             return;
         }
-        context.RejectAuthorization(result.IsForbidden ? 403 : 401);
+
+        result.Merge(AuthorizeRole(context, result));
+        if (result is { IsForbidden: true })
+        {
+            context.RejectAuthorization(403);
+            return;
+        }
+
+        var contextService = context.HttpContext.RequestServices.GetRequiredService<IHttpContextService>();
+        contextService.AddItem(DefaultAuthenticationOptions.ApiContextAuthorizationKey, result);
     }
+
+    private AuthorizationResult AuthorizeRole(AuthorizationFilterContext context, AuthorizationResult result) => result;
 
     private AuthorizationResult AuthorizeApiKey(AuthorizationFilterContext context)
     {
-        var result = new AuthorizationResult();
         var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationApiKeyService>();
         var apiKey = service.GetRequestKey();
-
-        if (Type.HasFlag(AuthorizeType.Jwt) && apiKey is null)
-            return result;
-
-        result.Merge(service.AuthorizeUser(apiKey));
-        if (!result.HasError())
-            result.Authorize();
-
-        return result;
+        return service.AuthorizeUser(apiKey);
     }
 
     private AuthorizationResult AuthorizeJwt(AuthorizationFilterContext context)
     {
-        var result = new AuthorizationResult();
         var service = context.HttpContext.RequestServices.GetRequiredService<IAuthorizationJwtService>();
         var token = service.GetRequestKey();
-
-        if (token is null)
-            return result.AddError(new TokenNotFoundException());
-
-        result.Merge(service.AuthorizeUser(token));
-        if (!result.HasError())
-            result.Authorize();
-
-        return result;
+        return service.AuthorizeUser(token);
     }
 }

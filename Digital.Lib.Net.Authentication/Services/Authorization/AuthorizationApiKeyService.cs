@@ -35,7 +35,7 @@ public class AuthorizationApiKeyService(
         if (user is null)
             return result.AddError(new InvalidTokenException());
 
-        result.UserId = user.Id;
+        result.Authorize(user.Id);
         result.Role = user.Role;
         return result;
     }

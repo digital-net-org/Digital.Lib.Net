@@ -34,14 +34,14 @@ public class AuthorizationJwtService(
                 .ReadJwtToken(token)
                 .Claims.First(c => c.Type == DefaultAuthenticationOptions.ContentClaimType)
                 .Value;
+
             var decoded = JsonSerializer.Deserialize<TokenContent>(content);
             var user = userRepository.Get(u => decoded != null && u.Id == decoded.Id).FirstOrDefault();
 
             if (user is null)
                 throw new InvalidTokenException();
 
-            result.UserId = user.Id;
-            result.Role = user.Role;
+            result.Authorize(user.Id);
         }
         catch (Exception e)
         {

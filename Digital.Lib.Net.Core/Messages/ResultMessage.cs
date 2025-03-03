@@ -1,5 +1,4 @@
-﻿using Digital.Lib.Net.Core.Extensions.EnumUtilities;
-using Digital.Lib.Net.Core.Extensions.ExceptionUtilities;
+﻿using Digital.Lib.Net.Core.Extensions.ExceptionUtilities;
 
 namespace Digital.Lib.Net.Core.Messages;
 
@@ -8,6 +7,8 @@ namespace Digital.Lib.Net.Core.Messages;
 /// </summary>
 public class ResultMessage
 {
+    public ResultMessage() {}
+
     public ResultMessage(Exception ex, string? message = null)
     {
         Code = message?.GetHashCode().ToString() ?? ex.GetFormattedErrorCode();

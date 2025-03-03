@@ -29,6 +29,12 @@ public class Result
         return this;
     }
 
+    public Result ClearErrors()
+    {
+        Errors.Clear();
+        return this;
+    }
+
     public Result AddInfo(string message)
     {
         Infos.Add(new ResultMessage(message));
