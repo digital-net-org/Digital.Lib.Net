@@ -3,6 +3,7 @@ using System;
 using Digital.Lib.Net.Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Digital.Lib.Net.Entities.Migrations
 {
     [DbContext(typeof(DigitalContext))]
-    partial class DigitalContextModelSnapshot : ModelSnapshot
+    [Migration("20250304203636_user_role_removal")]
+    partial class user_role_removal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
