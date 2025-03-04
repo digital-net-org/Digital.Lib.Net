@@ -14,6 +14,10 @@ public class TestUserSeed(
 ) : Seeder<User, DigitalContext>(logger, userRepository), ISeed
 {
     public const string TestUserPassword = "Testpassword123!";
+    public const string TestUserBaseApiKey =
+        "s12d5fg4h56m56z4ergf561gfj764m4fgsd56fgsj956qierfgd5498746sf8gap9jrp8ez7tazecz079e87u98uo7tyu978az111era98dwckg833574kiumpt";
+
+    public static string GetTestUserApiKey(User user) => $"dev_{user.Login.ToLower()}_{TestUserBaseApiKey}"[..128];
 
     public override async Task ApplySeed()
     {
@@ -21,7 +25,7 @@ public class TestUserSeed(
         if (result.HasError())
             throw new Exception(result.Errors.First().Message);
 
-        foreach (var apiKey in result.Value!.Select(BuildUserApiKey))
+        foreach (var apiKey in result.Value!.Select(u => new ApiKey(u.Id, GetTestUserApiKey(u))))
         {
             await apiKeyRepository.CreateAsync(apiKey);
             await apiKeyRepository.SaveAsync();
@@ -41,16 +45,10 @@ public class TestUserSeed(
                     Login = Randomizer.GenerateRandomString(Randomizer.AnyLetterOrNumber, 12),
                     Password = TestUserPassword,
                     Email = Randomizer.GenerateRandomEmail(),
-                    IsActive = i < userAmount - 1
+                    IsActive = i < userAmount - 1,
                 }
             );
         }
         return result;
     }
-
-    private static ApiKey BuildUserApiKey(User user) => new(
-        user.Id,
-        $"dev_{user.Login.ToLower()}_s12d5fg4h56m56z4ergf561gfj764m4fgsd56fgsj956qierfgd5498746sf8gap9jrp8ez7tazecz079e87u98uo7tyu978az111era98dwckg833574kiumpt"
-            [..128]
-    );
 }

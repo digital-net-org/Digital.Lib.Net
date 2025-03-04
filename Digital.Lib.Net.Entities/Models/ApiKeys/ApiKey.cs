@@ -12,9 +12,7 @@ namespace Digital.Lib.Net.Entities.Models.ApiKeys;
 [Table("ApiKey"), Index(nameof(Key), IsUnique = true)]
 public class ApiKey(Guid userId, string? key = null) : EntityId
 {
-    public bool Match(string input) => Key == HashApiKey(input);
-
-    private static string HashApiKey(string apiKey)
+    public static string Hash(string apiKey)
     {
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(apiKey));
         return Convert.ToBase64String(hashBytes);
@@ -22,7 +20,7 @@ public class ApiKey(Guid userId, string? key = null) : EntityId
 
     [Column("Key"), MaxLength(64), Required, ReadOnly]
     public string Key { get; set; } =
-        HashApiKey(key ?? Randomizer.GenerateRandomString(Randomizer.AnyLetterOrNumber, 128));
+        Hash(key ?? Randomizer.GenerateRandomString(Randomizer.AnyLetterOrNumber, 128));
 
     [Column("ExpiredAt")]
     public DateTime? ExpiredAt { get; set; }

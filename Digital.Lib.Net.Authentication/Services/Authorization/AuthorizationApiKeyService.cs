@@ -24,7 +24,7 @@ public class AuthorizationApiKeyService(
         if (string.IsNullOrWhiteSpace(key))
             return result.AddError(new TokenNotFoundException());
 
-        var authorization = apiKeyRepository.Get(k => k.Key == key).FirstOrDefault();
+        var authorization = apiKeyRepository.Get(k => k.Key == ApiKey.Hash(key)).FirstOrDefault();
         if (authorization is null)
             return result.AddError(new InvalidTokenException());
 
@@ -36,7 +36,6 @@ public class AuthorizationApiKeyService(
             return result.AddError(new InvalidTokenException());
 
         result.Authorize(user.Id);
-        result.Role = user.Role;
         return result;
     }
 }
