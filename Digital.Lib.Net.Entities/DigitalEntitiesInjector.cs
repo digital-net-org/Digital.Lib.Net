@@ -1,4 +1,3 @@
-using Digital.Lib.Net.Core.Environment;
 using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Models;
 using Digital.Lib.Net.Entities.Models.ApiKeys;
@@ -8,9 +7,6 @@ using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Models.Events;
 using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Repositories;
-using Digital.Lib.Net.Entities.Seeds;
-using Digital.Lib.Net.Entities.Seeds.Development;
-using Digital.Lib.Net.Entities.Seeds.Test;
 using Digital.Lib.Net.Entities.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,23 +44,5 @@ public static class DigitalEntitiesInjector
             .AddDigitalEntities<ApiKey>()
             .AddDigitalEntities<Event>();
         return builder;
-    }
-
-    /// <summary>
-    ///     Add data seeds to services.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddDataSeeds(this IServiceCollection services)
-    {
-        if (AspNetEnv.IsDevelopment)
-        {
-            services.AddScoped<ISeed, DevUserSeed>();
-        }
-        if (AspNetEnv.IsTest)
-        {
-            services.AddScoped<ISeed, TestUserSeed>();
-        }
-        return services;
     }
 }
