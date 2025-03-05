@@ -12,7 +12,9 @@ public static class AppFactorySettings
     {
         { "Domain", "domain.test" },
         { "ConnectionStrings:Default", SqliteUtils.InMemoryConnectionString },
-        { "Auth:JwtSecret", "superLongSecretThatNeedsToBeSuperLongAndSecure" }
+        { "Auth:JwtSecret", "superLongSecretThatNeedsToBeSuperLongAndSecure" },
+        { "Auth:JwtRefreshExpiration", "60000" },
+        { "Auth:JwtBearerExpiration", "5000" }
     };
 
     public static IWebHostBuilder UseTestConfiguration(this IWebHostBuilder hostBuilder)
