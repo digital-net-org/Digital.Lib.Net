@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Digital.Lib.Net.Entities.Models.ApiKeys;
 
 [Table("ApiKey"), Index(nameof(Key), IsUnique = true)]
-public class ApiKey(Guid userId, string? key = null) : EntityId
+public class ApiKey(Guid userId, string? key = null, DateTime? expiredAt = null) : EntityId
 {
     public static string Hash(string apiKey)
     {
@@ -23,7 +23,7 @@ public class ApiKey(Guid userId, string? key = null) : EntityId
         Hash(key ?? Randomizer.GenerateRandomString(Randomizer.AnyLetterOrNumber, 128));
 
     [Column("ExpiredAt")]
-    public DateTime? ExpiredAt { get; set; }
+    public DateTime? ExpiredAt { get; set; } = expiredAt;
 
     [Column("UserId"), ForeignKey("User"), Required]
     public Guid UserId { get; set; } = userId;

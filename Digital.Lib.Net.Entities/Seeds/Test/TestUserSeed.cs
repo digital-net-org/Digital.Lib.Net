@@ -14,27 +14,17 @@ public class TestUserSeed(
 ) : Seeder<User, DigitalContext>(logger, userRepository), ISeed
 {
     public const string TestUserPassword = "Testpassword123!";
-    public const string TestUserBaseApiKey =
-        "s12d5fg4h56m56z4ergf561gfj764m4fgsd56fgsj956qierfgd5498746sf8gap9jrp8ez7tazecz079e87u98uo7tyu978az111era98dwckg833574kiumpt";
-
-    public static string GetTestUserApiKey(User user) => $"dev_{user.Login.ToLower()}_{TestUserBaseApiKey}"[..128];
 
     public override async Task ApplySeed()
     {
         var result = await SeedAsync(GetUsers());
         if (result.HasError())
             throw new Exception(result.Errors.First().Message);
-
-        foreach (var apiKey in result.Value!.Select(u => new ApiKey(u.Id, GetTestUserApiKey(u))))
-        {
-            await apiKeyRepository.CreateAsync(apiKey);
-            await apiKeyRepository.SaveAsync();
-        }
     }
 
     private static List<User> GetUsers()
     {
-        const int userAmount = 15;
+        const int userAmount = 5;
         var result = new List<User>();
         for (var i = 0; i < userAmount; i++)
         {
