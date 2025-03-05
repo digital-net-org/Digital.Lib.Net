@@ -42,7 +42,7 @@ public class Event : EntityId
     }
 
     [Column("Name"), Required, MaxLength(64)]
-    public string Name { get; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
 
     [Column("Payload"), MaxLength(64)]
     public string? Payload { get; set; }
