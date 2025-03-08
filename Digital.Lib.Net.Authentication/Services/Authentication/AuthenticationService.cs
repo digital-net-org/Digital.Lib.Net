@@ -1,4 +1,5 @@
 using System.Security.Authentication;
+using Digital.Lib.Net.Authentication.Events;
 using Digital.Lib.Net.Authentication.Exceptions;
 using Digital.Lib.Net.Authentication.Models;
 using Digital.Lib.Net.Authentication.Options;

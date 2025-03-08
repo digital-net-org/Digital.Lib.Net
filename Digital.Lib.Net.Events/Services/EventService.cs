@@ -19,11 +19,19 @@ public class EventService(
         string? payload = null
     )
     {
-        await eventRepository.CreateAsync(
-            new Event(name, httpContextService.UserAgent, httpContextService.IpAddress)
-                .SetUser(userId)
-                .SetError(result)
-        );
-        await eventRepository.SaveAsync();
+        var appEvent = new Event
+        {
+            Name = name,
+            State = state,
+            UserId = userId,
+            Payload = payload,
+            UserAgent = httpContextService.UserAgent, 
+            IpAddress = httpContextService.IpAddress
+        };
+        
+        if (result is not null && result.HasError())
+            appEvent.SetError(result);
+        
+        await eventRepository.CreateAndSaveAsync(appEvent);
     }
 }

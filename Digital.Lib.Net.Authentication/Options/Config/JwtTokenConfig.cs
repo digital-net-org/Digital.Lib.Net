@@ -25,13 +25,28 @@ public class JwtTokenConfig
     /// </remarks>
     public string Secret { get; set; } = string.Empty;
 
+
     /// <summary>
     ///     The expiration of the refresh token in milliseconds.
     /// </summary>
-    public long RefreshTokenExpiration { get; set; } = DefaultAuthenticationOptions.DefaultRefreshTokenExpiration;
-
+    public long RefreshTokenExpiration
+    {
+        get => _refreshTokenExpiration;
+        set => _refreshTokenExpiration = value > 0 
+            ? value 
+            : DefaultAuthenticationOptions.DefaultRefreshTokenExpiration;
+    }
+    private long _refreshTokenExpiration = DefaultAuthenticationOptions.DefaultRefreshTokenExpiration;
+    
     /// <summary>
     ///     The expiration of the access token in milliseconds.
     /// </summary>
-    public long AccessTokenExpiration { get; set; } = DefaultAuthenticationOptions.DefaultAccessTokenExpiration;
+    public long AccessTokenExpiration
+    {
+        get => _accessTokenExpiration;
+        set => _accessTokenExpiration = value > 0
+            ? value
+            : DefaultAuthenticationOptions.DefaultAccessTokenExpiration;
+    }
+    private long _accessTokenExpiration = DefaultAuthenticationOptions.DefaultAccessTokenExpiration;
 }

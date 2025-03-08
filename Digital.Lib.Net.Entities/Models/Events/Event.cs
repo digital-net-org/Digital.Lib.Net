@@ -11,55 +11,33 @@ public class Event : EntityId
 {
     public Event() {}
 
-    public Event(string name)
+    public Event SetError(Result result)
     {
-        Name = name;
-    }
-
-    public Event(string name, string userAgent, string ipAddress)
-    {
-        Name = name;
-        UserAgent = userAgent;
-        IpAddress = ipAddress;
-    }
-
-    public Event SetUser(Guid? userId)
-    {
-        UserId = userId ?? UserId;
-        return this;
-    }
-
-    public Event SetError(Result? result)
-    {
-        if (result is not null && result.HasError())
-        {
-            var trace = JsonSerializer.Serialize(result.Errors);
-            ErrorTrace = trace.Length > 4096 ? trace[..4096] : trace;
-            HasError = true;
-        }
-
+        var trace = JsonSerializer.Serialize(result.Errors);
+        ErrorTrace = trace.Length > 4096 ? trace[..4096] : trace;
+        HasError = true;
         return this;
     }
 
     [Column("Name"), Required, MaxLength(64)]
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
 
     [Column("Payload"), MaxLength(64)]
-    public string? Payload { get; set; }
+    public string? Payload { get; init; } = string.Empty;
 
     [Column("UserAgent"), Required, MaxLength(1024)]
-    public string UserAgent { get; set; } = string.Empty;
+    public string UserAgent { get; init; } = string.Empty;
 
     [Column("IpAddress"), Required, MaxLength(45)]
-    public string IpAddress { get; set; } = string.Empty;
+    public string IpAddress { get; init; } = string.Empty;
 
     [Column("UserId"), ForeignKey("User")]
-    public Guid? UserId { get; private set; }
+    public Guid? UserId { get; init; }
 
-    public virtual User? User { get; set; }
+    public virtual User? User { get; init; }
 
     [Column("State")]
-    public EventState? State { get; set; }
+    public EventState? State { get; init; }
 
     [Column("HasError"), Required]
     public bool HasError { get; private set; }

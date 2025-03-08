@@ -1,4 +1,4 @@
-namespace Digital.Lib.Net.Authentication.Services;
+namespace Digital.Lib.Net.Authentication.Events;
 
 public static class AuthenticationEvents
 {
