@@ -7,13 +7,14 @@ using Xunit;
 
 namespace Digital.Lib.Net.TestTools.Integration;
 
-public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>>
+public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>>, IDisposable
     where T : class
 {
     private readonly List<HttpClient> _clients = [];
     private readonly WebApplicationFactory<T> _factory;
 
     protected HttpClient BaseClient => _clients.First();
+    protected List<HttpClient> ClientPool => _clients.Skip(1).ToList();
 
     protected IntegrationTest(AppFactory<T> fixture)
     {
@@ -38,7 +39,7 @@ public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>
             _clients.Add(_factory.CreateClient());
     }
 
-    protected void DisposeClients()
+    public void Dispose()
     {
         foreach (var client in _clients)
             client.Dispose();
