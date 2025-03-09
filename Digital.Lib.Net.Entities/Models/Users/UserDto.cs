@@ -25,7 +25,7 @@ public class UserDto
     public string? Login { get; init; }
     public string? Email { get; init; }
     public AvatarDto? Avatar { get; init; }
-    public bool IsActive { get; init; }
+    public bool? IsActive { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
 }
