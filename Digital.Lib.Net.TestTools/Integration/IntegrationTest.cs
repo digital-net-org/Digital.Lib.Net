@@ -33,7 +33,14 @@ public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>
         return new Repository<TEntity, TContext>(context);
     }
 
-    protected void CreateClient(int? amount = 1)
+    protected HttpClient CreateClient()
+    {
+        var result = _factory.CreateClient();
+        _clients.Add(result);
+        return result;
+    }
+
+    protected void CreateClient(int amount)
     {
         for (var i = 0; i < amount; i++)
             _clients.Add(_factory.CreateClient());

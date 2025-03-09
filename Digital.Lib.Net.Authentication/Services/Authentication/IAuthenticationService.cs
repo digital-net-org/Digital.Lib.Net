@@ -10,7 +10,7 @@ public interface IAuthenticationService
 
     public Task<User?> GetAuthenticatedUserAsync();
     Task<int> GetLoginAttemptCountAsync(User? user = null);
-    public Result<string> RefreshTokens();
+    public Task<Result<string>> RefreshTokensAsync();
     public Task<Result<User>> ValidateCredentialsAsync(string login, string password);
     public Task<Result<User>> UpdatePasswordAsync(User user, string currentPassword, string newPassword);
     public Task<Result<string>> LoginAsync(string login, string password);

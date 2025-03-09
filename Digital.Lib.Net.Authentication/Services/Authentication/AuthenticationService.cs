@@ -112,7 +112,7 @@ public class AuthenticationService(
         return result;
     }
 
-    public Result<string> RefreshTokens()
+    public async Task<Result<string>> RefreshTokensAsync()
     {
         var token = httpContextService.Request.Cookies[authenticationOptionService.CookieName];
         var result = new Result<string>();
@@ -121,6 +121,8 @@ public class AuthenticationService(
         result.Merge(tokenResult);
         if (result.HasError())
             return result;
+
+        await authenticationJwtService.RevokeTokenAsync(token!);
 
         httpContextService.SetResponseCookie(
             authenticationJwtService.GenerateRefreshToken(tokenResult.UserId),

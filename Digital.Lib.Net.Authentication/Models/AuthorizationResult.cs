@@ -4,10 +4,12 @@ namespace Digital.Lib.Net.Authentication.Models;
 
 public class AuthorizationResult : Result
 {
-    public Guid UserId { get; private set; } = Guid.Empty;
-    public bool IsForbidden { get; private set; }
-    public bool IsAuthorized { get; private set; }
+    public Guid UserId { get; set; } = Guid.Empty;
+    public bool IsForbidden { get; set; }
+    public bool IsAuthorized { get; set; }
+
     public void Forbid() => IsForbidden = true;
+
     public void Authorize(Guid userId)
     {
         IsAuthorized = true;
