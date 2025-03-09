@@ -45,6 +45,12 @@ public interface IRepository<T, TContext>
     public void Delete(T entity);
 
     /// <summary>
+    ///     Delete an entity
+    /// </summary>
+    /// <param name="expression">The predicate to filter entities</param>
+    public void Delete(Expression<Func<T, bool>> expression);
+
+    /// <summary>
     ///     Update an entity.
     /// </summary>
     /// <param name="entity">The entity to update</param>

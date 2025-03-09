@@ -65,6 +65,13 @@ public class Repository<T, TContext>(TContext context) : IRepository<T, TContext
 
     public void Delete(T entity) => context.Set<T>().Remove(entity);
 
+    public void Delete(Expression<Func<T, bool>> expression)
+    {
+        var entities = context.Set<T>().Where(expression);
+        foreach (var entity in entities)
+            context.Set<T>().Remove(entity);
+    }
+
     public IQueryable<T> Get() => context.Set<T>().AsQueryable();
     public IQueryable<T> Get(Expression<Func<T, bool>> expression) => context.Set<T>().Where(expression);
 
