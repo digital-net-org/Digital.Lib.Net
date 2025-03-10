@@ -36,21 +36,6 @@ public class AuthenticationService(
     public async Task<User?> GetAuthenticatedUserAsync() =>
         await userRepository.GetByIdAsync(GetAuthenticatedUserId());
 
-    public async Task<Result<User>> UpdatePasswordAsync(User user, string currentPassword, string newPassword)
-    {
-        var result = new Result<User>();
-
-        if (!PasswordUtils.VerifyPassword(user, currentPassword))
-            return result.AddError(new InvalidCredentialsException());
-        if (!authenticationOptionService.PasswordRegex.IsMatch(newPassword))
-            return result.AddError(new PasswordMalformedException());
-
-        user.Password = PasswordUtils.HashPassword(newPassword);
-        userRepository.Update(user);
-        await userRepository.SaveAsync();
-        return result;
-    }
-
     public async Task<int> GetLoginAttemptCountAsync(User? user = null)
     {
         if (user is null)
