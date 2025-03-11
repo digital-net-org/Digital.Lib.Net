@@ -8,18 +8,22 @@ namespace Digital.Lib.Net.Entities.Context;
 
 public static class ContextInjector
 {
-    public static WebApplicationBuilder AddNpgsqlContext<T>(
-        this WebApplicationBuilder builder,
-        string? accessor = null
-    )
+    public static WebApplicationBuilder AddDatabaseContext<T>(this WebApplicationBuilder builder)
         where T : DbContext
     {
-        accessor ??= "Default";
-        var connStr = builder.Configuration.GetOrThrow<string>($"{AppSettings.ConnectionStrings}:{accessor}");
+        var connectionString = builder.Configuration.GetOrThrow<string>($"{AppSettings.ConnectionString}");
+        var useSqlite = builder.Configuration.Get<bool>(AppSettings.UseSqlite);
+
         builder.Services.AddDbContext<T>(options =>
         {
-            options.UseNpgsql(connStr);
+            if (useSqlite)
+                options.UseSqlite(connectionString);
+            else
+                options.UseNpgsql(connectionString);
         });
+
+        var context = builder.Services.BuildServiceProvider().GetService<T>();
+        context?.Database.EnsureCreated();
         return builder;
     }
 }

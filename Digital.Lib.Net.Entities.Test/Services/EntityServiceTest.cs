@@ -9,10 +9,11 @@ using Digital.Lib.Net.Entities.Services;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Data.Sqlite;
 
 namespace Digital.Lib.Net.Entities.Test.Services;
 
-public class EntityServiceTest : UnitTest
+public class EntityServiceTest : UnitTest, IDisposable
 {
     private static User GetTestUser() => new()
     {
@@ -29,12 +30,14 @@ public class EntityServiceTest : UnitTest
         return patch;
     }
 
+    private readonly SqliteConnection _connection;
     private readonly Repository<User, DigitalContext> _userRepository;
     private readonly IEntityService<User, DigitalContext> _userService;
 
     public EntityServiceTest()
     {
-        var context = new SqliteMemoryDb<DigitalContext>().Context;
+        _connection = SqliteInMemoryHelper.GetConnection();
+        var context = _connection.CreateContext<DigitalContext>();
         _userRepository = new Repository<User, DigitalContext>(context);
         _userService = new EntityService<User, DigitalContext>(_userRepository);
     }
@@ -123,4 +126,6 @@ public class EntityServiceTest : UnitTest
         var result = await _userService.Delete(Guid.NewGuid());
         Assert.True(result.HasError());
     }
+
+    public void Dispose() => _connection.Dispose();
 }

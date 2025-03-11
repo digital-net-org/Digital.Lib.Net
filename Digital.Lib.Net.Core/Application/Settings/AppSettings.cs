@@ -4,7 +4,8 @@ public static class AppSettings
 {
     public const string Domain = "Domain";
     public const string CorsAllowedOrigins = "CorsAllowedOrigins";
-    public const string ConnectionStrings = "ConnectionStrings";
+    public const string ConnectionString = "Database:ConnectionString";
+    public const string UseSqlite = "Database:UseSqlite";
 
     public const string FileSystemPath = "FileSystem:Path";
     public const string FileSystemMaxAvatarSize = "FileSystem:MaxAvatarSize";

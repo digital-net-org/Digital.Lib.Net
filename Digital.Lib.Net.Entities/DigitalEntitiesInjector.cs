@@ -35,7 +35,7 @@ public static class DigitalEntitiesInjector
     /// <returns></returns>
     public static WebApplicationBuilder AddDigitalContext(this WebApplicationBuilder builder)
     {
-        builder.AddNpgsqlContext<DigitalContext>();
+        builder.AddDatabaseContext<DigitalContext>();
         builder.Services
             .AddDigitalEntities<Avatar>()
             .AddDigitalEntities<Document>()

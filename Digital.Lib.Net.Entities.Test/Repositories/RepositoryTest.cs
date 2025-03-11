@@ -5,10 +5,11 @@ using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
+using Microsoft.Data.Sqlite;
 
 namespace Digital.Lib.Net.Entities.Test.Repositories;
 
-public class RepositoryTest : UnitTest
+public class RepositoryTest : UnitTest, IDisposable
 {
     private static Document GetTestDocument() => new()
     {
@@ -17,12 +18,14 @@ public class RepositoryTest : UnitTest
         FileSize = 1
     };
 
+    private readonly SqliteConnection _connection;
     private readonly Repository<Document, DigitalContext> _documentRepository;
     private readonly Repository<Avatar, DigitalContext> _avatarRepository;
 
     public RepositoryTest()
     {
-        var context = new SqliteMemoryDb<DigitalContext>().Context;
+        _connection = SqliteInMemoryHelper.GetConnection();
+        var context = _connection.CreateContext<DigitalContext>();
         _documentRepository = new Repository<Document, DigitalContext>(context);
         _avatarRepository = new Repository<Avatar, DigitalContext>(context);
     }
@@ -50,4 +53,6 @@ public class RepositoryTest : UnitTest
         document = await _documentRepository.UpdateAndSaveAsync(document);
         Assert.True(document.UpdatedAt > DateTime.UtcNow.AddSeconds(-60));
     }
+
+    public void Dispose() => _connection.Dispose();
 }

@@ -15,10 +15,10 @@ if (-Not (Test-Path $AppSettingsPath)) {
 }
 
 $JsonContent = Get-Content -Raw $AppSettingsPath | ConvertFrom-Json
-$ConnectionString = $JsonContent.ConnectionStrings.Default
+$ConnectionString = $JsonContent.Database.ConnectionString
 
 if (-not $ConnectionString) {
-    Write-Host "Missing value 'ConnectionStrings:Default' in $AppSettingsPath"
+    Write-Host "Missing value 'Database:ConnectionString' in $AppSettingsPath"
     exit 1
 }
 

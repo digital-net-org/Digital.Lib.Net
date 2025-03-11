@@ -1,4 +1,5 @@
 using Digital.Lib.Net.Core.Interval;
+using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.Mvc.Controllers.Pagination;
 using Digital.Lib.Net.Mvc.Test.TestUtilities.Context;
@@ -7,19 +8,22 @@ using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
 using Digital.Lib.Net.TestTools.Data.Factories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Xunit;
 
 namespace Digital.Lib.Net.Mvc.Test.Controllers.Pagination;
 
-public class PaginationControllerTest : UnitTest
+public class PaginationControllerTest : UnitTest, IDisposable
 {
+    private readonly SqliteConnection _connection;
     private readonly PaginationControllerWithId _paginationController;
     private readonly DataFactory<TestIdEntity, MvcTestContext> _testEntityFactory;
     private readonly Repository<TestIdEntity, MvcTestContext> _testEntityRepository;
 
     public PaginationControllerTest()
     {
-        var context = new SqliteMemoryDb<MvcTestContext>().Context;
+        _connection = SqliteInMemoryHelper.GetConnection();
+        var context = _connection.CreateContext<MvcTestContext>();
         _testEntityRepository = new Repository<TestIdEntity, MvcTestContext>(context);
         _testEntityFactory = new DataFactory<TestIdEntity, MvcTestContext>(context);
         _paginationController = new PaginationControllerWithId(_testEntityRepository);
@@ -100,4 +104,6 @@ public class PaginationControllerTest : UnitTest
         Assert.True(result.HasError());
         Assert.NotEmpty(result.Errors);
     }
+
+    public void Dispose() => _connection.Dispose();
 }

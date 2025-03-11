@@ -1,3 +1,4 @@
+using Digital.Lib.Net.Core.Application.Settings;
 using Digital.Lib.Net.Core.Environment;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -48,9 +49,9 @@ public static class ApplicationSettings
     {
         var mandatorySettings = new[]
         {
-            "Domain",
-            "ConnectionStrings:Default",
-            "Auth:JwtSecret"
+            AppSettings.Domain,
+            AppSettings.ConnectionString,
+            AppSettings.AuthJwtSecret
         };
 
         foreach (var setting in mandatorySettings)

@@ -3,19 +3,22 @@ using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Digital.Lib.Net.Entities.Test.Seeds;
 
-public class SeederTest : UnitTest
+public class SeederTest : UnitTest, IDisposable
 {
+    private readonly SqliteConnection _connection;
     private readonly SeederTestSeed _userSeeder;
     private readonly Repository<User, DigitalContext> _userRepository;
 
     public SeederTest()
     {
-        var context = new SqliteMemoryDb<DigitalContext>().Context;
+        _connection = SqliteInMemoryHelper.GetConnection();
+        var context = _connection.CreateContext<DigitalContext>();
         _userRepository = new Repository<User, DigitalContext>(context);
         _userSeeder = new SeederTestSeed(
             new Mock<ILogger<SeederTestSeed>>().Object,
@@ -55,4 +58,6 @@ public class SeederTest : UnitTest
         Assert.Single(result.Value!);
         Assert.True(user is not null && user.Id != Guid.Empty);
     }
+
+    public void Dispose() => _connection.Dispose();
 }
