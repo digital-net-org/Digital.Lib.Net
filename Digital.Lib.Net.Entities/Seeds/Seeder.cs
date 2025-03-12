@@ -76,7 +76,7 @@ public abstract class Seeder<T, TContext>(
         foreach (var property in properties)
         {
             var value = property.GetValue(entity);
-            if (value is null || property.PropertyType.IsEntity())
+            if (value is null || property.PropertyType.IsEntity() || property.Name == "Password")
                 continue;
 
             value = property.PropertyType.IsEnum ? (int)value : value;

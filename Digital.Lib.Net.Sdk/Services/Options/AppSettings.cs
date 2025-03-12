@@ -1,4 +1,4 @@
-namespace Digital.Lib.Net.Core.Application.Settings;
+namespace Digital.Lib.Net.Sdk.Services.Options;
 
 public static class AppSettings
 {

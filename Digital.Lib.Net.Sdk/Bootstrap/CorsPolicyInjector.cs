@@ -1,11 +1,11 @@
-using Digital.Lib.Net.Core.Application.Settings;
 using Digital.Lib.Net.Core.Extensions.ConfigurationUtilities;
+using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.Sdk.Bootstrap;
 
-public static class DefaultCorsPolicy
+public static class CorsPolicyInjector
 {
     /// <summary>
     ///     Allow any method and header for CorsAllowedOrigins configuration content,

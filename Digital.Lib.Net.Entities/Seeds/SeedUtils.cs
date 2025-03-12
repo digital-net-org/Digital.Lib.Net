@@ -5,6 +5,18 @@ namespace Digital.Lib.Net.Entities.Seeds;
 
 public static class SeedUtils
 {
+    public static WebApplicationBuilder ApplyDataSeeds(this WebApplicationBuilder builder)
+    {
+        var seeds = builder.Services
+            .BuildServiceProvider()
+            .GetRequiredService<IEnumerable<ISeed>>();
+
+        foreach (var seed in seeds)
+            seed.ApplySeed().Wait();
+
+        return builder;
+    }
+
     public static async Task ApplyDataSeedsAsync(this WebApplication app)
     {
         var seeds = app.Services

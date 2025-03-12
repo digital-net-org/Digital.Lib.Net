@@ -1,4 +1,3 @@
-using Digital.Lib.Net.Core.Application.Settings;
 using Digital.Lib.Net.Core.Random;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

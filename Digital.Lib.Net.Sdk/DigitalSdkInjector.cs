@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Digital.Lib.Net.Entities;
 using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Models.ApiKeys;
@@ -7,6 +8,8 @@ using Digital.Lib.Net.Entities.Models.Avatars;
 using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Models.Events;
 using Digital.Lib.Net.Entities.Models.Users;
+using Digital.Lib.Net.Entities.Seeds;
+using Digital.Lib.Net.Sdk.Bootstrap;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,9 +26,12 @@ public static class DigitalSdkInjector
     /// <returns></returns>
     public static WebApplicationBuilder AddDigitalSdk(this WebApplicationBuilder builder)
     {
+        builder.Configuration.AddAppSettings();
         builder
             .ValidateApplicationSettings()
-            .AddDatabaseContext<DigitalContext>();
+            .AddDatabaseContext<DigitalContext>()
+            .ApplyMigrations<DigitalContext>()
+            .ApplyDataSeeds();
 
         builder.Services
             .AddDigitalEntities<ApiKey>()
@@ -36,7 +42,6 @@ public static class DigitalSdkInjector
             .AddDigitalEntities<Event>()
             .AddDigitalEntities<User>()
             .AddScoped<IAppOptionService, AppOptionService>();
-
         builder.SetAppDefaults();
         return builder;
     }

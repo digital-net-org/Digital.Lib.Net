@@ -108,6 +108,35 @@ namespace Digital.Lib.Net.Entities.Migrations
                     b.ToTable("ApiToken", "digital_core");
                 });
 
+            modelBuilder.Entity("Digital.Lib.Net.Entities.Models.ApplicationOptions.ApplicationOption", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UpdatedAt");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationOption", "digital_core");
+                });
+
             modelBuilder.Entity("Digital.Lib.Net.Entities.Models.Avatars.Avatar", b =>
                 {
                     b.Property<Guid>("Id")

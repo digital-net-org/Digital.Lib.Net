@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace Digital.Lib.Net.Sdk.Bootstrap;
 
-public static class DefaultRateLimiterConfig
+public static class RateLimiterInjector
 {
     public static WebApplicationBuilder AddRateLimiter(this WebApplicationBuilder builder)
     {

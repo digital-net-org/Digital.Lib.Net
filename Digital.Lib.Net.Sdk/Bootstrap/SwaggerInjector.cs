@@ -6,7 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Digital.Lib.Net.Sdk.Bootstrap;
 
-public static class DefaultSwaggerConfig
+public static class SwaggerInjector
 {
     public static WebApplicationBuilder AddSwagger(
         this WebApplicationBuilder builder,

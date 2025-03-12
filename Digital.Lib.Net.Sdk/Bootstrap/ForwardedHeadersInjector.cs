@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.Sdk.Bootstrap;
 
-public static class DefaultForwardedHeadersConfig
+public static class ForwardedHeadersInjector
 {
     public static WebApplicationBuilder SetForwardedHeaders(this WebApplicationBuilder builder)
     {

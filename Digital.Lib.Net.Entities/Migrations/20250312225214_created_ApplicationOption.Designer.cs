@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Digital.Lib.Net.Entities.Migrations
 {
     [DbContext(typeof(DigitalContext))]
-    [Migration("20250311220510_test")]
-    partial class test
+    [Migration("20250312225214_created_ApplicationOption")]
+    partial class created_ApplicationOption
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,35 @@ namespace Digital.Lib.Net.Entities.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ApiToken", "digital_core");
+                });
+
+            modelBuilder.Entity("Digital.Lib.Net.Entities.Models.ApplicationOptions.ApplicationOption", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UpdatedAt");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationOption", "digital_core");
                 });
 
             modelBuilder.Entity("Digital.Lib.Net.Entities.Models.Avatars.Avatar", b =>

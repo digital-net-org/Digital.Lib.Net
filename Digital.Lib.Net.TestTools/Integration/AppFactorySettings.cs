@@ -1,7 +1,6 @@
-using Digital.Lib.Net.Core.Application;
-using Digital.Lib.Net.Core.Application.Settings;
 using Digital.Lib.Net.Core.Environment;
 using Digital.Lib.Net.Core.Random;
+using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
