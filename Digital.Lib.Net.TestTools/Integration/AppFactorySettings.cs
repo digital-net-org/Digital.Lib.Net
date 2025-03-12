@@ -18,8 +18,7 @@ public static class AppFactorySettings
     {
         { AppSettings.Domain, "domain.test" },
         { AppSettings.ConnectionString, $"Data Source={DbPath}" },
-        { AppSettings.UseSqlite, "true" },
-        { AppSettings.AuthJwtSecret, "superLongSecretThatNeedsToBeSuperLongAndSecure" }
+        { AppSettings.UseSqlite, "true" }
     };
 
     public static IWebHostBuilder UseTestConfiguration(this IWebHostBuilder hostBuilder)

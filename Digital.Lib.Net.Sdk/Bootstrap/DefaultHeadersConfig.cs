@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Digital.Lib.Net.Bootstrap.Defaults;
+namespace Digital.Lib.Net.Sdk.Bootstrap;
 
 public static class DefaultForwardedHeadersConfig
 {

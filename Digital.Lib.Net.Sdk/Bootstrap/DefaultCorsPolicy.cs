@@ -3,7 +3,7 @@ using Digital.Lib.Net.Core.Extensions.ConfigurationUtilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Digital.Lib.Net.Bootstrap.Defaults;
+namespace Digital.Lib.Net.Sdk.Bootstrap;
 
 public static class DefaultCorsPolicy
 {

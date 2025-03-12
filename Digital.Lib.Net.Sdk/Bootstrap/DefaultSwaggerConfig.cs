@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Digital.Lib.Net.Bootstrap.Defaults;
+namespace Digital.Lib.Net.Sdk.Bootstrap;
 
 public static class DefaultSwaggerConfig
 {

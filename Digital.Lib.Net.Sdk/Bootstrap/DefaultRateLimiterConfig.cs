@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace Digital.Lib.Net.Bootstrap.Defaults;
+namespace Digital.Lib.Net.Sdk.Bootstrap;
 
 public static class DefaultRateLimiterConfig
 {

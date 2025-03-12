@@ -1,5 +1,6 @@
 using Digital.Lib.Net.Entities.Models.ApiKeys;
 using Digital.Lib.Net.Entities.Models.ApiTokens;
+using Digital.Lib.Net.Entities.Models.ApplicationOptions;
 using Digital.Lib.Net.Entities.Models.Avatars;
 using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Models.Events;
@@ -12,12 +13,13 @@ public class DigitalContext(DbContextOptions<DigitalContext> options) : DbContex
 {
     public const string Schema = "digital_core";
 
+    public DbSet<ApiKey> ApiKeys { get; init; }
+    public DbSet<ApiToken> ApiTokens { get; init; }
+    public DbSet<ApplicationOption> ApplicationOptions { get; init; }
     public DbSet<Avatar> Avatars { get; init; }
     public DbSet<Document> Documents { get; init; }
+    public DbSet<Event> Events { get; init; }
     public DbSet<User> Users { get; init; }
-    public DbSet<ApiToken> ApiTokens { get; init; }
-    public DbSet<ApiKey> ApiKeys { get; init; }
-    public DbSet<Event> EventAuthentications { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

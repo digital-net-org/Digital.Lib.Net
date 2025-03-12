@@ -15,17 +15,6 @@ public class AuthenticationOptions
         return this;
     }
 
-    public PasswordConfig PasswordConfig { get; private set; } = new();
-
-    /// <summary>
-    ///     Set the password validation and security options.
-    /// </summary>
-    public AuthenticationOptions SetPasswordOptions(PasswordConfig config)
-    {
-        PasswordConfig = config;
-        return this;
-    }
-
     public JwtTokenConfig JwtTokenConfig { get; private set; } = new();
 
     /// <summary>

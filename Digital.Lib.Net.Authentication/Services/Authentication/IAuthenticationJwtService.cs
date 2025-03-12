@@ -1,5 +1,3 @@
-using Digital.Lib.Net.Entities.Models.ApiTokens;
-
 namespace Digital.Lib.Net.Authentication.Services.Authentication;
 
 public interface IAuthenticationJwtService

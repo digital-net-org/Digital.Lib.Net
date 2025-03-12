@@ -40,31 +40,6 @@ public static class ApplicationSettings
             .AddEnvironmentVariables();
 
     /// <summary>
-    ///     Verify if mandatory settings are sets.
-    /// </summary>
-    /// <param name="builder"></param>
-    /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
-    public static WebApplicationBuilder ValidateApplicationSettings(this WebApplicationBuilder builder)
-    {
-        var mandatorySettings = new[]
-        {
-            AppSettings.Domain,
-            AppSettings.ConnectionString,
-            AppSettings.AuthJwtSecret
-        };
-
-        foreach (var setting in mandatorySettings)
-        {
-            var value = builder.Configuration.GetSection(setting).Value;
-            if (string.IsNullOrWhiteSpace(value))
-                throw new NullReferenceException($"Missing mandatory configuration section: {setting}");
-        }
-
-        return builder;
-    }
-
-    /// <summary>
     ///     Get the connection string from the provided WebApplicationBuilder.
     /// </summary>
     /// <param name="builder">The WebApplicationBuilder.</param>

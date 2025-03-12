@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Digital.Lib.Net.Core.Messages;
+﻿using Digital.Lib.Net.Core.Messages;
 using Digital.Lib.Net.TestTools;
 
 namespace Digital.Lib.Net.Core.Test.Messages;

@@ -6,22 +6,19 @@ using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Repositories;
 using Digital.Lib.Net.Files.Exceptions;
 using Digital.Lib.Net.Files.Extensions;
-using Digital.Lib.Net.Files.Options;
+using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace Digital.Lib.Net.Files.Services;
 
 public class DocumentService(
-    IConfiguration configuration,
-    IOptions<DigitalFilesOptions> filesOptions,
+    IAppOptionService appOptionService,
     IAuthenticationService authenticationService,
     IRepository<Document, DigitalContext> documentRepository
 ) : IDocumentService
 {
     public string GetDocumentPath(Document document) => Path.Combine(
-        filesOptions.Value.Root,
+        appOptionService.Get<string>(OptionAccessor.FileSystemPath),
         document.FileName
     );
 

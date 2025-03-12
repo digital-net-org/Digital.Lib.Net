@@ -1,13 +1,15 @@
 using System.Text;
-using System.Text.RegularExpressions;
+using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Digital.Lib.Net.Authentication.Options;
 
-public class AuthenticationOptionService(IOptions<AuthenticationOptions> options) : IAuthenticationOptionService
+public class AuthenticationOptionService(
+    IOptions<AuthenticationOptions> options,
+    IAppOptionService appOptionService
+) : IAuthenticationOptionService
 {
-    public Regex PasswordRegex => options.Value.PasswordConfig.PasswordRegex;
     public string CookieName => options.Value.JwtTokenConfig.CookieName;
     public string ApiKeyHeaderAccessor => options.Value.ApiKeyConfig.HeaderAccessor;
 
@@ -15,17 +17,19 @@ public class AuthenticationOptionService(IOptions<AuthenticationOptions> options
         TimeSpan.FromMilliseconds(DefaultAuthenticationOptions.MaxLoginAttemptsThreshold);
 
     public DateTime GetRefreshTokenExpirationDate(DateTime? from = null) =>
-        (from ?? DateTime.UtcNow).AddMilliseconds(options.Value.JwtTokenConfig.RefreshTokenExpiration);
+        (from ?? DateTime.UtcNow).AddMilliseconds(appOptionService.Get<long>(OptionAccessor.JwtRefreshExpiration));
 
     public DateTime GetBearerTokenExpirationDate(DateTime? from = null) =>
-        (from ?? DateTime.UtcNow).AddMilliseconds(options.Value.JwtTokenConfig.AccessTokenExpiration);
+        (from ?? DateTime.UtcNow).AddMilliseconds(appOptionService.Get<long>(OptionAccessor.JwtBearerExpiration));
 
     public TokenValidationParameters GetTokenParameters() => new()
     {
         ValidateIssuerSigningKey = true,
         ValidIssuer = options.Value.JwtTokenConfig.Issuer,
         ValidAudience = options.Value.JwtTokenConfig.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(options.Value.JwtTokenConfig.Secret)),
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.ASCII.GetBytes(appOptionService.Get<string>(OptionAccessor.JwtSecret))
+        ),
         ClockSkew = TimeSpan.Zero
     };
 }

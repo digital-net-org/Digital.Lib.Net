@@ -27,22 +27,4 @@ public static class DigitalEntitiesInjector
         services
             .AddScoped<IRepository<T, DigitalContext>, Repository<T, DigitalContext>>()
             .AddScoped<IEntityService<T, DigitalContext>, EntityService<T, DigitalContext>>();
-
-    /// <summary>
-    ///     Add the DigitalContext and register Entities services for them.
-    /// </summary>
-    /// <param name="builder"></param>
-    /// <returns></returns>
-    public static WebApplicationBuilder AddDigitalContext(this WebApplicationBuilder builder)
-    {
-        builder.AddDatabaseContext<DigitalContext>();
-        builder.Services
-            .AddDigitalEntities<Avatar>()
-            .AddDigitalEntities<Document>()
-            .AddDigitalEntities<User>()
-            .AddDigitalEntities<ApiToken>()
-            .AddDigitalEntities<ApiKey>()
-            .AddDigitalEntities<Event>();
-        return builder;
-    }
 }

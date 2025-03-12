@@ -1,4 +1,3 @@
-using Digital.Lib.Net.Core.Application;
 using Digital.Lib.Net.Mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

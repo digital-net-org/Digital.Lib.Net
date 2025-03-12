@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using Digital.Lib.Net.Core.Extensions.EnumUtilities;
 using Digital.Lib.Net.Core.Messages;
 using Digital.Lib.Net.TestTools;
 

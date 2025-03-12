@@ -1,5 +1,4 @@
 using Digital.Lib.Net.Core.Application.Settings;
-using Digital.Lib.Net.Core.Environment;
 using Digital.Lib.Net.Core.Extensions.ConfigurationUtilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;

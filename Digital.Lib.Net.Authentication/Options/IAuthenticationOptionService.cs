@@ -1,11 +1,9 @@
-using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Digital.Lib.Net.Authentication.Options;
 
 public interface IAuthenticationOptionService
 {
-    public Regex PasswordRegex { get; }
     public string CookieName { get; }
     public string ApiKeyHeaderAccessor { get; }
     public TimeSpan GetMaxLoginAttemptsThreshold();
