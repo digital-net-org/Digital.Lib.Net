@@ -5,13 +5,26 @@ using Microsoft.EntityFrameworkCore;
 namespace Digital.Lib.Net.Entities.Repositories;
 
 /// <summary>
-///     Interface for a repository.
+///     Entity Repository. Use this class for database interactions.
 /// </summary>
 /// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
+/// <typeparam name="TContext">The entity DbContext.</typeparam>
 public interface IRepository<T, TContext>
     where T : Entity
     where TContext : DbContext
 {
+    /// <summary>
+    ///     Reload the entity.
+    /// </summary>
+    /// <param name="entity"></param>
+    void Reload(T entity);
+
+    /// <summary>
+    ///     Reload the entity.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    Task ReloadAsync(T entity);
     /// <summary>
     ///     Create a new entity
     /// </summary>

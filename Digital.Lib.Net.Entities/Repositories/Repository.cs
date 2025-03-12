@@ -6,15 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Lib.Net.Entities.Repositories;
 
-/// <summary>
-///     Repository class for a database context.
-/// </summary>
-/// <typeparam name="T">The entity type. (Must inherit from EntityBase)</typeparam>
-/// <typeparam name="TContext">The entity DbContext.</typeparam>
 public class Repository<T, TContext>(TContext context) : IRepository<T, TContext>
     where T : Entity
     where TContext : DbContext
 {
+    public void Reload(T entity) => context.Entry(entity).Reload();
+
+    public async Task ReloadAsync(T entity) => context.Entry(entity).ReloadAsync();
+
     public void Create(T entity) => context.Set<T>().Add(entity);
 
     public async Task CreateAsync(T entity) => await context.Set<T>().AddAsync(entity);
