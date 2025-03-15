@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Digital.Lib.Net.Entities;
 using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Models.ApiKeys;
@@ -10,6 +9,7 @@ using Digital.Lib.Net.Entities.Models.Events;
 using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Seeds;
 using Digital.Lib.Net.Sdk.Bootstrap;
+using Digital.Lib.Net.Sdk.RateLimiter.Limiters;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +23,12 @@ public static class DigitalSdkInjector
     ///     AppOptionService and initiate options in database.
     /// </summary>
     /// <param name="builder"></param>
+    /// <param name="applicationName"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddDigitalSdk(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddDigitalSdk(
+        this WebApplicationBuilder builder,
+        string applicationName
+    )
     {
         builder.Configuration.AddAppSettings();
         builder
@@ -42,13 +46,35 @@ public static class DigitalSdkInjector
             .AddDigitalEntities<Event>()
             .AddDigitalEntities<User>()
             .AddScoped<IAppOptionService, AppOptionService>();
-        builder.SetAppDefaults();
-        return builder;
-    }
-
-    private static void SetAppDefaults(this WebApplicationBuilder builder) =>
+        
         builder.Services
             .BuildServiceProvider()
             .GetService<IAppOptionService>()?
             .SettingsInit();
+        
+        builder
+            .SetForwardedHeaders()
+            .AddDefaultCorsPolicy()
+            .AddSwagger(applicationName, "v1");
+        
+        builder.Services.AddRateLimiter(GlobalLimiter.Options);
+        return builder;
+    }
+
+    public static WebApplication UseDigitalSdk(
+        this WebApplication app,
+        string applicationName
+    )
+    {
+        app
+            .UseCors()
+            .UseAuthorization()
+            .UseRateLimiter()
+            .UseSwaggerPage(applicationName, "v1")
+            .UseStaticFiles();
+        app
+            .MapControllers()
+            .RequireRateLimiting(GlobalLimiter.Policy);
+        return app;
+    }
 }
