@@ -37,15 +37,4 @@ public static class ContextInjector
         context.Database.Migrate();
         return builder;
     }
-
-    public static async Task ApplyMigrationsAsync<T>(this WebApplication app)
-        where T : DbContext
-    {
-        if (app.Configuration.Get<bool>(AppSettings.UseSqlite))
-            return;
-
-        using var scope = app.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<T>();
-        await context.Database.MigrateAsync();
-    }
 }
