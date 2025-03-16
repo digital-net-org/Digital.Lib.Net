@@ -16,6 +16,21 @@ namespace Digital.Lib.Net.Entities.Migrations
                 name: "digital_core");
 
             migrationBuilder.CreateTable(
+                name: "ApplicationOption",
+                schema: "digital_core",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Value = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationOption", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ApiKey",
                 schema: "digital_core",
                 columns: table => new
@@ -77,7 +92,6 @@ namespace Digital.Lib.Net.Entities.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
                     Email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false),
                     AvatarId = table.Column<Guid>(type: "uuid", nullable: true),
                     Password = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Login = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
@@ -93,7 +107,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                         column: x => x.AvatarId,
                         principalSchema: "digital_core",
                         principalTable: "Avatar",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,7 +132,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                         column: x => x.UploaderId,
                         principalSchema: "digital_core",
                         principalTable: "User",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,6 +143,7 @@ namespace Digital.Lib.Net.Entities.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Payload = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     UserAgent = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     IpAddress = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
@@ -145,7 +162,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                         column: x => x.UserId,
                         principalSchema: "digital_core",
                         principalTable: "User",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -166,6 +184,13 @@ namespace Digital.Lib.Net.Entities.Migrations
                 schema: "digital_core",
                 table: "ApiToken",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationOption_Id",
+                schema: "digital_core",
+                table: "ApplicationOption",
+                column: "Id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Avatar_DocumentId",
@@ -250,6 +275,10 @@ namespace Digital.Lib.Net.Entities.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApiToken",
+                schema: "digital_core");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationOption",
                 schema: "digital_core");
 
             migrationBuilder.DropTable(

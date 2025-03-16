@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Digital.Lib.Net.Entities.Migrations
 {
     [DbContext(typeof(DigitalContext))]
-    [Migration("20250301235519_init_context")]
+    [Migration("20250316205443_init_context")]
     partial class init_context
     {
         /// <inheritdoc />
@@ -109,6 +109,35 @@ namespace Digital.Lib.Net.Entities.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ApiToken", "digital_core");
+                });
+
+            modelBuilder.Entity("Digital.Lib.Net.Entities.Models.ApplicationOptions.ApplicationOption", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UpdatedAt");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationOption", "digital_core");
                 });
 
             modelBuilder.Entity("Digital.Lib.Net.Entities.Models.Avatars.Avatar", b =>
@@ -218,6 +247,12 @@ namespace Digital.Lib.Net.Entities.Migrations
                         .HasColumnType("character varying(45)")
                         .HasColumnName("IpAddress");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Name");
+
                     b.Property<string>("Payload")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
@@ -285,10 +320,6 @@ namespace Digital.Lib.Net.Entities.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("Password");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("Role");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("UpdatedAt");
@@ -346,7 +377,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                 {
                     b.HasOne("Digital.Lib.Net.Entities.Models.Users.User", "Uploader")
                         .WithMany()
-                        .HasForeignKey("UploaderId");
+                        .HasForeignKey("UploaderId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Uploader");
                 });
@@ -355,7 +387,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                 {
                     b.HasOne("Digital.Lib.Net.Entities.Models.Users.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -364,7 +397,8 @@ namespace Digital.Lib.Net.Entities.Migrations
                 {
                     b.HasOne("Digital.Lib.Net.Entities.Models.Avatars.Avatar", "Avatar")
                         .WithMany()
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Avatar");
                 });

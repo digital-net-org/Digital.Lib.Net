@@ -1,4 +1,5 @@
 using Digital.Lib.Net.Core.Extensions.ConfigurationUtilities;
+using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +20,8 @@ public static class ContextInjector
             if (useSqlite)
                 options.UseSqlite(connectionString);
             else
-                options.UseNpgsql(connectionString);
+                options.UseDigitalNpgsql<T>(connectionString);
         });
-
-        var context = builder.Services.BuildServiceProvider().GetService<T>();
-        context?.Database.EnsureCreated();
         return builder;
     }
 

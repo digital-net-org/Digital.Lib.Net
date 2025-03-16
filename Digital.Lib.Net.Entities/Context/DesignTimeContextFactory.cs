@@ -12,7 +12,7 @@ public abstract class DesignTimeContextFactory<T> : IDesignTimeDbContextFactory<
     private static T Build(string connStr)
     {
         var optionsBuilder = new DbContextOptionsBuilder<T>();
-        optionsBuilder.UseNpgsql(connStr);
+        optionsBuilder.UseDigitalNpgsql<T>(connStr);
         return (T)Activator.CreateInstance(typeof(T), optionsBuilder.Options)!;
     }
 
