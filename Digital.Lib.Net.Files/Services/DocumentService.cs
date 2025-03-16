@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Http;
 namespace Digital.Lib.Net.Files.Services;
 
 public class DocumentService(
-    IAppOptionService appOptionService,
+    IOptionsService optionsService,
     IAuthenticationService authenticationService,
     IRepository<Document, DigitalContext> documentRepository
 ) : IDocumentService
 {
     public string GetDocumentPath(Document document) => Path.Combine(
-        appOptionService.Get<string>(OptionAccessor.FileSystemPath),
+        optionsService.Get<string>(OptionAccessor.FileSystemPath),
         document.FileName
     );
 

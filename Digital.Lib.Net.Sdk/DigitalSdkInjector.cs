@@ -10,8 +10,10 @@ using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Seeds;
 using Digital.Lib.Net.Sdk.Bootstrap;
 using Digital.Lib.Net.Sdk.RateLimiter.Limiters;
+using Digital.Lib.Net.Sdk.Services.Application;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.Sdk;
@@ -25,10 +27,7 @@ public static class DigitalSdkInjector
     /// <param name="builder"></param>
     /// <param name="applicationName"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddDigitalSdk(
-        this WebApplicationBuilder builder,
-        string applicationName
-    )
+    public static WebApplicationBuilder AddDigitalSdk(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddAppSettings();
         builder
@@ -44,32 +43,30 @@ public static class DigitalSdkInjector
             .AddDigitalEntities<Document>()
             .AddDigitalEntities<Event>()
             .AddDigitalEntities<User>()
-            .AddScoped<IAppOptionService, AppOptionService>();
+            .AddScoped<IApplicationService, ApplicationService>()
+            .AddScoped<IOptionsService, OptionsService>();
 
         builder.Services
             .BuildServiceProvider()
-            .GetService<IAppOptionService>()?
+            .GetService<IOptionsService>()?
             .SettingsInit();
 
         builder
             .SetForwardedHeaders()
             .AddDefaultCorsPolicy()
-            .AddSwagger(applicationName, "v1");
+            .AddSwagger(builder.GetApplicationName(), "v1");
         
         builder.Services.AddRateLimiter(GlobalLimiter.Options);
         return builder;
     }
 
-    public static WebApplication UseDigitalSdk(
-        this WebApplication app,
-        string applicationName
-    )
+    public static WebApplication UseDigitalSdk(this WebApplication app)
     {
         app
             .UseCors()
             .UseAuthorization()
             .UseRateLimiter()
-            .UseSwaggerPage(applicationName, "v1")
+            .UseSwaggerPage(app.Configuration.GetApplicationName(), "v1")
             .UseStaticFiles();
         app
             .MapControllers()

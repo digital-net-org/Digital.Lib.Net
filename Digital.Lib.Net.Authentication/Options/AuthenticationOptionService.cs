@@ -7,7 +7,7 @@ namespace Digital.Lib.Net.Authentication.Options;
 
 public class AuthenticationOptionService(
     IOptions<AuthenticationOptions> options,
-    IAppOptionService appOptionService
+    IOptionsService optionsService
 ) : IAuthenticationOptionService
 {
     public string CookieName => options.Value.JwtTokenConfig.CookieName;
@@ -17,10 +17,10 @@ public class AuthenticationOptionService(
         TimeSpan.FromMilliseconds(DefaultAuthenticationOptions.MaxLoginAttemptsThreshold);
 
     public DateTime GetRefreshTokenExpirationDate(DateTime? from = null) =>
-        (from ?? DateTime.UtcNow).AddMilliseconds(appOptionService.Get<long>(OptionAccessor.JwtRefreshExpiration));
+        (from ?? DateTime.UtcNow).AddMilliseconds(optionsService.Get<long>(OptionAccessor.JwtRefreshExpiration));
 
     public DateTime GetBearerTokenExpirationDate(DateTime? from = null) =>
-        (from ?? DateTime.UtcNow).AddMilliseconds(appOptionService.Get<long>(OptionAccessor.JwtBearerExpiration));
+        (from ?? DateTime.UtcNow).AddMilliseconds(optionsService.Get<long>(OptionAccessor.JwtBearerExpiration));
 
     public TokenValidationParameters GetTokenParameters() => new()
     {
@@ -28,7 +28,7 @@ public class AuthenticationOptionService(
         ValidIssuer = options.Value.JwtTokenConfig.Issuer,
         ValidAudience = options.Value.JwtTokenConfig.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.ASCII.GetBytes(appOptionService.Get<string>(OptionAccessor.JwtSecret))
+            Encoding.ASCII.GetBytes(optionsService.Get<string>(OptionAccessor.JwtSecret))
         ),
         ClockSkew = TimeSpan.Zero
     };

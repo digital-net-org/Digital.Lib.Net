@@ -9,11 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Digital.Lib.Net.Sdk.Services.Options;
 
-public class AppOptionService(
-    ILogger<AppOptionService> logger,
+public class OptionsService(
+    ILogger<OptionsService> logger,
     IConfiguration configuration,
     IRepository<ApplicationOption, DigitalContext> appOptionRepository
-) : IAppOptionService
+) : IOptionsService
 {
     public void SettingsInit()
     {
