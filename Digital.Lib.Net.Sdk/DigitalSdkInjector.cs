@@ -34,8 +34,7 @@ public static class DigitalSdkInjector
         builder
             .ValidateApplicationSettings()
             .AddDatabaseContext<DigitalContext>()
-            .ApplyMigrations<DigitalContext>()
-            .ApplyDataSeeds();
+            .ApplyMigrations<DigitalContext>();
 
         builder.Services
             .AddDigitalEntities<ApiKey>()
@@ -46,12 +45,12 @@ public static class DigitalSdkInjector
             .AddDigitalEntities<Event>()
             .AddDigitalEntities<User>()
             .AddScoped<IAppOptionService, AppOptionService>();
-        
+
         builder.Services
             .BuildServiceProvider()
             .GetService<IAppOptionService>()?
             .SettingsInit();
-        
+
         builder
             .SetForwardedHeaders()
             .AddDefaultCorsPolicy()

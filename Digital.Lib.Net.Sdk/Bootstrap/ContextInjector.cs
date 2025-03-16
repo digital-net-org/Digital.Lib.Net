@@ -18,7 +18,11 @@ public static class ContextInjector
         builder.Services.AddDbContext<T>(options =>
         {
             if (useSqlite)
+            {
                 options.UseSqlite(connectionString);
+                var context = builder.Services.BuildServiceProvider().GetRequiredService<T>();
+                context.Database.EnsureCreated();
+            }
             else
                 options.UseDigitalNpgsql<T>(connectionString);
         });
