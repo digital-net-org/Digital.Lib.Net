@@ -24,6 +24,8 @@ public class ResultMessage
         Message = message;
     }
 
+    public void Throw() => throw Exception ?? new Exception(Message);
+
     public string? Code { get; init; }
     public string? Reference { get; init; }
     public string? Message { get; init; }
