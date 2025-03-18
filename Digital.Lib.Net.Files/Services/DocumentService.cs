@@ -8,6 +8,7 @@ using Digital.Lib.Net.Files.Exceptions;
 using Digital.Lib.Net.Files.Extensions;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Digital.Lib.Net.Files.Services;
 
@@ -17,6 +18,25 @@ public class DocumentService(
     IRepository<Document, DigitalContext> documentRepository
 ) : IDocumentService
 {
+    public FileResult? GetDocumentFile(Guid documentId, string? contentType = null)
+    {
+        var document = documentRepository.GetById(documentId);
+        return document is null ? null : GetDocumentFile(document, contentType);
+    }
+
+    public FileResult? GetDocumentFile(Document document, string? contentType = null)
+    {
+        var path = GetDocumentPath(document);
+        if (!File.Exists(path))
+            return null;
+
+        var fileBytes = File.ReadAllBytes(path);
+        return new FileContentResult(fileBytes, contentType ?? "application/octet-stream")
+        {
+            FileDownloadName = document.FileName
+        };
+    }
+
     public string GetDocumentPath(Document document) => Path.Combine(
         optionsService.Get<string>(OptionAccessor.FileSystemPath),
         document.FileName
@@ -54,7 +74,7 @@ public class DocumentService(
         return await RemoveDocumentAsync(document);
     }
 
-    private async Task<Result<Document>> SaveDocumentAsync(IFormFile file)
+    public async Task<Result<Document>> SaveDocumentAsync(IFormFile file)
     {
         var result = new Result<Document>();
         var user = await authenticationService.GetAuthenticatedUserAsync();
