@@ -14,7 +14,7 @@ public class Document : EntityGuid
 
     public Document(User uploader, IFormFile file)
     {
-        FileName = file.FileName;
+        FileName = GenerateAnonymousFileName(file.FileName);
         MimeType = file.ContentType;
         FileSize = file.Length;
         UploaderId = uploader.Id;
@@ -33,4 +33,10 @@ public class Document : EntityGuid
     public Guid? UploaderId { get; set; }
 
     public virtual User? Uploader { get; set; }
+
+    private static string GenerateAnonymousFileName(string originalFileName)
+    {
+        var extension = Path.GetExtension(originalFileName);
+        return $"{Guid.NewGuid()}{extension}";
+    }
 }
