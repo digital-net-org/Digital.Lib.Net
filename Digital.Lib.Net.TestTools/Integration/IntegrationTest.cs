@@ -1,4 +1,9 @@
+using Digital.Core.Api.Test.Utils;
+using Digital.Lib.Net.Authentication.Services.Authentication;
+using Digital.Lib.Net.Core.Extensions.HttpUtilities;
+using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Models;
+using Digital.Lib.Net.Entities.Models.Users;
 using Digital.Lib.Net.Entities.Repositories;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +38,12 @@ public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>
         return new Repository<TEntity, TContext>(context);
     }
 
+    protected User CreateUser(UserDto? userDto = null) =>
+        GetRepository<User, DigitalContext>().BuildTestUser(userDto);
+
+    protected void SetAsLogged(HttpClient client, User user) =>
+        client.AddAuthorization(GetService<IAuthenticationJwtService>().GenerateBearerToken(user.Id, string.Empty));
+
     protected HttpClient CreateClient()
     {
         var result = _factory.CreateClient();
@@ -50,7 +61,6 @@ public abstract class IntegrationTest<T> : UnitTest, IClassFixture<AppFactory<T>
     {
         foreach (var client in _clients)
             client.Dispose();
-
         _clients.Clear();
     }
 }

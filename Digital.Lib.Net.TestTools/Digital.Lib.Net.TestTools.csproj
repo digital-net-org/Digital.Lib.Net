@@ -31,6 +31,7 @@
         <ProjectReference Include="..\Digital.Lib.Net.Sdk\Digital.Lib.Net.Sdk.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Core\Digital.Lib.Net.Core.csproj" />
         <ProjectReference Include="..\Digital.Lib.Net.Entities\Digital.Lib.Net.Entities.csproj" />
+        <ProjectReference Include="..\Digital.Lib.Net.Authentication\Digital.Lib.Net.Authentication.csproj" />
     </ItemGroup>
 
     <ItemGroup>

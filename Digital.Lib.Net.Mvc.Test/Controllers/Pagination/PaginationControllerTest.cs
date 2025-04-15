@@ -5,7 +5,6 @@ using Digital.Lib.Net.Mvc.Test.TestUtilities.Context;
 using Digital.Lib.Net.Mvc.Test.TestUtilities.Controllers;
 using Digital.Lib.Net.TestTools;
 using Digital.Lib.Net.TestTools.Data;
-using Digital.Lib.Net.TestTools.Data.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Xunit;
@@ -16,7 +15,6 @@ public class PaginationControllerTest : UnitTest, IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly PaginationControllerWithId _paginationController;
-    private readonly DataFactory<TestIdEntity, MvcTestContext> _testEntityFactory;
     private readonly Repository<TestIdEntity, MvcTestContext> _testEntityRepository;
 
     public PaginationControllerTest()
@@ -24,7 +22,6 @@ public class PaginationControllerTest : UnitTest, IDisposable
         _connection = SqliteInMemoryHelper.GetConnection();
         var context = _connection.CreateContext<MvcTestContext>();
         _testEntityRepository = new Repository<TestIdEntity, MvcTestContext>(context);
-        _testEntityFactory = new DataFactory<TestIdEntity, MvcTestContext>(context);
         _paginationController = new PaginationControllerWithId(_testEntityRepository);
     }
 
@@ -40,7 +37,7 @@ public class PaginationControllerTest : UnitTest, IDisposable
         const int total = 10;
         const int index = 1;
         const int size = 5;
-        _testEntityFactory.CreateMany(total);
+        CreateDataPool(total);
         var result = Test(new TestIdEntityQuery { Index = index, Size = size });
 
         Assert.Equal(total, result.Total);
@@ -53,7 +50,7 @@ public class PaginationControllerTest : UnitTest, IDisposable
     public void Get_ReturnsCorrectItems_WhenFilteredWithMutationDates()
     {
         for (var i = 1; i < 3; i++)
-            _testEntityFactory.Create(new TestIdEntity { CreatedAt = DateTime.UtcNow.AddDays(-i + 1) });
+            _testEntityRepository.CreateAndSave(new TestIdEntity { CreatedAt = DateTime.UtcNow.AddDays(-i + 1) });
 
         var result = Test(new TestIdEntityQuery { CreatedAt = DateTime.UtcNow.AddDays(-1) });
         Assert.Equal(2, result.Count);
@@ -63,7 +60,7 @@ public class PaginationControllerTest : UnitTest, IDisposable
     public void Get_ReturnsCorrectItems_WhenFilteredWithMutationDateRanges()
     {
         var now = DateTime.UtcNow;
-        var users = _testEntityFactory.CreateMany(5);
+        var users = CreateDataPool(5);
         foreach (var user in users)
         {
             var i = users.IndexOf(user);
@@ -81,7 +78,7 @@ public class PaginationControllerTest : UnitTest, IDisposable
         const int total = 10;
         const int index = 2;
         const int size = 5;
-        var users = _testEntityFactory.CreateMany(total);
+        var users = CreateDataPool(total);
         foreach (var user in users)
         {
             var i = users.IndexOf(user) + 1;
@@ -97,11 +94,18 @@ public class PaginationControllerTest : UnitTest, IDisposable
     [Fact]
     public void Get_ReturnsError_WhenInvalidOrder()
     {
-        const int total = 10;
-        _testEntityFactory.CreateMany(total);
+        CreateDataPool(10);
         var result = Test(new TestIdEntityQuery { OrderBy = "Lol" });
         Assert.True(result.HasError());
         Assert.NotEmpty(result.Errors);
+    }
+
+    private List<TestIdEntity> CreateDataPool(int count)
+    {
+            var entities = new List<TestIdEntity>();
+            for (var i = 0; i < count; i++)
+                entities.Add(_testEntityRepository.CreateAndSave(new TestIdEntity()));
+            return entities;
     }
 
     public void Dispose() => _connection.Dispose();
