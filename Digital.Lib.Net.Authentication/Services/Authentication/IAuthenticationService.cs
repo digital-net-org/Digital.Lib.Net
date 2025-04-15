@@ -13,6 +13,15 @@ public interface IAuthenticationService
         string? userAgent = null,
         string? ipAddress = null
     );
-    public Task<Result> LogoutAsync(string? refreshToken, Guid? userId);
-    public Task<Result> LogoutAllAsync(string? refreshToken);
+    public Task<Result> LogoutAsync(
+        string? refreshToken,
+        Guid? userId,
+        string? userAgent = null,
+        string? ipAddress = null
+    );
+    public Task<Result> LogoutAllAsync(
+        string? refreshToken,
+        string? userAgent = null,
+        string? ipAddress = null
+    );
 }

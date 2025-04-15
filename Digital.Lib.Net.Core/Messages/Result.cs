@@ -56,7 +56,7 @@ public class Result
     }
 }
 
-public class Result<T> : Result where T : class
+public class Result<T> : Result
 {
     public Result()
     {

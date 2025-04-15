@@ -108,7 +108,12 @@ public class AuthenticationService(
         return result;
     }
 
-    public async Task<Result> LogoutAsync(string? refreshToken, Guid? userId)
+    public async Task<Result> LogoutAsync(
+        string? refreshToken,
+        Guid? userId,
+        string? userAgent = null,
+        string? ipAddress = null
+    )
     {
         var result = new Result();
         if (refreshToken is null)
@@ -119,12 +124,18 @@ public class AuthenticationService(
             AuthenticationEvents.Logout,
             EventState.Success,
             null,
-            userId
+            userId,
+            userAgent,
+            ipAddress
         );
         return result;
     }
 
-    public async Task<Result> LogoutAllAsync(string? refreshToken)
+    public async Task<Result> LogoutAllAsync(
+        string? refreshToken,
+        string? userAgent = null,
+        string? ipAddress = null
+    )
     {
         var result = new Result();
         var userId = tokenRepository.Get(u => u.Key == refreshToken).FirstOrDefault()?.UserId;
@@ -136,7 +147,9 @@ public class AuthenticationService(
             AuthenticationEvents.LogoutAll,
             EventState.Success,
             null,
-            userId
+            userId,
+            userAgent,
+            ipAddress
         );
         return result;
     }
