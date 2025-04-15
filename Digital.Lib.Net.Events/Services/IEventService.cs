@@ -10,6 +10,8 @@ public interface IEventService
         EventState state,
         Result? result,
         Guid? userId,
-        string? payload = null
+        string? payload = null,
+        string? userAgent = null,
+        string? ipAddress = null
     );
 }

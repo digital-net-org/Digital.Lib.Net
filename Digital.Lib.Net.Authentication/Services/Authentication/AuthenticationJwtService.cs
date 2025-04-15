@@ -6,15 +6,13 @@ using Digital.Lib.Net.Authentication.Services.Authorization;
 using Digital.Lib.Net.Entities.Context;
 using Digital.Lib.Net.Entities.Models.ApiTokens;
 using Digital.Lib.Net.Entities.Repositories;
-using Digital.Lib.Net.Mvc.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Digital.Lib.Net.Authentication.Services.Authentication;
 
 public class AuthenticationJwtService(
     IAuthenticationOptionService authenticationOptionService,
-    IRepository<ApiToken, DigitalContext> apiTokenRepository,
-    IHttpContextService httpContextService
+    IRepository<ApiToken, DigitalContext> apiTokenRepository
 ) : IAuthenticationJwtService
 {
     public async Task RevokeTokenAsync(string token)
@@ -43,20 +41,20 @@ public class AuthenticationJwtService(
         }
     }
 
-    public string GenerateBearerToken(Guid userId)
+    public string GenerateBearerToken(Guid userId, string userAgent)
     {
-        var content = new TokenContent(userId, httpContextService.UserAgent);
+        var content = new TokenContent(userId, userAgent);
         return SignToken(content, authenticationOptionService.GetBearerTokenExpirationDate());
     }
 
-    public string GenerateRefreshToken(Guid userId)
+    public string GenerateRefreshToken(Guid userId, string userAgent)
     {
-        var content = new TokenContent(userId, httpContextService.UserAgent);
+        var content = new TokenContent(userId, userAgent);
         var tokenExpiration = authenticationOptionService.GetRefreshTokenExpirationDate();
         var token = SignToken(content, tokenExpiration);
 
         HandleMaxConcurrentSessions(userId);
-        apiTokenRepository.Create(new ApiToken(userId, token, httpContextService.UserAgent, tokenExpiration));
+        apiTokenRepository.Create(new ApiToken(userId, token, userAgent, tokenExpiration));
         apiTokenRepository.Save();
 
         return token;

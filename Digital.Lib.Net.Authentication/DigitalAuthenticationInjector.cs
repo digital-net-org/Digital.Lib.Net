@@ -36,6 +36,7 @@ public static class DigitalAuthenticationInjector
         });
         builder.Services.TryAddScoped<IEventService, EventService>();
         builder.Services
+            .AddScoped<IUserContextService, UserContextService>()
             .AddScoped<IAuthenticationOptionService, AuthenticationOptionService>()
             .AddScoped<IAuthorizationJwtService, AuthorizationJwtService>()
             .AddScoped<IAuthorizationApiKeyService, AuthorizationApiKeyService>()

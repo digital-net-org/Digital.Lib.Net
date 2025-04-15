@@ -7,13 +7,11 @@ using Digital.Lib.Net.Entities.Models.Avatars;
 using Digital.Lib.Net.Entities.Models.Documents;
 using Digital.Lib.Net.Entities.Models.Events;
 using Digital.Lib.Net.Entities.Models.Users;
-using Digital.Lib.Net.Entities.Seeds;
 using Digital.Lib.Net.Sdk.Bootstrap;
 using Digital.Lib.Net.Sdk.RateLimiter.Limiters;
 using Digital.Lib.Net.Sdk.Services.Application;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Digital.Lib.Net.Sdk;

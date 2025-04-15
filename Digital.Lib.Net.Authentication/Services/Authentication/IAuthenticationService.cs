@@ -5,14 +5,14 @@ namespace Digital.Lib.Net.Authentication.Services.Authentication;
 
 public interface IAuthenticationService
 {
-    public Guid? GetAuthenticatedUserId();
-    public User? GetAuthenticatedUser();
-
-    public Task<User?> GetAuthenticatedUserAsync();
-    Task<int> GetLoginAttemptCountAsync(User? user = null);
-    public Task<Result<string>> RefreshTokensAsync();
     public Task<Result<User>> ValidateCredentialsAsync(string login, string password);
-    public Task<Result<string>> LoginAsync(string login, string password);
-    public Task<Result> LogoutAsync();
-    public Task<Result> LogoutAllAsync();
+    public Task<Result<(Guid, string)>> RefreshTokensAsync(string? refreshToken, string? userAgent = null);
+    public Task<Result<(Guid, string)>> LoginAsync(
+        string login,
+        string password,
+        string? userAgent = null,
+        string? ipAddress = null
+    );
+    public Task<Result> LogoutAsync(string? refreshToken, Guid? userId);
+    public Task<Result> LogoutAllAsync(string? refreshToken);
 }
