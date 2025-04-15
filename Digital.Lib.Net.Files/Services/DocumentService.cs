@@ -8,6 +8,7 @@ using Digital.Lib.Net.Files.Exceptions;
 using Digital.Lib.Net.Files.Extensions;
 using Digital.Lib.Net.Sdk.Services.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Digital.Lib.Net.Files.Services;
 
@@ -21,6 +22,22 @@ public class DocumentService(
         document.FileName
     );
 
+    public FileResult? GetDocumentFile(Guid documentId, string? contentType = null)
+    {
+        var document = documentRepository.GetById(documentId);
+        if (document is null)
+            return null;
+        var path = GetDocumentPath(document);
+        if (!File.Exists(path))
+            return null;
+
+        var fileBytes = File.ReadAllBytes(path);
+        return new FileContentResult(fileBytes, contentType ?? "application/octet-stream")
+        {
+            FileDownloadName = document.FileName
+        };
+    }
+
     public async Task<Result<Document>> SaveImageDocumentAsync(IFormFile form, User uploader, int? quality = null)
     {
         var result = new Result<Document>();
@@ -32,8 +49,9 @@ public class DocumentService(
         return result;
     }
 
-    public async Task<Result> RemoveDocumentAsync(Document? document)
+    public async Task<Result> RemoveDocumentAsync(Guid id)
     {
+        var document = await documentRepository.GetByIdAsync(id);
         var result = new Result();
         if (document is null)
             return result.AddError(new DocumentNotFoundException());
@@ -47,13 +65,7 @@ public class DocumentService(
         return result;
     }
 
-    public async Task<Result> RemoveDocumentAsync(Guid id)
-    {
-        var document = await documentRepository.GetByIdAsync(id);
-        return await RemoveDocumentAsync(document);
-    }
-
-    private async Task<Result<Document>> SaveDocumentAsync(IFormFile file, User uploader)
+    public async Task<Result<Document>> SaveDocumentAsync(IFormFile file, User uploader)
     {
         var result = new Result<Document>();
         if (uploader is null)
