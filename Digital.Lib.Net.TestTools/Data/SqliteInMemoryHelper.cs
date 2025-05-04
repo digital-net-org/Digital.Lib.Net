@@ -14,7 +14,10 @@ public static class SqliteInMemoryHelper
 
     public static T CreateContext<T>(this SqliteConnection connection) where T : DbContext
     {
-        var contextOptions = new DbContextOptionsBuilder<T>().UseSqlite(connection).Options;
+        var contextOptions = new DbContextOptionsBuilder<T>()
+            .UseLazyLoadingProxies()
+            .UseSqlite(connection)
+            .Options;
         var context = (T)Activator.CreateInstance(typeof(T), contextOptions)! ?? throw new InvalidOperationException();
         context.Database.EnsureCreated();
         return context;

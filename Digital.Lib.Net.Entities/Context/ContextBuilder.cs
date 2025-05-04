@@ -12,10 +12,12 @@ public static class ContextBuilder
     )
         where T : DbContext
     {
-        optionsBuilder.UseNpgsql(
-            connectionString,
-            o => o.MigrationsHistoryTable($"{typeof(T).Name}Migration", EfCoreSchema)
-        );
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseNpgsql(
+                connectionString,
+                o => o.MigrationsHistoryTable($"{typeof(T).Name}Migration", EfCoreSchema)
+            );
         return optionsBuilder;
     }
 }
