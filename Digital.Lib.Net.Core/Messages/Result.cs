@@ -40,19 +40,20 @@ public class Result
         Infos.Add(new ResultMessage(message));
         return this;
     }
-
-    public Result Try(Action action)
+    
+    public TReturn? Try<TReturn>(Func<Result<TReturn>> action)
     {
         try
         {
-            action();
+            var result = action();
+            Merge(result);
+            return result.Value;
         }
         catch (Exception ex)
         {
             AddError(ex);
+            return default;
         }
-
-        return this;
     }
 }
 
@@ -84,12 +85,6 @@ public class Result<T> : Result
     public new Result<T> AddInfo(string message)
     {
         base.AddInfo(message);
-        return this;
-    }
-
-    public new Result<T> Try(Action action)
-    {
-        base.Try(action);
         return this;
     }
 }
