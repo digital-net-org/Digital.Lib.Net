@@ -34,11 +34,12 @@ public class DocumentService(
         var fileBytes = File.ReadAllBytes(path);
         return new FileContentResult(fileBytes, contentType ?? "application/octet-stream")
         {
-            FileDownloadName = document.FileName
+            FileDownloadName = document.FileName,
+            LastModified = document.UpdatedAt ?? document.CreatedAt,
         };
     }
 
-    public async Task<Result<Document>> SaveImageDocumentAsync(IFormFile form, User uploader, int? quality = null)
+    public async Task<Result<Document>> SaveImageDocumentAsync(IFormFile form, User? uploader, int? quality = null)
     {
         var result = new Result<Document>();
         var compressed = await form.CompressImageAsync(quality: quality);
@@ -65,7 +66,7 @@ public class DocumentService(
         return result;
     }
 
-    public async Task<Result<Document>> SaveDocumentAsync(IFormFile file, User uploader)
+    public async Task<Result<Document>> SaveDocumentAsync(IFormFile file, User? uploader)
     {
         var result = new Result<Document>();
         if (uploader is null)

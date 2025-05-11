@@ -12,7 +12,7 @@ public class Document : EntityGuid
 {
     public Document() {}
 
-    public Document(User uploader, IFormFile file)
+    public Document(User? uploader, IFormFile file)
     {
         FileName = GenerateAnonymousFileName(file.FileName);
         MimeType = file.ContentType;
