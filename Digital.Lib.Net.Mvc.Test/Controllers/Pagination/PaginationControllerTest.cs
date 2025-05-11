@@ -96,7 +96,7 @@ public class PaginationControllerTest : UnitTest, IDisposable
     {
         CreateDataPool(10);
         var result = Test(new TestIdEntityQuery { OrderBy = "Lol" });
-        Assert.True(result.HasError());
+        Assert.True(result.HasError);
         Assert.NotEmpty(result.Errors);
     }
 

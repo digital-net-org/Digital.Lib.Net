@@ -65,7 +65,7 @@ public class EntityServiceTest : UnitTest, IDisposable
             CreateUserPatch(u => u.Username, "NewUsername"),
             Guid.NewGuid()
         );
-        Assert.True(result.HasError<ResourceNotFoundException>());
+        Assert.True(result.HasErrorOfType<ResourceNotFoundException>());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class EntityServiceTest : UnitTest, IDisposable
         var patch = CreateUserPatch(u => u.Username, "to");
         var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.True(result.HasError<EntityValidationException>());
+        Assert.True(result.HasErrorOfType<EntityValidationException>());
         Assert.NotEqual("", updatedUser?.Username);
     }
     
@@ -87,7 +87,7 @@ public class EntityServiceTest : UnitTest, IDisposable
         var patch = CreateUserPatch(u => u.Username, user2.Username);
         var result = await _userService.Patch(patch, user.Id);
         var updatedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.True(result.HasError());
+        Assert.True(result.HasError);
         Assert.NotEqual(user2.Username, updatedUser?.Username);
     }
     
@@ -97,7 +97,7 @@ public class EntityServiceTest : UnitTest, IDisposable
         var user = await _userRepository.CreateAndSaveAsync(GetTestUser());
         var patch = CreateUserPatch(u => u.Password, "testValue");
         var result = await _userService.Patch(patch, user.Id);
-        Assert.True(result.HasError());
+        Assert.True(result.HasError);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class EntityServiceTest : UnitTest, IDisposable
         var user = await _userRepository.CreateAndSaveAsync(GetTestUser());
         var result = await _userService.Delete(user.Id);
         var deletedUser = await _userRepository.GetByIdAsync(user.Id);
-        Assert.False(result.HasError());
+        Assert.False(result.HasError);
         Assert.Null(deletedUser);
     }
 
@@ -124,7 +124,7 @@ public class EntityServiceTest : UnitTest, IDisposable
     public async Task Delete_ReturnsError_WhenEntityDoesNotExist()
     {
         var result = await _userService.Delete(Guid.NewGuid());
-        Assert.True(result.HasError());
+        Assert.True(result.HasError);
     }
 
     public void Dispose() => _connection.Dispose();

@@ -31,7 +31,7 @@ public class SeederTest : UnitTest, IDisposable
     {
         var result = await _userSeeder.SeedAsync(SeederTestSeed.Users);
         var users = _userRepository.Get(x => true);
-        Assert.False(result.HasError());
+        Assert.False(result.HasError);
         Assert.Equal(2, users.Count());
     }
 
@@ -42,7 +42,7 @@ public class SeederTest : UnitTest, IDisposable
         await _userRepository.SaveAsync();
 
         var result = await _userSeeder.SeedAsync([SeederTestSeed.Users[0]]);
-        Assert.False(result.HasError());
+        Assert.False(result.HasError);
         Assert.Single(_userRepository.Get(u => u.Username == SeederTestSeed.Users[0].Username));
     }
 
@@ -54,7 +54,7 @@ public class SeederTest : UnitTest, IDisposable
 
         var result = await _userSeeder.SeedAsync(SeederTestSeed.Users);
         var user = result.Value!.Find(u => u.Username == SeederTestSeed.Users[1].Username);
-        Assert.False(result.HasError());
+        Assert.False(result.HasError);
         Assert.Single(result.Value!);
         Assert.True(user is not null && user.Id != Guid.Empty);
     }

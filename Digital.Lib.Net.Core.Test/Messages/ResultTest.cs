@@ -14,7 +14,7 @@ public class ResultTest : UnitTest
         model.AddError(new Exception("Test exception"));
         var error = model.Errors[0];
         Assert.Single((IEnumerable)model.Errors);
-        Assert.True(model.HasError());
+        Assert.True(model.HasError);
         Assert.Equal("Test exception", error.Message);
     }
 
@@ -41,10 +41,14 @@ public class ResultTest : UnitTest
     public void Try_ReturnsResultWithError_WhenExceptionThrown()
     {
         var model = new Result();
-        model.Try(() => throw new Exception("Test exception"));
+        model.Try(() =>
+        {
+            throw new Exception("Test exception");
+            return new Result<string>();
+        });
         var error = model.Errors[0];
         Assert.Single(model.Errors);
-        Assert.True(model.HasError());
+        Assert.True(model.HasError);
         Assert.Equal("Test exception", error.Message);
     }
 
@@ -52,22 +56,23 @@ public class ResultTest : UnitTest
     public void Try_ReturnsResultWithoutError_WhenNoExceptionThrown()
     {
         var model = new Result();
-        model.Try(() =>
-        {
-            /* No exception */
-        });
+        model.Try(() => new Result<string>());
         Assert.Empty(model.Errors);
-        Assert.False(model.HasError());
+        Assert.False(model.HasError);
     }
 
     [Fact]
     public void TryGeneric_ReturnsResultWithError_WhenExceptionThrown()
     {
         var model = new Result<string>();
-        model.Try(() => throw new Exception("Test exception"));
+        model.Try(() =>
+        {
+            throw new Exception("Test exception");
+            return new Result<string>();
+        });
         var error = model.Errors[0];
         Assert.Single(model.Errors);
-        Assert.True(model.HasError());
+        Assert.True(model.HasError);
         Assert.Equal("Test exception", error.Message);
     }
 
@@ -75,12 +80,9 @@ public class ResultTest : UnitTest
     public void TryGeneric_ReturnsResultWithoutError_WhenNoExceptionThrown()
     {
         var model = new Result<string>();
-        model.Try(() =>
-        {
-            /* No exception */
-        });
+        model.Try(() => new Result<string>());
         Assert.Empty(model.Errors);
-        Assert.False(model.HasError());
+        Assert.False(model.HasError);
     }
 
     [Fact]
@@ -88,7 +90,7 @@ public class ResultTest : UnitTest
     {
         var model = new Result();
         model.AddError(new Exception("Test exception"));
-        Assert.True(model.HasError());
+        Assert.True(model.HasError);
     }
 
     [Fact]
@@ -96,9 +98,9 @@ public class ResultTest : UnitTest
     {
         var model = new Result();
         model.AddError(new AggregateException("Test exception"));
-        var result = model.HasError<AggregateException>();
+        var result = model.HasErrorOfType<AggregateException>();
         Assert.True(result);
-        Assert.False(model.HasError<NotImplementedException>());
+        Assert.False(model.HasErrorOfType<NotImplementedException>());
     }
 
     private enum TestEnum
