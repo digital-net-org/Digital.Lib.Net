@@ -8,9 +8,9 @@ public class Result
     public List<ResultMessage> Errors { get; init; } = [];
     public List<ResultMessage> Infos { get; init; } = [];
 
-    public bool HasError() => Errors.Count > 0;
+    public bool HasError => Errors.Count > 0;
 
-    public bool HasError<TException>() where TException : Exception
+    public bool HasErrorOfType<TException>() where TException : Exception
     {
         var result = Errors.Any(error => error.IsExceptionOfType<TException>());
         return result;

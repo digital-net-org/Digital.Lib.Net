@@ -68,7 +68,7 @@ public class AuthenticationService(
         var result = new Result<(Guid, string)>((Guid.Empty, string.Empty));
         userAgent ??= string.Empty;
         var userResult = await ValidateCredentialsAsync(login, password);
-        var state = userResult.HasError() ? EventState.Failed : EventState.Success;
+        var state = userResult.HasError ? EventState.Failed : EventState.Success;
 
         result.Merge(userResult);
 
@@ -82,7 +82,7 @@ public class AuthenticationService(
             ipAddress
         );
 
-        if (result.HasError())
+        if (result.HasError)
             return result;
 
         result.Value = (
@@ -97,7 +97,7 @@ public class AuthenticationService(
         var result = new Result<(Guid, string)>((Guid.Empty, string.Empty));
         var tokenResult = authorizationJwtService.AuthorizeRefreshToken(refreshToken);
         result.Merge(tokenResult);
-        if (result.HasError())
+        if (result.HasError)
             return result;
 
         await authenticationJwtService.RevokeTokenAsync(refreshToken!);

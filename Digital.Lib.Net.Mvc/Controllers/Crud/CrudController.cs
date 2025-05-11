@@ -34,14 +34,14 @@ public abstract class CrudController<T, TContext, TDto, TPayload>(
         else
             result.AddError(new KeyNotFoundException("Entity not found."));
 
-        return result.HasError() ? NotFound(result) : Ok(result);
+        return result.HasError ? NotFound(result) : Ok(result);
     }
 
     [HttpPost("")]
     public virtual async Task<ActionResult<Result>> Post([FromBody] TPayload payload)
     {
         var result = await entityService.Create(Mapper.Map<TPayload, T>(payload));
-        return result.HasError() ? BadRequest(result) : Ok(result);
+        return result.HasError ? BadRequest(result) : Ok(result);
     }
 
     [HttpPatch("{id}")]
@@ -56,9 +56,9 @@ public abstract class CrudController<T, TContext, TDto, TPayload>(
         else
             result.AddError(new KeyNotFoundException("Entity not found."));
 
-        if (result.HasError() && result.HasError<KeyNotFoundException>())
+        if (result.HasError && result.HasErrorOfType<KeyNotFoundException>())
             return NotFound(result);
-        if (result.HasError() && result.HasError<InvalidOperationException>())
+        if (result.HasError && result.HasErrorOfType<InvalidOperationException>())
             return BadRequest(result);
 
         return Ok(result);
@@ -76,7 +76,7 @@ public abstract class CrudController<T, TContext, TDto, TPayload>(
         else
             result.AddError(new KeyNotFoundException("Entity not found."));
 
-        return result.HasError() ? NotFound(result) : Ok(result);
+        return result.HasError ? NotFound(result) : Ok(result);
     }
 
     [NonAction]

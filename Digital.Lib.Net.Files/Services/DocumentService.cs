@@ -43,7 +43,7 @@ public class DocumentService(
     {
         var result = new Result<Document>();
         var compressed = await form.CompressImageAsync(quality: quality);
-        if (compressed.HasError() || compressed.Value is null)
+        if (compressed.HasError || compressed.Value is null)
             return result.Merge(compressed);
 
         result = await SaveDocumentAsync(compressed.Value, uploader);

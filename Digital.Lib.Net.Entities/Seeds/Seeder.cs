@@ -64,7 +64,7 @@ public abstract class Seeder<T, TContext>(
             logger.LogInformation(
                 $"Skipped {skip} {nameof(T)} entities because they already exist."
             );
-        if (result.HasError())
+        if (result.HasError)
             logger.LogError($"One or more entities could not be seeded: {result.Errors}");
 
         return result;

@@ -27,7 +27,7 @@ public class EventService(IRepository<Event, DigitalContext> eventRepository) : 
             IpAddress = ipAddress ?? string.Empty
         };
         
-        if (result is not null && result.HasError())
+        if (result is not null && result.HasError)
             appEvent.SetError(result);
         
         await eventRepository.CreateAndSaveAsync(appEvent);
