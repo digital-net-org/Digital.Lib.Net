@@ -12,7 +12,7 @@ public class Repository<T, TContext>(TContext context) : IRepository<T, TContext
 {
     public void Reload(T entity) => context.Entry(entity).Reload();
 
-    public async Task ReloadAsync(T entity) => context.Entry(entity).ReloadAsync();
+    public async Task ReloadAsync(T entity) => await context.Entry(entity).ReloadAsync();
 
     public void Create(T entity) => context.Set<T>().Add(entity);
 

@@ -125,6 +125,7 @@ public class AuthenticationService(
             EventState.Success,
             null,
             userId,
+            null,
             userAgent,
             ipAddress
         );
@@ -148,6 +149,7 @@ public class AuthenticationService(
             EventState.Success,
             null,
             userId,
+            null,
             userAgent,
             ipAddress
         );

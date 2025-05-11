@@ -22,7 +22,7 @@ public abstract class CrudController<T, TContext, TDto, TPayload>(
     public virtual ActionResult<Result<List<SchemaProperty<T>>>> GetSchema() =>
         Ok(new Result<List<SchemaProperty<T>>>(entityService.GetSchema()));
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public virtual ActionResult<Result<TDto>> GetById(string id)
     {
         var result = new Result<TDto>();
